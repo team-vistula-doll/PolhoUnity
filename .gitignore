@@ -33,6 +33,8 @@
 ExportedObj/
 .consulo/
 *.csproj
+# Except .csproj in Assets
+!/[Aa]ssets/**/*.csproj
 *.unityproj
 *.sln
 *.suo
