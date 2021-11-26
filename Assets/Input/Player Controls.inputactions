@@ -6,7 +6,7 @@
             "id": "477895a0-2d11-48a3-8e80-d58668212533",
             "actions": [
                 {
-                    "name": "Player Movement",
+                    "name": "Move",
                     "type": "Button",
                     "id": "59787297-b255-4e09-8e75-52f05cde3a7e",
                     "expectedControlType": "Button",
@@ -22,7 +22,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Player Movement",
+                    "action": "Move",
                     "isComposite": true,
                     "isPartOfComposite": false
                 },
@@ -33,7 +33,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard & Mouse",
-                    "action": "Player Movement",
+                    "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -44,7 +44,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard & Mouse",
-                    "action": "Player Movement",
+                    "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -55,7 +55,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard & Mouse",
-                    "action": "Player Movement",
+                    "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -66,7 +66,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard & Mouse",
-                    "action": "Player Movement",
+                    "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
                 }
