@@ -1255,12 +1255,12 @@ MonoBehaviour:
     m_Name: Skip
     m_Type: 1
     m_ExpectedControlType: 
-    m_Id: 
+    m_Id: 8eedf74a-52bd-4777-8fd2-ac701e15ee0d
     m_Processors: 
     m_Interactions: 
     m_SingletonActionBindings:
     - m_Name: 
-      m_Id: 
+      m_Id: 0c5591fc-15c3-46cd-83ff-617577a458e9
       m_Path: Cancel
       m_Interactions: 
       m_Processors: 
@@ -1311,6 +1311,7 @@ GameObject:
   - component: {fileID: 1295647416}
   - component: {fileID: 1295647418}
   - component: {fileID: 1295647417}
+  - component: {fileID: 1295647419}
   m_Layer: 9
   m_Name: Player
   m_TagString: Untagged
@@ -1398,7 +1399,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4108325f38727794f9e59fa38e78127c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Speed: 192
+  Speed: 162
 --- !u!114 &1295647416
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1463,6 +1464,47 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &1295647419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1295647412}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56d35b1ef2eef8249b0ba1b88e74fe60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DanmakuType: {fileID: -2612603446601050132, guid: 1df655dc5b3faaf48b21e72d0deb5ed2, type: 3}
+  Speed:
+    _min: 5
+    _max: 5
+  AngularSpeed:
+    _min: 0
+    _max: 0
+  Color: {r: 1, g: 1, b: 1, a: 1}
+  FireRate:
+    _min: 5
+    _max: 5
+  FrameRate: 0
+  Arc:
+    Count:
+      _min: 0
+      _max: 0
+    ArcLength:
+      _min: 0
+      _max: 0
+    Radius:
+      _min: 0
+      _max: 0
+  Line:
+    Count:
+      _min: 1
+      _max: 1
+    DeltaSpeed:
+      _min: 0
+      _max: 0
 --- !u!1 &1387082081
 GameObject:
   m_ObjectHideFlags: 0

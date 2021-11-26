@@ -15,7 +15,7 @@ public class Player : MonoBehaviour, IMoveable
         if(input.magnitude>1)
             input = input.normalized;
 
-        Rigidbody2D.velocity = new Vector2(input.x, input.y) * Speed * Time.deltaTime;
+        Rigidbody2D.velocity = new Vector2(input.x, input.y) * Speed * Time.fixedDeltaTime; //fixedDeltaTime until we set the targetFrameRate
     }
 
     // Start is called before the first frame update
