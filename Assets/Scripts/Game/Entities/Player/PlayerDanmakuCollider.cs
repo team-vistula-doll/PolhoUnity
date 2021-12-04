@@ -35,6 +35,7 @@ public class PlayerDanmakuCollider : DanmakuCollider
         bool hit = false;
         foreach (var collision in collisions)
         {
+            //if(collision.Danmaku.Pool == DanmakuEmitter.) //figuring out how to limit detection to certain emmiters through pools  
             hit = true;
             collision.Danmaku.Destroy();
             
