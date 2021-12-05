@@ -6,6 +6,12 @@ using UnityEngine;
 public class PlayerDanmakuCollider : DanmakuCollider
 {
     public DanmakuCollider Collider;
+    public PDanmakuEmitter Emitter;
+
+    private void Awake()
+    {
+        Emitter = GetComponentInChildren<PDanmakuEmitter>();
+    }
 
     /// <summary>
     /// This function is called when the object becomes enabled and active.
@@ -35,9 +41,11 @@ public class PlayerDanmakuCollider : DanmakuCollider
         bool hit = false;
         foreach (var collision in collisions)
         {
-            //if(collision.Danmaku.Pool == DanmakuEmitter.) //figuring out how to limit detection to certain emmiters through pools  
-            hit = true;
-            collision.Danmaku.Destroy();
+            if(collision.Danmaku.Pool != Emitter.set.Pool) //Ignore player emitter
+            {
+                hit = true;
+                collision.Danmaku.Destroy();
+            }
             
         }
 

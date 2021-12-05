@@ -44,9 +44,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Type: 0
-  Material: {fileID: 10756, guid: 0000000000000000e000000000000000, type: 0}
+  Material: {fileID: 2100000, guid: 9942c237b767f1646a040f5b3220eb43, type: 2}
   Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
-  Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  Sprite: {fileID: 10911, guid: 0000000000000000f000000000000000, type: 0}
   ColliderRadius: 1
   ColliderOffset: {x: 0, y: 0}
   DefaultPoolSize: 1000

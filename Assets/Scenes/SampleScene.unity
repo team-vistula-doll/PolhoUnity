@@ -400,6 +400,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 421277023}
+  - {fileID: 1413466677}
   m_Father: {fileID: 1295647413}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -444,6 +445,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Collider: {fileID: 448451560}
+  Emitter: {fileID: 0}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -1311,7 +1313,6 @@ GameObject:
   - component: {fileID: 1295647416}
   - component: {fileID: 1295647418}
   - component: {fileID: 1295647417}
-  - component: {fileID: 1295647419}
   m_Layer: 9
   m_Name: Player
   m_TagString: Untagged
@@ -1464,47 +1465,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!114 &1295647419
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1295647412}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56d35b1ef2eef8249b0ba1b88e74fe60, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DanmakuType: {fileID: 8882630788408880235, guid: 31bf04885267ae4408877319f730b2b0, type: 3}
-  Speed:
-    _min: 5
-    _max: 5
-  AngularSpeed:
-    _min: 0
-    _max: 0
-  Color: {r: 1, g: 1, b: 1, a: 1}
-  FireRate:
-    _min: 5
-    _max: 5
-  FrameRate: 0
-  Arc:
-    Count:
-      _min: 1
-      _max: 1
-    ArcLength:
-      _min: 0
-      _max: 0
-    Radius:
-      _min: 0
-      _max: 0
-  Line:
-    Count:
-      _min: 1
-      _max: 1
-    DeltaSpeed:
-      _min: 0
-      _max: 0
 --- !u!1 &1387082081
 GameObject:
   m_ObjectHideFlags: 0
@@ -1579,6 +1539,78 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1413466676
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1413466677}
+  - component: {fileID: 1413466678}
+  m_Layer: 9
+  m_Name: Emitter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1413466677
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1413466676}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 448451558}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1413466678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1413466676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e44a4d43954f4c244b6c98fb1b774909, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DanmakuType: {fileID: 8882630788408880235, guid: 31bf04885267ae4408877319f730b2b0, type: 3}
+  Speed:
+    _min: 1
+    _max: 1
+  AngularSpeed:
+    _min: 0
+    _max: 0
+  Color: {r: 1, g: 1, b: 1, a: 1}
+  FireRate:
+    _min: 5
+    _max: 5
+  FrameRate: 0
+  Arc:
+    Count:
+      _min: 1
+      _max: 1
+    ArcLength:
+      _min: 0
+      _max: 0
+    Radius:
+      _min: 0
+      _max: 0
+  Line:
+    Count:
+      _min: 1
+      _max: 1
+    DeltaSpeed:
+      _min: 0
+      _max: 0
 --- !u!1 &1633723736
 GameObject:
   m_ObjectHideFlags: 0
