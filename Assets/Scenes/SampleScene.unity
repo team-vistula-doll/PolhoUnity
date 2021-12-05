@@ -1476,7 +1476,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56d35b1ef2eef8249b0ba1b88e74fe60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DanmakuType: {fileID: -2612603446601050132, guid: 1df655dc5b3faaf48b21e72d0deb5ed2, type: 3}
+  DanmakuType: {fileID: 8882630788408880235, guid: 31bf04885267ae4408877319f730b2b0, type: 3}
   Speed:
     _min: 5
     _max: 5
@@ -1490,8 +1490,8 @@ MonoBehaviour:
   FrameRate: 0
   Arc:
     Count:
-      _min: 0
-      _max: 0
+      _min: 1
+      _max: 1
     ArcLength:
       _min: 0
       _max: 0
