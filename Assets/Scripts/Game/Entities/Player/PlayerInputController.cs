@@ -22,9 +22,9 @@ public class PlayerInputController : MonoBehaviour
     //    _player.Move(new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")));
     //}
 
-    void OnMove(InputValue value)
+    public void Move(InputAction.CallbackContext context)
     {
-        moveVal = value.Get<Vector2>();
+        moveVal = context.ReadValue<Vector2>();
         //Debug.Log("X: " + moveVal.x + ", Y: " + moveVal.y);
         _player.Move(new Vector2(moveVal.x, moveVal.y));
     }
