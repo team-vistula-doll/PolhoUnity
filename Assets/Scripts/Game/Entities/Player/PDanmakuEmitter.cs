@@ -7,7 +7,7 @@ namespace DanmakU
 {
 
     [AddComponentMenu("DanmakU/PDanmaku Emitter")]
-    public class PDanmakuEmitter : DanmakuBehaviour
+    public class PDanmakuEmitter : DanmakuBehaviour, IShootable
     {
 
         public DanmakuPrefab DanmakuType;
@@ -22,7 +22,9 @@ namespace DanmakU
 
         public DanmakuSet set;
 
-        float timer;
+        public float timer { get; set; }
+        public bool canShoot { get; set; } = false;
+
         DanmakuConfig config;
         IFireable fireable;
 
@@ -54,7 +56,7 @@ namespace DanmakU
                 deltaTime = 1f / FrameRate;
             }
             timer -= deltaTime;
-            if (timer < 0)
+            if (timer < 0 && canShoot)
             {
                 config = new DanmakuConfig
                 {
