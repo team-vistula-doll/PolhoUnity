@@ -12,34 +12,21 @@ public enum GameState
 }
 public class GameStateManager
 {
-    private GameState _currentState;
-
-    private int _lifes;
-
     public int Difficulty { get; set; }
+    
+    public static event Action<GameState> GameStateChanged;
+    private static GameStateManager instance = null;
+    private static GameState _currentState;
 
-    public int Lifes
-    { 
-        get { return _lifes; }
-
+    public static GameState gameState
+    {
+        get => _currentState;
         set
         {
-            if (value < 0)
-            {
-                SetState(GameState.DEAD);
-                _lifes = 0;
-            }
-            else
-                _lifes = Mathf.Min(value, 5);
-
-            LifesChanged.Invoke(_lifes);
+            _currentState = value;
+            GameStateChanged?.Invoke(_currentState);
         }
     }
-    
-    public event Action<GameState> GameStateChanged;
-    public event Action<int> LifesChanged;
-
-    private static GameStateManager instance = null;
 
     public static GameStateManager Instance
     {
@@ -49,16 +36,5 @@ public class GameStateManager
                 instance = new GameStateManager();
             return instance;
         }
-    }
-
-    private GameStateManager()
-    {
-        _lifes = 3;
-    }
-
-    public void SetState(GameState state)
-    {
-        _currentState = state;
-        GameStateChanged?.Invoke(_currentState);
     }
 }
