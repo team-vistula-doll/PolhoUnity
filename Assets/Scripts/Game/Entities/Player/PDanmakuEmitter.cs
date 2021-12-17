@@ -15,7 +15,7 @@ namespace DanmakU
         public Range Speed = 5f;
         public Range AngularSpeed;
         public Color Color = Color.white;
-        public Range FireRate = 5;
+        public Range FireRate { get; set; } = 5;
         public float FrameRate;
         public Arc Arc;
         public Line Line;

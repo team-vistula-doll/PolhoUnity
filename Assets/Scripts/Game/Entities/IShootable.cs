@@ -6,5 +6,6 @@ using DanmakU;
 public interface IShootable
 {
     public float timer { get; set; }
+    public Range FireRate { get; set; }
     public bool canShoot { get; set; }
 }

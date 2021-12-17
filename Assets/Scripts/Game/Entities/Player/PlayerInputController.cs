@@ -38,7 +38,10 @@ public class PlayerInputController : MonoBehaviour
         if (context.canceled)
         {
             _playerEmitter.canShoot = false;
-            _playerEmitter.timer = 0;
+            
+            //This lets the player fire twice as fast if they spam the button
+            if(_playerEmitter.timer > 0.5f/_playerEmitter.FireRate.GetValue())
+                _playerEmitter.timer = 0.5f / _playerEmitter.FireRate.GetValue();
         }
         else _playerEmitter.canShoot = true;
     }
