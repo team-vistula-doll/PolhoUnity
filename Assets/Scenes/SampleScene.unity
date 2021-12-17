@@ -1414,6 +1414,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveVal: {x: 0, y: 0}
+  focus: 1
 --- !u!114 &1295647417
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1471,6 +1472,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 8db250e3-347c-45db-ae75-5088fbde594f
     m_ActionName: Gameplay/Shoot[/Keyboard/space]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1295647416}
+        m_TargetAssemblyTypeName: PlayerInputController, Game
+        m_MethodName: Focus
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 9533d3eb-f233-4854-9eaa-38e8b08a76fb
+    m_ActionName: Gameplay/Focus[/Keyboard/shift]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: Keyboard & Mouse
   m_DefaultActionMap: Gameplay
@@ -1622,7 +1639,7 @@ MonoBehaviour:
     _min: 0
     _max: 0
   Color: {r: 1, g: 0, b: 0, a: 1}
-  FireRate:
+  <FireRate>k__BackingField:
     _min: 5
     _max: 5
   FrameRate: 0
