@@ -8,7 +8,7 @@ public class PlayerDanmakuCollider : DanmakuCollider
     public DanmakuCollider Collider;
     public PDanmakuEmitter Emitter;
 
-    private void Awake()
+    private void Start()
     {
         Emitter = GetComponentInChildren<PDanmakuEmitter>();
     }
@@ -36,7 +36,7 @@ public class PlayerDanmakuCollider : DanmakuCollider
         }
     }
 
-    void OnDanmakuCollision(DanmakuCollisionList collisions)
+    new void OnDanmakuCollision(DanmakuCollisionList collisions)
     {
         bool hit = false;
         foreach (var collision in collisions)
