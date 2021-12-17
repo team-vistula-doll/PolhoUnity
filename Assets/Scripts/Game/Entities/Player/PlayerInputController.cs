@@ -12,18 +12,13 @@ public class PlayerInputController : MonoBehaviour
 
     private IMoveable _player;
     private IShootable _playerEmitter;
+
     // Start is called before the first frame update
     void Start()
     {
         _player = GetComponent<IMoveable>();
         _playerEmitter = GetComponentInChildren<IShootable>();
     }
-
-    //// Update is called once per frame
-    //void FixedUpdate()
-    //{
-    //    _player.Move(new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")));
-    //}
 
     public void Move(InputAction.CallbackContext context)
     {
@@ -34,8 +29,7 @@ public class PlayerInputController : MonoBehaviour
 
     public void Shoot(InputAction.CallbackContext context)
     {
-
-        if (context.canceled)
+        if (context.canceled) //if button released
         {
             _playerEmitter.canShoot = false;
             
