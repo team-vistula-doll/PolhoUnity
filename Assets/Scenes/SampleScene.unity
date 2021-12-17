@@ -763,9 +763,10 @@ GameObject:
   - component: {fileID: 1022631779}
   - component: {fileID: 1022631781}
   - component: {fileID: 1022631780}
+  - component: {fileID: 1022631782}
   m_Layer: 5
   m_Name: Score
-  m_TagString: ScoreText
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -886,6 +887,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1022631778}
   m_CullTransparentMesh: 1
+--- !u!114 &1022631782
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1022631778}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f08234dfe8b46e24cad9ff5be1c068e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1138412655
 GameObject:
   m_ObjectHideFlags: 0
@@ -1668,9 +1681,10 @@ GameObject:
   - component: {fileID: 1906983731}
   - component: {fileID: 1906983733}
   - component: {fileID: 1906983732}
+  - component: {fileID: 1906983734}
   m_Layer: 5
   m_Name: Lives
-  m_TagString: LivesText
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1793,6 +1807,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1906983730}
   m_CullTransparentMesh: 1
+--- !u!114 &1906983734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1906983730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 738293a398cc3514f98d0a766564a475, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1969527395
 GameObject:
   m_ObjectHideFlags: 0

@@ -13,9 +13,6 @@ public class Player : MonoBehaviour, IMoveable
     private static int lives = 3;
     private static uint score = 0;
 
-    private static TMP_Text scoreText;
-    private static TMP_Text livesText;
-    
     public static int Lives
     {
         get => lives;
@@ -25,13 +22,13 @@ public class Player : MonoBehaviour, IMoveable
             if (value <= 0)
             {
                 lives = value;
-                livesText.text = "Dead";
+                LivesText.Text = "Dead";
                 GameStateManager.gameState = GameState.DEAD;
             }
             else
             {
                 lives = value;
-                livesText.text = "Lives: " + lives; // Update life indicator
+                LivesText.Text = "Lives: " + lives; // Update life indicator
             }
         }
     }
@@ -42,7 +39,7 @@ public class Player : MonoBehaviour, IMoveable
         set
         {
             score = value;
-            scoreText.text = "Score: " + score; // Update score indicator
+            ScoreText.Text = "Score: " + score; // Update score indicator
         }
     }
 
@@ -64,7 +61,5 @@ public class Player : MonoBehaviour, IMoveable
     void Start()
     {
         Rigidbody2D = GetComponent<Rigidbody2D>();
-        scoreText = GameObject.FindWithTag("ScoreText").GetComponent<TMP_Text>();
-        livesText = GameObject.FindWithTag("LivesText").GetComponent<TMP_Text>();
     }
 }
