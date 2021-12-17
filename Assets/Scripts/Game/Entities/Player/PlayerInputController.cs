@@ -9,6 +9,8 @@ public class PlayerInputController : MonoBehaviour
 {
     [HideInInspector]
     public Vector2 moveVal;
+    [HideInInspector]
+    public float focus = 1f;
 
     private IMoveable _player;
     private IShootable _playerEmitter;
@@ -23,8 +25,15 @@ public class PlayerInputController : MonoBehaviour
     public void Move(InputAction.CallbackContext context)
     {
         moveVal = context.ReadValue<Vector2>();
-        //Debug.Log("X: " + moveVal.x + ", Y: " + moveVal.y);
-        _player.Move(new Vector2(moveVal.x, moveVal.y));
+        _player.Move(new Vector2(moveVal.x * focus, moveVal.y * focus));
+    }
+
+    public void Focus(InputAction.CallbackContext context)
+    {
+        if (context.canceled) focus = 1f;
+        else focus = 0.5f;
+
+        _player.Move(new Vector2(moveVal.x * focus, moveVal.y * focus));
     }
 
     public void Shoot(InputAction.CallbackContext context)

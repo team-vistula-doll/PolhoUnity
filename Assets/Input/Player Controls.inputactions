@@ -9,7 +9,7 @@
                     "name": "Move",
                     "type": "Value",
                     "id": "59787297-b255-4e09-8e75-52f05cde3a7e",
-                    "expectedControlType": "Digital",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": ""
                 },
@@ -17,6 +17,14 @@
                     "name": "Shoot",
                     "type": "Value",
                     "id": "8db250e3-347c-45db-ae75-5088fbde594f",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Focus",
+                    "type": "Value",
+                    "id": "9533d3eb-f233-4854-9eaa-38e8b08a76fb",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": ""
@@ -86,6 +94,17 @@
                     "processors": "",
                     "groups": "Keyboard & Mouse",
                     "action": "Shoot",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4844a351-34dd-4ca3-aadf-afda91cdd546",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard & Mouse",
+                    "action": "Focus",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
