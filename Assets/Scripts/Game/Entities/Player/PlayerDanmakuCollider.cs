@@ -41,7 +41,7 @@ public class PlayerDanmakuCollider : DanmakuCollider
         bool hit = false;
         foreach (var collision in collisions)
         {
-            if(collision.Danmaku.Pool != Emitter.set.Pool) //Ignore player emitter
+            if(collision.Danmaku.Pool != Emitter.Set.Pool) //Ignore player emitter
             {
                 hit = true;
                 collision.Danmaku.Destroy();

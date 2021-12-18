@@ -21,10 +21,10 @@ namespace DanmakU
         public Arc Arc;
         public Line Line;
 
-        public DanmakuSet set;
+        public DanmakuSet Set;
 
-        public float timer { get; set; }
-        public bool canShoot { get; set; } = false;
+        public float Timer { get; set; }
+        public bool CanShoot { get; set; } = false;
 
         DanmakuConfig config;
         IFireable fireable;
@@ -40,9 +40,9 @@ namespace DanmakU
                 Debug.LogWarning($"Emitter doesn't have a valid DanmakuPrefab", this);
                 return;
             }
-            set = CreateSet(DanmakuType);
-            set.AddModifiers(GetComponents<IDanmakuModifier>());
-            fireable = Arc.Of(Line).Of(set);
+            Set = CreateSet(DanmakuType);
+            Set.AddModifiers(GetComponents<IDanmakuModifier>());
+            fireable = Arc.Of(Line).Of(Set);
         }
 
         /// <summary>
@@ -56,8 +56,8 @@ namespace DanmakU
             {
                 deltaTime = 1f / FrameRate;
             }
-            timer -= deltaTime;
-            if (timer < 0 && canShoot)
+            Timer -= deltaTime;
+            if (Timer < 0 && CanShoot)
             {
                 config = new DanmakuConfig
                 {
@@ -68,7 +68,7 @@ namespace DanmakU
                     Color = Color
                 };
                 fireable.Fire(config);
-                timer = 1f / FireRate.GetValue();
+                Timer = 1f / FireRate.GetValue();
             }
         }
 

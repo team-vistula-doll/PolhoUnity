@@ -8,9 +8,9 @@ using UnityEngine.InputSystem;
 public class PlayerInputController : MonoBehaviour
 {
     [HideInInspector]
-    public Vector2 moveVal;
+    public Vector2 MoveVal;
     [HideInInspector]
-    public float focus = 1f;
+    public float FocusMultiplier = 1f;
 
     private IMoveable _player;
     private IShootable _playerEmitter;
@@ -24,28 +24,28 @@ public class PlayerInputController : MonoBehaviour
 
     public void Move(InputAction.CallbackContext context)
     {
-        moveVal = context.ReadValue<Vector2>();
-        _player.Move(new Vector2(moveVal.x * focus, moveVal.y * focus));
+        MoveVal = context.ReadValue<Vector2>();
+        _player.Move(new Vector2(MoveVal.x * FocusMultiplier, MoveVal.y * FocusMultiplier));
     }
 
     public void Focus(InputAction.CallbackContext context)
     {
-        if (context.canceled) focus = 1f;
-        else focus = 0.5f;
+        if (context.canceled) FocusMultiplier = 1f;
+        else FocusMultiplier = 0.5f;
 
-        _player.Move(new Vector2(moveVal.x * focus, moveVal.y * focus));
+        _player.Move(new Vector2(MoveVal.x * FocusMultiplier, MoveVal.y * FocusMultiplier));
     }
 
     public void Shoot(InputAction.CallbackContext context)
     {
         if (context.canceled) //if button released
         {
-            _playerEmitter.canShoot = false;
+            _playerEmitter.CanShoot = false;
             
             //This lets the player fire twice as fast if they spam the button
-            if(_playerEmitter.timer > 0.5f/_playerEmitter.FireRate.GetValue())
-                _playerEmitter.timer = 0.5f / _playerEmitter.FireRate.GetValue();
+            if(_playerEmitter.Timer > 0.5f/_playerEmitter.FireRate.GetValue())
+                _playerEmitter.Timer = 0.5f / _playerEmitter.FireRate.GetValue();
         }
-        else _playerEmitter.canShoot = true;
+        else _playerEmitter.CanShoot = true;
     }
 }
