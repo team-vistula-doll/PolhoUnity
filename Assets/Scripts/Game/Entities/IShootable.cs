@@ -8,4 +8,5 @@ public interface IShootable
     public float Timer { get; set; }
     public Range FireRate { get; set; }
     public bool CanShoot { get; set; }
+    public DanmakuSet Set { get; set; }
 }

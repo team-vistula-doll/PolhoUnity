@@ -21,7 +21,7 @@ namespace DanmakU
         public Arc Arc;
         public Line Line;
 
-        public DanmakuSet Set;
+        public DanmakuSet Set { get; set; }
 
         public float Timer { get; set; }
         public bool CanShoot { get; set; } = false;
