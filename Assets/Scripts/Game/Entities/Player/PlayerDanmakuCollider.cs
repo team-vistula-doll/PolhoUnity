@@ -11,7 +11,7 @@ public class PlayerDanmakuCollider : DanmakuCollider
 
     private void Start()
     {
-        _playerEmitter = GetComponentInChildren<PDanmakuEmitter>();
+        _playerEmitter = GetComponentInChildren<PlayerDanmakuEmitter>();
     }
 
     /// <summary>

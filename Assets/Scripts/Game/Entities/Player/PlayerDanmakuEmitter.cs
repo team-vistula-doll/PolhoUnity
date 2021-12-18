@@ -7,7 +7,7 @@ namespace DanmakU
 {
 
     [AddComponentMenu("DanmakU/PDanmaku Emitter")]
-    public class PDanmakuEmitter : DanmakuBehaviour, IShootable
+    public class PlayerDanmakuEmitter : DanmakuBehaviour, IShootable
     {
 
         public DanmakuPrefab DanmakuType;
