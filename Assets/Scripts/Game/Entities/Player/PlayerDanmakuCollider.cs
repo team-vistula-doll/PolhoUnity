@@ -3,9 +3,16 @@ using System.Collections.Generic;
 using DanmakU;
 using UnityEngine;
 
+[RequireComponent(typeof(IShootable))]
 public class PlayerDanmakuCollider : DanmakuCollider
 {
     public DanmakuCollider Collider;
+    private IShootable _playerEmitter;
+
+    private void Start()
+    {
+        _playerEmitter = GetComponentInChildren<PlayerDanmakuEmitter>();
+    }
 
     /// <summary>
     /// This function is called when the object becomes enabled and active.
@@ -30,13 +37,16 @@ public class PlayerDanmakuCollider : DanmakuCollider
         }
     }
 
-    void OnDanmakuCollision(DanmakuCollisionList collisions)
+    new void OnDanmakuCollision(DanmakuCollisionList collisions)
     {
         bool hit = false;
         foreach (var collision in collisions)
         {
-            hit = true;
-            collision.Danmaku.Destroy();
+            if(collision.Danmaku.Pool != _playerEmitter.Set.Pool) //Ignore player emitter
+            {
+                hit = true;
+                collision.Danmaku.Destroy();
+            }
             
         }
 
