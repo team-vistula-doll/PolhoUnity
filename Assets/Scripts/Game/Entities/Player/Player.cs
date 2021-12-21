@@ -10,6 +10,9 @@ public class Player : MonoBehaviour, IMoveable
 {
     public float Speed;
 
+    [HideInInspector]
+    public Rigidbody2D Rigidbody2D { get; set; }
+
     private static int lives = 3;
     private static uint score = 0;
 
@@ -43,13 +46,12 @@ public class Player : MonoBehaviour, IMoveable
         }
     }
 
-    public Rigidbody2D Rigidbody2D { get; set; }
     public void Move(Vector2 input)
     {
         if(input.magnitude > 1)
             input = input.normalized;
-        
-        Rigidbody2D.velocity = new Vector2(input.x, input.y) * Speed * Time.deltaTime;
+
+        Rigidbody2D.velocity = new Vector2(input.x, input.y) * Speed; //TODO: Yes, without Time.deltaTime because with it the speed varies between framerates, but maybe there's a solution
     }
 
     public static void Hit()
