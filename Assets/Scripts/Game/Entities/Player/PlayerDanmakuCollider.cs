@@ -19,22 +19,18 @@ public class PlayerDanmakuCollider : DanmakuCollider
     /// </summary>
     void OnEnable()
     {
-        if (Collider != null)
-        {
-            Debug.Log("Subscribed");
-            Collider.OnDanmakuCollision += OnDanmakuCollision;
-        }
+        if (Collider == null) return;
+        Debug.Log("Subscribed");
+        Collider.OnDanmakuCollision += OnDanmakuCollision;
     }
-
+    
     /// <summary>
     /// This function is called when the behaviour becomes disabled or inactive.
     /// </summary>
     void OnDisable()
     {
         if (Collider != null)
-        {
             Collider.OnDanmakuCollision -= OnDanmakuCollision;
-        }
     }
 
     new void OnDanmakuCollision(DanmakuCollisionList collisions)
@@ -51,10 +47,7 @@ public class PlayerDanmakuCollider : DanmakuCollider
         }
 
         if (hit)
-        {
-            GameStateManager.Instance.Lifes = GameStateManager.Instance.Lifes - 1;
-            Debug.Log("Player hit!");
-        }
+            Player.Hit();
     }
 
     /// <summary>
