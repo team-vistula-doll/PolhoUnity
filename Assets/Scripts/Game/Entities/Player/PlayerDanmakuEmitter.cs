@@ -17,7 +17,6 @@ namespace DanmakU
         public Color Color = Color.white;
         [field: SerializeField]
         public Range FireRate { get; set; } = 5;
-        public float FrameRate;
         public Arc Arc;
         public Line Line;
 
@@ -51,12 +50,7 @@ namespace DanmakU
         void Update()
         {
             if (fireable == null) return;
-            var deltaTime = Time.deltaTime;
-            if (FrameRate > 0)
-            {
-                deltaTime = 1f / FrameRate;
-            }
-            Timer -= deltaTime;
+            Timer -= Time.deltaTime;
             if (Timer < 0 && CanShoot)
             {
                 config = new DanmakuConfig

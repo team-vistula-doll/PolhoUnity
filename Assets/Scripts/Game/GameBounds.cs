@@ -15,18 +15,19 @@ public static class BoundsExtension
 public class GameBounds : MonoBehaviour
 {
     public BoxCollider2D BoxCollider { get; private set; }
-    private float _edge = 0.1f;
+    
     public void Start()
     {
         BoxCollider = GetComponent<BoxCollider2D>();
     }
+    
     public bool IsInBounds(Vector2 position)
     {
         return BoxCollider.bounds.Contains(position);
     }
 
-    public bool IsInBounds(Collider2D collider)
+    public bool IsInBounds(Collider2D col)
     {
-        return BoxCollider.bounds.ContainBounds(collider.bounds);
+        return BoxCollider.bounds.ContainBounds(col.bounds);
     }
 }
