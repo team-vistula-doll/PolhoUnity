@@ -14,7 +14,6 @@ public class DanmakuEmitter : DanmakuBehaviour {
   public Range AngularSpeed;
   public Color Color = Color.white;
   public Range FireRate = 5;
-  public float FrameRate;
   public Arc Arc;
   public Line Line;
 
@@ -41,11 +40,7 @@ public class DanmakuEmitter : DanmakuBehaviour {
   /// </summary>
   void Update() {
     if (fireable == null) return;
-    var deltaTime = Time.deltaTime;
-    if (FrameRate > 0) {
-      deltaTime = 1f / FrameRate;
-    }
-    timer -= deltaTime;
+    timer -= Time.deltaTime;
     if (timer < 0) {
       config = new DanmakuConfig {
         Position = transform.position,

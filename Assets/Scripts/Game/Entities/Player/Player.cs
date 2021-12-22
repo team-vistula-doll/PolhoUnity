@@ -51,7 +51,7 @@ public class Player : MonoBehaviour, IMoveable
         if(input.magnitude > 1)
             input = input.normalized;
 
-        Rigidbody2D.velocity = new Vector2(input.x, input.y) * Speed; //TODO: Yes, without Time.deltaTime because with it the speed varies between framerates, but maybe there's a solution
+        Rigidbody2D.velocity = new Vector2(input.x, input.y) * Speed;
     }
 
     public static void Hit()
