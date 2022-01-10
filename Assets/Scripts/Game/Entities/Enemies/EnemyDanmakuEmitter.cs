@@ -5,7 +5,7 @@ using DanmakU;
 using DanmakU.Fireables;
 using UnityEngine;
 
-public class SpecialEmitter : DanmakuBehaviour
+public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
 {
 
     public DanmakuPrefab DanmakuType;
@@ -13,10 +13,12 @@ public class SpecialEmitter : DanmakuBehaviour
     public Range Speed = 5f;
     public Range AngularSpeed;
     public Color Color = Color.white;
-    public Range FireRate = 5;
-    public float FrameRate;
+    public Range FireRate;
     public Arc Arc;
     public Line Line;
+
+    public DanmakuSet Set { get; set; }
+    public float Timer { get; set; }
 
     float timer;
     DanmakuConfig config;
@@ -44,13 +46,8 @@ public class SpecialEmitter : DanmakuBehaviour
     void Update()
     {
         if (fireable == null) return;
-        var deltaTime = Time.deltaTime;
-        if (FrameRate > 0)
-        {
-            deltaTime = 1f / FrameRate;
-        }
-        timer -= deltaTime;
-        if (timer < 0)
+        Timer -= Time.deltaTime;
+        if (Timer < 0)
         {
             config = new DanmakuConfig
             {
@@ -61,7 +58,7 @@ public class SpecialEmitter : DanmakuBehaviour
                 Color = Color
             };
             fireable.Fire(config);
-            timer = 1f / FireRate.GetValue();
+            Timer = 1f / FireRate.GetValue();
         }
     }
 
