@@ -21,8 +21,8 @@ public class WaypointWalker : MonoBehaviour
     private Vector2 _startPosition;
     public void OnValidate()
     {
-        //_startPosition = transform.position; 
-        //SetWaypointPath(WaypointPathCreator.GeneratePathFromExpression(_startPosition, _length, _pathFormula, _angle));
+        _startPosition = transform.position;
+        SetWaypointPath(WaypointPathCreator.GeneratePathFromExpression(_startPosition, _length, _pathFormula, _angle));
     }
 
     public void Start()
