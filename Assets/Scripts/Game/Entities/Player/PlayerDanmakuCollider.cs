@@ -6,6 +6,7 @@ using UnityEngine;
 public class PlayerDanmakuCollider : DanmakuCollider
 {
     public DanmakuCollider Collider;
+    private IShootable _playerEmitter;
 
     private PlayerDanmakuEmitter playerEmitter;
 

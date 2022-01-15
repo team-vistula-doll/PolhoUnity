@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using DanmakU;
 using UnityEngine;
 
+[RequireComponent(typeof(IShootable))]
 public class EnemyDanmakuCollider : DanmakuCollider
 {
     public DanmakuCollider Collider;
+    private EnemyDanmakuEmitter _enemyEmitter;
 
     private IShootable _enemyEmitter;
     private IHitable _enemy;
@@ -25,7 +27,7 @@ public class EnemyDanmakuCollider : DanmakuCollider
         Debug.Log("Subscribed");
         Collider.OnDanmakuCollision += OnDanmakuCollision;
     }
-
+    
     /// <summary>
     /// This function is called when the behaviour becomes disabled or inactive.
     /// </summary>
@@ -45,7 +47,7 @@ public class EnemyDanmakuCollider : DanmakuCollider
                 hit = true;
                 collision.Danmaku.Destroy();
             }
-
+            
         }
 
         if (hit)
