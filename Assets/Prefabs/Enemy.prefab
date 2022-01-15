@@ -162,7 +162,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2092912531923440512}
-  - component: {fileID: 2092912531923440513}
+  - component: {fileID: 1256739408825577477}
   - component: {fileID: 2092912531923440518}
   m_Layer: 10
   m_Name: Emitter
@@ -185,7 +185,7 @@ Transform:
   m_Father: {fileID: 2092912531510788438}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}
---- !u!114 &2092912531923440513
+--- !u!114 &1256739408825577477
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -194,7 +194,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2092912531923440514}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56d35b1ef2eef8249b0ba1b88e74fe60, type: 3}
+  m_Script: {fileID: 11500000, guid: 523f177a051e7614bab12ad20c4cd01b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   DanmakuType: {fileID: -2612603446601050132, guid: 1df655dc5b3faaf48b21e72d0deb5ed2, type: 3}

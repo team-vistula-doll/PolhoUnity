@@ -4,14 +4,14 @@ using DanmakU;
 using UnityEngine;
 
 [RequireComponent(typeof(IShootable))]
-public class PlayerDanmakuCollider : DanmakuCollider
+public class EnemyDanmakuCollider : DanmakuCollider
 {
     public DanmakuCollider Collider;
-    private PlayerDanmakuEmitter _playerEmitter;
+    private EnemyDanmakuEmitter _enemyEmitter;
 
     private void Start()
     {
-        _playerEmitter = GetComponentInChildren<PlayerDanmakuEmitter>();
+        _enemyEmitter = GetComponentInChildren<EnemyDanmakuEmitter>();
     }
 
     /// <summary>
@@ -38,7 +38,7 @@ public class PlayerDanmakuCollider : DanmakuCollider
         bool hit = false;
         foreach (var collision in collisions)
         {
-            if(collision.Danmaku.Pool != _playerEmitter.Set.Pool) //Ignore player emitter
+            if(collision.Danmaku.Pool != _enemyEmitter.Set.Pool) //Ignore player emitter
             {
                 hit = true;
                 collision.Danmaku.Destroy();
