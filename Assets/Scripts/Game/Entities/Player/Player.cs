@@ -54,7 +54,7 @@ public class Player : MonoBehaviour, IMoveable
         Rigidbody2D.velocity = new Vector2(input.x, input.y) * Speed;
     }
 
-    public static void Hit()
+    public static void OnHit()
     {
         Lives -= 1;
         // Future hit functionality

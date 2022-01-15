@@ -34,9 +34,9 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
             Debug.LogWarning($"Emitter doesn't have a valid DanmakuPrefab", this);
             return;
         }
-        var set = CreateSet(DanmakuType);
-        set.AddModifiers(GetComponents<IDanmakuModifier>());
-        fireable = Arc.Of(Line).Of(set);
+        Set = EnemyDanmakuSet.Set;
+        Set.AddModifiers(GetComponents<IDanmakuModifier>());
+        fireable = Arc.Of(Line).Of(Set);
     }
 
     /// <summary>
