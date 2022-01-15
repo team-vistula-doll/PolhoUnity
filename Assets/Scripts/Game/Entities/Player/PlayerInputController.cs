@@ -13,13 +13,13 @@ public class PlayerInputController : MonoBehaviour
     public float FocusMultiplier = 1f;
 
     private IMoveable _player;
-    private IShootable _playerEmitter;
+    private PlayerDanmakuEmitter _playerEmitter;
 
     // Start is called before the first frame update
     void Start()
     {
         _player = GetComponent<IMoveable>();
-        _playerEmitter = GetComponentInChildren<IShootable>();
+        _playerEmitter = GetComponentInChildren<PlayerDanmakuEmitter>();
     }
 
     public void Move(InputAction.CallbackContext context)
