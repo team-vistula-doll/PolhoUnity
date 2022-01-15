@@ -775,6 +775,7 @@ GameObject:
   - component: {fileID: 966855637}
   - component: {fileID: 966855638}
   - component: {fileID: 966855639}
+  - component: {fileID: 966855640}
   m_Layer: 8
   m_Name: Game
   m_TagString: Untagged
@@ -841,6 +842,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08055110f019c2f4f9ccc662c08f801f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &966855640
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 966855635}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac7e3e0db02650b40b2524703612c76a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DanmakuType: {fileID: -2612603446601050132, guid: 1df655dc5b3faaf48b21e72d0deb5ed2, type: 3}
 --- !u!1 &1022631778
 GameObject:
   m_ObjectHideFlags: 0
@@ -1733,13 +1747,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DanmakuType: {fileID: 8882630788408880235, guid: 31bf04885267ae4408877319f730b2b0, type: 3}
   Speed:
-    _min: 8
-    _max: 8
+    _min: 15
+    _max: 15
   AngularSpeed:
     _min: 0
     _max: 0
   Color: {r: 1, g: 0, b: 0, a: 1}
-  <FireRate>k__BackingField:
+  FireRate:
     _min: 5
     _max: 5
   Arc:

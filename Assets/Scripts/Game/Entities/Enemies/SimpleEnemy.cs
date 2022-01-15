@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class SimpleEnemy : MonoBehaviour, IMoveable
+public class SimpleEnemy : MonoBehaviour, IMoveable, IHitable
 {
     public float Speed;
+
     [HideInInspector]
     public Rigidbody2D Rigidbody2D { get; set; }
 
@@ -28,5 +29,12 @@ public class SimpleEnemy : MonoBehaviour, IMoveable
     void Update()
     {
 
+    }
+
+    public void OnHit()
+    {
+        Debug.Log("Enemy hit!");
+        // Future hit functionality
+        gameObject.SetActive(false);
     }
 }

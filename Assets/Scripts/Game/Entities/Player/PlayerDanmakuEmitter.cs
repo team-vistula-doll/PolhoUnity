@@ -10,7 +10,7 @@ public class PlayerDanmakuEmitter : DanmakuBehaviour, IShootable
 
     public DanmakuPrefab DanmakuType;
 
-    public Range Speed = 5f;
+    public Range Speed = 15f;
     public Range AngularSpeed;
     public Color Color = Color.white;
     public Range FireRate = 5;
