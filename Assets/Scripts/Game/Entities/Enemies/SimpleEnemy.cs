@@ -45,4 +45,11 @@ public class SimpleEnemy : MonoBehaviour, IMoveable, IHitable
         Debug.Log("Enemy killed!");
         gameObject.SetActive(false);
     }
+
+    public void OnHit()
+    {
+        Debug.Log("Enemy hit!");
+        // Future hit functionality
+        gameObject.SetActive(false);
+    }
 }
