@@ -49,7 +49,7 @@ public class WaypointWalker : MonoBehaviour
 
     public bool WaypointCheck() //check if you are close enough to set nextWaypoint to next waypoint in path
     {
-        if(Vector2.Distance(transform.position, _nextWaypoint) < 0.1f && _currentWaypoint<_waypoints)
+        if(Vector2.Distance(transform.position, _nextWaypoint) < 0.1f && _currentWaypoint +1<_waypoints)
         {
             _currentWaypoint++;
             _nextWaypoint = _path[_currentWaypoint];
