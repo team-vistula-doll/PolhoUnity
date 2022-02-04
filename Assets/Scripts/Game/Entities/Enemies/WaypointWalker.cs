@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,9 +18,6 @@ public class WaypointWalker : MonoBehaviour
     private int _waypoints;
     private int _currentWaypoint;
 
-    private bool _isMoving = true;
-    private Action move;
-
     private Vector2 _startPosition;
     public void OnValidate()
     {
@@ -39,56 +36,49 @@ public class WaypointWalker : MonoBehaviour
     {
         _path = pathToSet;
         _currentWaypoint = 0;
-        _waypoints = _path.Count - 1;
-        _nextWaypoint = _path[1];
-        _isMoving = true;
-        move += Move;
+        _waypoints = _path.Count;
+        _nextWaypoint = _path[0];
     }
 
-    public void FixedUpdate()
+    // Update is called once per frame
+    void FixedUpdate()
     {
-        if(move != null) move();
+        if(_moveableEntity!=null && _moveableEntity.Rigidbody2D!=null)
+            _moveableEntity.Move(GetCurrentAxis());
     }
 
-    public void Move()
+    public bool WaypointCheck() //check if you are close enough to set nextWaypoint to next waypoint in path
     {
-        if (_moveableEntity != null && _moveableEntity.Rigidbody2D != null)
-        {
-            if (_isMoving)
-                _moveableEntity.Move(GetCurrentAxis());
-
-            else
-            {
-                _moveableEntity.Move(new Vector2(0, 0));
-                move -= Move;
-            }
-        }
-    }
-
-    public void ChangeNextWaypoint() //changes _nextWaypoint if you are close enough to the next waypoint
-    {
-        if (Vector2.Distance(transform.position, _nextWaypoint) < 0.1f && _currentWaypoint < _waypoints)
+        if(Vector2.Distance(transform.position, _nextWaypoint) < 0.1f && _currentWaypoint +1<_waypoints)
         {
             _currentWaypoint++;
             _nextWaypoint = _path[_currentWaypoint];
         }
-        else if (_currentWaypoint >= _waypoints)
-            _isMoving = false;
+        else if(_currentWaypoint>=_waypoints)
+        {
+            return false;
+        }
+        return true;
+
     }
 
     public Vector2 GetCurrentAxis()
     {
-        ChangeNextWaypoint();
+        if (WaypointCheck())
+        {
+            Vector2 axis = _nextWaypoint - new Vector2(_moveableEntity.Rigidbody2D.position.x,
+                _moveableEntity.Rigidbody2D.position.y);
 
-        Vector2 axis = _nextWaypoint - new Vector2(_moveableEntity.Rigidbody2D.position.x,
-            _moveableEntity.Rigidbody2D.position.y);
+            return axis.normalized;
+        }
+        else
+            return new Vector2(0, 0);
 
-        return axis.normalized;
     }
 
     void OnDrawGizmosSelected()
     {
-        if (_path != null)
+        if(_path!=null)
         {
             foreach (Vector2 point in _path)
             {
