@@ -6,6 +6,10 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using UnityEngine;
 
+//Single line structure of stage enemies data file:
+//spawnTime, enemyName, spawnPosition.X, spawnPosition.Y: (length1, expression1, angle1), (len2, exp2, ang2), ...|
+// spawnRepeats.delay1, spawnRepeats.amount1| spawnRepeats.delay2, spawnRepeats.amount2| ...;
+
 public struct Enemy
 {
     float spawnTime; //Enemies HAVE to be ordered by spawnTime from earliest to latest
@@ -64,7 +68,7 @@ public class StageEnemyParser
             {
                 badLines.Add(currentLineNumber);
                 continue;
-            }
+        }
 
             string name = match.Groups[2].Value;
 
