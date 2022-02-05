@@ -19,7 +19,7 @@ public static class WaypointPathCreator
      List<Vector2> waypoints = new List<Vector2>();
 
      angle = Mathf.Deg2Rad*angle;
-     for(int i = 0; i*stepSize<length;i++)
+     for(int i = 1; i*stepSize<length;i++)
      {
          exp.Parameters["x"].Value = i*stepSize; //Put x-val to x in expression
 
