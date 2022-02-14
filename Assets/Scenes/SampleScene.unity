@@ -830,6 +830,12 @@ MonoBehaviour:
   - Name: enemy1
     Difficulty: 0
     Prefab: {fileID: 2092912531510788433, guid: 1b25910f37cc1754a8c6ee26e59a9802, type: 3}
+  - Name: enemy2
+    Difficulty: 0
+    Prefab: {fileID: 7829635670147028809, guid: c068a600d90f1944a96486e8d3d42071, type: 3}
+  - Name: enemy3
+    Difficulty: 0
+    Prefab: {fileID: 317357075254503586, guid: f5eeef1cccc085a418f6e0738626b30e, type: 3}
 --- !u!114 &966855639
 MonoBehaviour:
   m_ObjectHideFlags: 0
