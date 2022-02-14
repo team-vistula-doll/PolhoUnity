@@ -11,8 +11,8 @@ public class TestStage : Stage
         yield return new WaitForSeconds(1f);
         for (int i = 0; i < 3; i++)
         {
-            args.EnemyManager.SpawnEnemy("enemy1", 
-                WaypointPathCreator.GeneratePathFromExpression(new Vector2(-5, 5), 20, "-x", 0));
+            args.EnemyManager.SpawnEnemy("enemy2", 
+                WaypointPathCreator.GeneratePathFromExpression(new Vector2(-6, 0), 20, "-x", 45));
             yield return new WaitForSeconds(0.5f);
             args.EnemyManager.SpawnEnemy("enemy1",
                 WaypointPathCreator.GeneratePathFromExpression(new Vector2(5, 5), 20, "-x", -90));
