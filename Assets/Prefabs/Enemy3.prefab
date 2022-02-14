@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 317357075254503586}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -5, y: 3, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 1}
   m_Children:
   - {fileID: 608195467499374206}
   m_Father: {fileID: 0}
@@ -121,10 +121,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Speed: 150
-  HealthPoints: 3
-  ScoreValue: 100
-  HitSound: {fileID: 8300000, guid: 27401145953c3bc4090829848910d781, type: 3}
-  DeathSound: {fileID: 8300000, guid: a78e7033603a6ab45af4975ccbe3c41a, type: 3}
 --- !u!114 &2419037630045480664
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -186,22 +182,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DanmakuType: {fileID: -2612603446601050132, guid: 1df655dc5b3faaf48b21e72d0deb5ed2, type: 3}
   Speed:
-    _min: 4
-    _max: 4
+    _min: 2
+    _max: 2
   AngularSpeed:
     _min: 0
     _max: 0
   Color: {r: 1, g: 1, b: 1, a: 1}
   FireRate:
-    _min: 2
-    _max: 2
+    _min: 1
+    _max: 1
   Arc:
     Count:
-      _min: 2
-      _max: 2
+      _min: 3
+      _max: 3
     ArcLength:
-      _min: 0.7853982
-      _max: 0.7853982
+      _min: 1.5707964
+      _max: 1.5707964
     Radius:
       _min: 0
       _max: 0
@@ -272,7 +268,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.0027434826, y: 0.0027939081}
+  m_Offset: {x: 0, y: 0.04046482}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -283,7 +279,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.64798594, y: 0.78734136}
+  m_Size: {x: 1.8530357, y: 2.1895814}
   m_EdgeRadius: 0
 --- !u!114 &6963596057231732132
 MonoBehaviour:

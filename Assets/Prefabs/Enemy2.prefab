@@ -196,10 +196,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Speed: 150
-  HealthPoints: 1
-  ScoreValue: 50
-  HitSound: {fileID: 8300000, guid: 27401145953c3bc4090829848910d781, type: 3}
-  DeathSound: {fileID: 8300000, guid: a78e7033603a6ab45af4975ccbe3c41a, type: 3}
 --- !u!114 &4269221037366217129
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -261,29 +257,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DanmakuType: {fileID: -2612603446601050132, guid: 1df655dc5b3faaf48b21e72d0deb5ed2, type: 3}
   Speed:
-    _min: 3.5
-    _max: 3.5
+    _min: 2
+    _max: 2
   AngularSpeed:
     _min: 0
     _max: 0
   Color: {r: 1, g: 1, b: 1, a: 1}
   FireRate:
-    _min: 2
-    _max: 2
+    _min: 1
+    _max: 1
   Arc:
     Count:
-      _min: 1
-      _max: 1
+      _min: 3
+      _max: 3
     ArcLength:
-      _min: 0
-      _max: 0
+      _min: 1.5707964
+      _max: 1.5707964
     Radius:
       _min: 0
       _max: 0
   Line:
     Count:
-      _min: 1
-      _max: 1
+      _min: 2
+      _max: 2
     DeltaSpeed:
       _min: 0
       _max: 0
