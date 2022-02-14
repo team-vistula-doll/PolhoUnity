@@ -264,22 +264,22 @@ MonoBehaviour:
     _max: 0
   Color: {r: 1, g: 1, b: 1, a: 1}
   FireRate:
-    _min: 1
-    _max: 1
+    _min: 2
+    _max: 2
   Arc:
     Count:
-      _min: 3
-      _max: 3
+      _min: 1
+      _max: 1
     ArcLength:
-      _min: 1.5707964
-      _max: 1.5707964
+      _min: 0
+      _max: 0
     Radius:
       _min: 0
       _max: 0
   Line:
     Count:
-      _min: 2
-      _max: 2
+      _min: 1
+      _max: 1
     DeltaSpeed:
       _min: 0
       _max: 0
