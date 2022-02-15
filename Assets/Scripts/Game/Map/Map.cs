@@ -28,7 +28,7 @@ public class Map : MonoBehaviour
 
     private void Start()
     {
-        setMapTexture(MapTexture);
+        SetMapTexture(MapTexture);
         getMaterial();
     }
 
@@ -38,7 +38,7 @@ public class Map : MonoBehaviour
             mapMaterial.mainTextureOffset += new Vector2(0f, Speed * Time.deltaTime);
     }
     
-    public void setMapTexture(Texture mapTexture)
+    public void SetMapTexture(Texture mapTexture)
     {
         RawImage rawImage = GetComponent<RawImage>();
         rawImage.texture = MapTexture;
