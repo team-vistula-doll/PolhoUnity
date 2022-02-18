@@ -6,6 +6,7 @@ using UnityEngine;
 public class SimpleEnemy : MonoBehaviour, IMoveable, IHitable
 {
     public float Speed;
+    public int HealthPoints = 1;
 
     [HideInInspector]
     public Rigidbody2D Rigidbody2D { get; set; }
@@ -33,8 +34,15 @@ public class SimpleEnemy : MonoBehaviour, IMoveable, IHitable
 
     public void OnHit()
     {
-        Debug.Log("Enemy hit!");
         // Future hit functionality
+        Debug.Log("Enemy hit");
+        if (--HealthPoints <= 0) OnDeath();
+    }
+
+    public void OnDeath()
+    {
+        //Future death functionality
+        Debug.Log("Enemy killed!");
         gameObject.SetActive(false);
     }
 }

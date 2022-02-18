@@ -6,4 +6,5 @@ using DanmakU;
 public interface IHitable
 {
     public void OnHit();
+    public void OnDeath();
 }
