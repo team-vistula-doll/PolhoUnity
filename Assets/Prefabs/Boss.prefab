@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 2107169467151355753}
   - component: {fileID: 5006464714118495857}
   - component: {fileID: 4397363322315190826}
-  - component: {fileID: 5935798291472033304}
   m_Layer: 8
   m_Name: Boss
   m_TagString: Untagged
@@ -29,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 545863818296485109}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 3, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 1}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 1}
   m_Children:
   - {fileID: 289260190654801620}
   m_Father: {fileID: 0}
@@ -121,25 +120,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Speed: 150
-  HealthPoints: 75
-  ScoreValue: 1000
-  HitSound: {fileID: 8300000, guid: 27401145953c3bc4090829848910d781, type: 3}
-  DeathSound: {fileID: 8300000, guid: a78e7033603a6ab45af4975ccbe3c41a, type: 3}
---- !u!114 &5935798291472033304
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 545863818296485109}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6cf58339d59065c4d905a95067333b2b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _pathFormula: -x
-  _length: 4
-  _angle: -45
+  Life: 50
 --- !u!1 &2832507255932950585
 GameObject:
   m_ObjectHideFlags: 0
@@ -271,22 +252,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DanmakuType: {fileID: -2612603446601050132, guid: 1df655dc5b3faaf48b21e72d0deb5ed2, type: 3}
   Speed:
-    _min: 3
-    _max: 3
+    _min: 2
+    _max: 2
   AngularSpeed:
     _min: 0
     _max: 0
   Color: {r: 1, g: 1, b: 1, a: 1}
   FireRate:
-    _min: 3
-    _max: 3
+    _min: 1
+    _max: 1
   Arc:
     Count:
-      _min: 7
-      _max: 7
+      _min: 3
+      _max: 3
     ArcLength:
-      _min: 1.3962634
-      _max: 1.3962634
+      _min: 1.5707964
+      _max: 1.5707964
     Radius:
       _min: 0
       _max: 0
@@ -309,4 +290,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 723aea1c587150e489d0d5211d07c8d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Delay: 0.05
+  Delay: 0.1
