@@ -35,8 +35,8 @@ public class SimpleEnemy : MonoBehaviour, IMoveable, IHitable
     public void OnHit()
     {
         // Future hit functionality
-        Debug.Log("Enemy hit");
         if (--HealthPoints <= 0) OnDeath();
+        else Debug.Log("Enemy hit");
     }
 
     public void OnDeath()
