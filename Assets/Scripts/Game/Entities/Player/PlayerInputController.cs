@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(IMoveable))]
 [RequireComponent(typeof(IShootable))]
@@ -47,5 +48,10 @@ public class PlayerInputController : MonoBehaviour
                 _playerEmitter.Timer = 0.5f / _playerEmitter.FireRate.GetValue();
         }
         else _playerEmitter.CanShoot = true;
+    }
+
+    public void Restart(InputAction.CallbackContext context)
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

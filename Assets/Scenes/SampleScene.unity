@@ -338,7 +338,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MapTexture: {fileID: 2800000, guid: a25fcf8387230134b86ddbffd2b77090, type: 3}
   Speed: 0.05
-  Paused: 0
 --- !u!114 &386311341
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1611,6 +1610,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 9533d3eb-f233-4854-9eaa-38e8b08a76fb
     m_ActionName: Gameplay/Focus[/Keyboard/shift]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1295647416}
+        m_TargetAssemblyTypeName: PlayerInputController, Game
+        m_MethodName: Restart
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: ea47f4b7-a501-4d67-a7d3-0f2c9e522616
+    m_ActionName: Gameplay/Restart[/Keyboard/escape]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: Keyboard & Mouse
   m_DefaultActionMap: Gameplay
