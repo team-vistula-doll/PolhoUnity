@@ -33,15 +33,22 @@ public class TestStage : Stage
         for(int i = -2; i <= 2; i += 4)
         {
             args.EnemyManager.SpawnEnemy("enemy3",
-                    WaypointPathCreator.GeneratePathFromExpression(new Vector2(i, 6), 20, "sin(3*x)*0.5", -90));
+                    WaypointPathCreator.GeneratePathFromExpression(new Vector2(i, 7), 20, "sin(3*x)*0.5", -90));
             yield return new WaitForSeconds(0.5f);
         }
 
         args.EnemyManager.SpawnEnemy("enemy3",
-                    WaypointPathCreator.GeneratePathFromExpression(new Vector2(0, 6), 20, "sin(3*x)*0.5", -90));
-        yield return new WaitForSeconds(0.5f);
+                    WaypointPathCreator.GeneratePathFromExpression(new Vector2(0, 7), 20, "sin(3*x)*0.5", -90));
+        yield return new WaitForSeconds(6f);
+
+
+        args.EnemyManager.SpawnEnemy("boss",
+                    WaypointPathCreator.GeneratePathFromExpression(new Vector2(0, 7), 3.5f, "-x", -45));
+        yield return new WaitForSeconds(1f);
+        Map.Paused = true;
 
         yield return new WaitUntil(args.EnemyManager.NoEnemiesPresent);
+
         Debug.Log("END! Good Job!");
     }
 }
