@@ -183,22 +183,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DanmakuType: {fileID: -2612603446601050132, guid: 1df655dc5b3faaf48b21e72d0deb5ed2, type: 3}
   Speed:
-    _min: 2
-    _max: 2
+    _min: 4
+    _max: 4
   AngularSpeed:
     _min: 0
     _max: 0
   Color: {r: 1, g: 1, b: 1, a: 1}
   FireRate:
-    _min: 1
-    _max: 1
+    _min: 2
+    _max: 2
   Arc:
     Count:
-      _min: 3
-      _max: 3
+      _min: 2
+      _max: 2
     ArcLength:
-      _min: 1.5707964
-      _max: 1.5707964
+      _min: 0.7853982
+      _max: 0.7853982
     Radius:
       _min: 0
       _max: 0

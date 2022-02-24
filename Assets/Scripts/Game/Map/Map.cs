@@ -8,7 +8,7 @@ public class Map : MonoBehaviour
 {
     public Texture MapTexture;
     public float Speed = 0.1f;
-    public bool Paused = false;
+    public static bool Paused = false;
 
     private Material mapMaterial;
 
