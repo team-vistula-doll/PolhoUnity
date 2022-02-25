@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,8 +18,8 @@ public class WaypointWalker : MonoBehaviour
     private int _waypoints;
     private int _currentWaypoint;
 
-    private enum Movement { Moving, Stop, Stopped }
-    private Movement _movement = Movement.Moving;
+    private bool _isMoving = true;
+    private Action move;
 
     private Vector2 _startPosition;
     public void OnValidate()
@@ -41,33 +41,39 @@ public class WaypointWalker : MonoBehaviour
         _currentWaypoint = 0;
         _waypoints = _path.Count - 1;
         _nextWaypoint = _path[1];
-        _movement = Movement.Moving;
+        _isMoving = true;
+        move += Move;
     }
 
-    void FixedUpdate()
+    public void FixedUpdate()
     {
-        if(_moveableEntity!=null && _moveableEntity.Rigidbody2D!=null)
+        if(move != null) move();
+    }
+
+    public void Move()
+    {
+        if (_moveableEntity != null && _moveableEntity.Rigidbody2D != null)
         {
-            if(_movement == Movement.Moving)
+            if (_isMoving)
                 _moveableEntity.Move(GetCurrentAxis());
 
-            else if(_movement == Movement.Stop)
+            else
             {
                 _moveableEntity.Move(new Vector2(0, 0));
-                _movement = Movement.Stopped;
+                move -= Move;
             }
         }
     }
 
     public void ChangeNextWaypoint() //changes _nextWaypoint if you are close enough to the next waypoint
     {
-        if(Vector2.Distance(transform.position, _nextWaypoint) < 0.1f && _currentWaypoint < _waypoints)
+        if (Vector2.Distance(transform.position, _nextWaypoint) < 0.1f && _currentWaypoint < _waypoints)
         {
             _currentWaypoint++;
             _nextWaypoint = _path[_currentWaypoint];
         }
-        else if(_currentWaypoint >= _waypoints)
-            _movement = Movement.Stop;
+        else if (_currentWaypoint >= _waypoints)
+            _isMoving = false;
     }
 
     public Vector2 GetCurrentAxis()
@@ -82,7 +88,7 @@ public class WaypointWalker : MonoBehaviour
 
     void OnDrawGizmosSelected()
     {
-        if(_path!=null)
+        if (_path != null)
         {
             foreach (Vector2 point in _path)
             {
