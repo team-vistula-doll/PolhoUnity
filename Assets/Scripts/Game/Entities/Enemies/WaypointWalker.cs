@@ -18,6 +18,9 @@ public class WaypointWalker : MonoBehaviour
     private int _waypoints;
     private int _currentWaypoint;
 
+    private enum Movement { Moving, Stop, Stopped }
+    private Movement _movement = Movement.Moving;
+
     private Vector2 _startPosition;
     public void OnValidate()
     {
@@ -36,44 +39,45 @@ public class WaypointWalker : MonoBehaviour
     {
         _path = pathToSet;
         _currentWaypoint = 0;
-        _waypoints = _path.Count;
-        _nextWaypoint = _path[0];
+        _waypoints = _path.Count - 1;
+        _nextWaypoint = _path[1];
+        _movement = Movement.Moving;
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
         if(_moveableEntity!=null && _moveableEntity.Rigidbody2D!=null)
-            _moveableEntity.Move(GetCurrentAxis());
+        {
+            if(_movement == Movement.Moving)
+                _moveableEntity.Move(GetCurrentAxis());
+
+            else if(_movement == Movement.Stop)
+            {
+                _moveableEntity.Move(new Vector2(0, 0));
+                _movement = Movement.Stopped;
+            }
+        }
     }
 
-    public bool WaypointCheck() //check if you are close enough to set nextWaypoint to next waypoint in path
+    public void ChangeNextWaypoint() //changes _nextWaypoint if you are close enough to the next waypoint
     {
-        if(Vector2.Distance(transform.position, _nextWaypoint) < 0.1f && _currentWaypoint +1<_waypoints)
+        if(Vector2.Distance(transform.position, _nextWaypoint) < 0.1f && _currentWaypoint < _waypoints)
         {
             _currentWaypoint++;
             _nextWaypoint = _path[_currentWaypoint];
         }
-        else if(_currentWaypoint>=_waypoints)
-        {
-            return false;
-        }
-        return true;
-
+        else if(_currentWaypoint >= _waypoints)
+            _movement = Movement.Stop;
     }
 
     public Vector2 GetCurrentAxis()
     {
-        if (WaypointCheck())
-        {
-            Vector2 axis = _nextWaypoint - new Vector2(_moveableEntity.Rigidbody2D.position.x,
-                _moveableEntity.Rigidbody2D.position.y);
+        ChangeNextWaypoint();
 
-            return axis.normalized;
-        }
-        else
-            return new Vector2(0, 0);
+        Vector2 axis = _nextWaypoint - new Vector2(_moveableEntity.Rigidbody2D.position.x,
+            _moveableEntity.Rigidbody2D.position.y);
 
+        return axis.normalized;
     }
 
     void OnDrawGizmosSelected()

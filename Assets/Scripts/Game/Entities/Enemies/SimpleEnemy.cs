@@ -17,7 +17,7 @@ public class SimpleEnemy : MonoBehaviour, IMoveable, IHitable
         if (input.magnitude > 1)
             input = input.normalized;
 
-        Rigidbody2D.velocity = new Vector2(input.x, input.y) * Speed * Time.deltaTime;
+        Rigidbody2D.velocity = input * Speed * Time.deltaTime;
     }
 
     // Start is called before the first frame update
