@@ -206,8 +206,8 @@ MonoBehaviour:
       _max: 0
   Line:
     Count:
-      _min: 2
-      _max: 2
+      _min: 1
+      _max: 1
     DeltaSpeed:
       _min: 0
       _max: 0

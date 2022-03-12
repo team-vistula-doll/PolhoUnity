@@ -10,16 +10,15 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
     public DanmakuPrefab DanmakuType;
 
     public Range Speed = 5f;
-    public Range AngularSpeed;
+    public Range AngularSpeed = 0;
     public Color Color = Color.white;
-    public Range FireRate;
-    public Arc Arc;
-    public Line Line;
+    public Range FireRate = 1f;
+    public Arc Arc = new Arc(1,0,0);
+    public Line Line = new Line();
 
     public DanmakuSet Set { get; set; }
     public float Timer { get; set; }
 
-    float timer;
     DanmakuConfig config;
     IFireable fireable;
 
@@ -37,6 +36,11 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
         Set = EnemyDanmakuSet.Set;
         Set.AddModifiers(GetComponents<IDanmakuModifier>());
         fireable = Arc.Of(Line).Of(Set);
+    }
+
+    public void Setup(Range speed, Range angularSpeed, Color color, Range fireRate, Arc arc, Line line, float timer)
+    {
+
     }
 
     /// <summary>
