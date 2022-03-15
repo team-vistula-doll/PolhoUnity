@@ -16,10 +16,24 @@ public class EnemyManager : MonoBehaviour
         _enemyBank = GetComponent<EnemyBank>();
     }
 
-    public void SpawnEnemy(string enemyName, List<Vector2> path)
+    public void SpawnEnemy(string enemyName, List<Vector2> path, List<int> eventWaypoints = null, List<DanmakU.IFireable> waypointEvents = null,
+        List<float> eventTimes = null, List<DanmakU.IFireable> timeEvents = null)
     {
         GameObject enemy = Instantiate(_enemyBank.EnemyEntries[new Tuple<string, int>(enemyName, GameStateManager.Instance.Difficulty)], path[0], Quaternion.identity, transform);
         enemy.GetComponent<WaypointWalker>().SetWaypointPath(path);
+
+        if (eventWaypoints == null ^ waypointEvents == null)
+            Debug.LogWarning("Event waypoints or waypoint events are null!");
+        else if (eventWaypoints != null && waypointEvents != null)
+            enemy.GetComponentInChildren<EnemyDanmakuEmitter>().EventWaypoints(in eventWaypoints, in waypointEvents);
+
+        if (eventTimes == null ^ timeEvents == null)
+        {
+            Debug.LogWarning("Event times or time events are null!");
+        }
+        else if (eventTimes != null && timeEvents != null)
+            enemy.GetComponentInChildren<EnemyDanmakuEmitter>().EventTimes(in eventTimes, in timeEvents);
+
         _enemies.Add(enemy);
     }
 

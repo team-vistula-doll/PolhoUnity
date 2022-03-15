@@ -17,11 +17,13 @@ public class WaypointWalker : MonoBehaviour
     private Vector2 _nextWaypoint;
     private int _waypoints;
     private int _currentWaypoint;
+    private Vector2 _startPosition;
+
+    public event EventHandler<int> WaypointEvent;
 
     private bool _isMoving = true;
     private Action move;
 
-    private Vector2 _startPosition;
     public void OnValidate()
     {
         _startPosition = transform.position;
@@ -47,7 +49,7 @@ public class WaypointWalker : MonoBehaviour
 
     public void FixedUpdate()
     {
-        if(move != null) move();
+        move?.Invoke();
     }
 
     public void Move()
@@ -70,7 +72,8 @@ public class WaypointWalker : MonoBehaviour
         if (Vector2.Distance(transform.position, _nextWaypoint) < 0.1f && _currentWaypoint < _waypoints)
         {
             _currentWaypoint++;
-            _nextWaypoint = _path[_currentWaypoint];
+            _nextWaypoint = _path[_currentWaypoint + 1];
+            WaypointEvent?.Invoke(this, _currentWaypoint);
         }
         else if (_currentWaypoint >= _waypoints)
             _isMoving = false;

@@ -9,18 +9,25 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
 
     public DanmakuPrefab DanmakuType;
 
-    public Range Speed = 5f;
+    public Range Speed = 2f;
     public Range AngularSpeed = 0;
     public Color Color = Color.white;
     public Range FireRate = 1f;
-    public Arc Arc = new Arc(1,0,0);
-    public Line Line = new Line();
+    public Arc  Arc;
+    public Line Line;
 
     public DanmakuSet Set { get; set; }
     public float Timer { get; set; }
 
-    DanmakuConfig config;
-    IFireable fireable;
+    DanmakuConfig _config;
+    IFireable _fireable;
+
+    List<int> _eventWaypoints;
+    List<float> _eventTimes;
+    List<IFireable> _waypointEvents, _timeEvents;
+    int _eventWaypointsIterator = 0, _eventTimesIterator = 0;
+    float _time;
+    Action times;
 
     /// <summary>
     /// Start is called on the frame when a script is enabled just before
@@ -35,12 +42,41 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
         }
         Set = EnemyDanmakuSet.Set;
         Set.AddModifiers(GetComponents<IDanmakuModifier>());
-        fireable = Arc.Of(Line).Of(Set);
+        _time = 0f;
+        _fireable = Arc.Of(Line).Of(Set);
     }
 
-    public void Setup(Range speed, Range angularSpeed, Color color, Range fireRate, Arc arc, Line line, float timer)
+    public void EventWaypoints(in List<int> eventWaypoints, in List<IFireable> waypointEvents)
+    {
+        _eventWaypoints = eventWaypoints;
+        _waypointEvents = waypointEvents;
+
+        GetComponentInParent<WaypointWalker>().WaypointEvent += WaypointEvents;
+    }
+
+    void WaypointEvents(object sender, int waypoint)
+    {
+        if(_eventWaypoints[_eventWaypointsIterator] == waypoint)
+        {
+            _fireable = _waypointEvents[_eventWaypointsIterator++];
+        }
+    }
+
+    public void EventTimes(in List<float> eventTimes, in List<IFireable> timeEvents)
     {
 
+        _eventTimes = eventTimes;
+        _timeEvents = timeEvents;
+
+        times += TimeEvents;
+    }
+
+    void TimeEvents()
+    {
+        if(_eventTimes[_eventTimesIterator] >= _time)
+        {
+            _fireable = _timeEvents[_eventTimesIterator++];
+        }
     }
 
     /// <summary>
@@ -48,11 +84,12 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
     /// </summary>
     void Update()
     {
-        if (fireable == null) return;
+        if (_fireable == null) return;
+        times?.Invoke();
         Timer -= Time.deltaTime;
         if (Timer < 0)
         {
-            config = new DanmakuConfig
+            _config = new DanmakuConfig
             {
                 Position = transform.position,
                 Rotation = transform.rotation.eulerAngles.z * Mathf.Deg2Rad,
@@ -60,9 +97,10 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
                 AngularSpeed = AngularSpeed,
                 Color = Color
             };
-            fireable.Fire(config);
+            _fireable.Fire(_config);
             Timer = 1f / FireRate.GetValue();
         }
+        _time += Time.deltaTime;
     }
 
 }

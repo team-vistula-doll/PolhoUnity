@@ -10,9 +10,6 @@ public class EnemyDanmakuCollider : DanmakuCollider
     private IShootable _enemyEmitter;
     private IHitable _enemy;
 
-    private IShootable _enemyEmitter;
-    private IHitable _enemy;
-
     private void Start()
     {
         _enemyEmitter = GetComponentInChildren<IShootable>();
