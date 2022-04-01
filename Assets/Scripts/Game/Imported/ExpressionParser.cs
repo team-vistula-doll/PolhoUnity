@@ -496,11 +496,14 @@ namespace B83.ExpressionParser
             }
             int index2a = aExpression.IndexOf('&');
             int index2b = aExpression.IndexOf(';');
+
+            System.Globalization.NumberStyles style = System.Globalization.NumberStyles.Integer;
+            System.Globalization.CultureInfo culture = System.Globalization.CultureInfo.InvariantCulture;
             if (index2a >= 0 && index2b >= 2)
             {
                 var inner = aExpression.Substring(index2a + 1, index2b - index2a - 1);
                 int bracketIndex;
-                if (int.TryParse(inner, out bracketIndex) && bracketIndex >= 0 && bracketIndex < m_BracketHeap.Count)
+                if (int.TryParse(inner, style, culture, out bracketIndex) && bracketIndex >= 0 && bracketIndex < m_BracketHeap.Count)
                 {
                     return Parse(m_BracketHeap[bracketIndex]);
                 }
@@ -508,7 +511,8 @@ namespace B83.ExpressionParser
                     throw new ParseException("Can't parse substitude token");
             }
             double doubleValue;
-            if (double.TryParse(aExpression, out doubleValue))
+            style = System.Globalization.NumberStyles.Number;
+            if (double.TryParse(aExpression, style, culture, out doubleValue))
             {
                 return new Number(doubleValue);
             }

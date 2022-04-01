@@ -775,6 +775,7 @@ GameObject:
   - component: {fileID: 966855638}
   - component: {fileID: 966855639}
   - component: {fileID: 966855640}
+  - component: {fileID: 966855641}
   m_Layer: 8
   m_Name: Game
   m_TagString: Untagged
@@ -863,6 +864,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DanmakuType: {fileID: -2612603446601050132, guid: 1df655dc5b3faaf48b21e72d0deb5ed2, type: 3}
+--- !u!114 &966855641
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 966855635}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30fb1d6accb34fe498ba30f78c14e2e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1022631778
 GameObject:
   m_ObjectHideFlags: 0
