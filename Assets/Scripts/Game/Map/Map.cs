@@ -24,6 +24,7 @@ public class Map : MonoBehaviour
     {
         RawImage rawImage = GetComponent<RawImage>();
         mapMaterial = rawImage.material;
+        ResetPosition();
     }
 
     private void Start()
