@@ -19,7 +19,7 @@ public class EnemyManager : MonoBehaviour
     public void SpawnEnemy(string enemyName, List<Vector2> path, List<int> eventWaypoints = null, List<DanmakU.IFireable> waypointEvents = null,
         List<float> eventTimes = null, List<DanmakU.IFireable> timeEvents = null)
     {
-        GameObject enemy = Instantiate(_enemyBank.EnemyEntries[new Tuple<string, int>(enemyName, GameStateManager.Instance.Difficulty)], path[0], Quaternion.identity, transform);
+        GameObject enemy = Instantiate(_enemyBank.EnemyEntries[enemyName], path[0], Quaternion.identity, transform);
         enemy.GetComponent<WaypointWalker>().SetWaypointPath(path);
 
         if (eventWaypoints == null ^ waypointEvents == null)
