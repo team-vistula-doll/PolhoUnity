@@ -7,29 +7,22 @@ public class SimpleEnemy : MonoBehaviour, IMoveable, IHitable
 {
     public float Speed;
     public int HealthPoints = 1;
+    public uint ScoreValue = 10;
 
     [HideInInspector]
     public Rigidbody2D Rigidbody2D { get; set; }
 
     public void Move(Vector2 input)
     {
-
         if (input.magnitude > 1)
             input = input.normalized;
 
         Rigidbody2D.velocity = input * Speed * Time.deltaTime;
     }
-
-    // Start is called before the first frame update
+    
     void Start()
     {
         Rigidbody2D = GetComponent<Rigidbody2D>();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 
     public void OnHit()
@@ -43,6 +36,7 @@ public class SimpleEnemy : MonoBehaviour, IMoveable, IHitable
     {
         //Future death functionality
         Debug.Log("Enemy killed!");
+        Player.Score += ScoreValue;
         gameObject.SetActive(false);
     }
 }
