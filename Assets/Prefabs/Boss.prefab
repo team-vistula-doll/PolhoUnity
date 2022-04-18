@@ -122,6 +122,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Speed: 150
   HealthPoints: 75
+  ScoreValue: 1000
 --- !u!114 &5935798291472033304
 MonoBehaviour:
   m_ObjectHideFlags: 0
