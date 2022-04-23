@@ -123,6 +123,62 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &155512254
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 155512255}
+  - component: {fileID: 155512256}
+  m_Layer: 8
+  m_Name: BulletKillZone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &155512255
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 155512254}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 966855636}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!68 &155512256
+EdgeCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 155512254}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_EdgeRadius: 0.76
+  m_Points:
+  - {x: -6.0386114, y: 6.0993085}
+  - {x: 5.9995, y: 6.0706105}
+  - {x: 5.9825273, y: -5.984211}
+  - {x: -6.0725417, y: -6.05433}
+  - {x: -6.0631614, y: 6.050087}
+  m_AdjacentStartPoint: {x: 0, y: 0}
+  m_AdjacentEndPoint: {x: 0, y: 0}
+  m_UseAdjacentStartPoint: 0
+  m_UseAdjacentEndPoint: 0
 --- !u!1 &168257904
 GameObject:
   m_ObjectHideFlags: 0
@@ -798,6 +854,7 @@ Transform:
   - {fileID: 519420032}
   - {fileID: 1969527396}
   - {fileID: 1138412656}
+  - {fileID: 155512255}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -828,16 +885,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DefinedEnemies:
   - Name: enemy1
-    Difficulty: 0
     Prefab: {fileID: 2092912531510788433, guid: 1b25910f37cc1754a8c6ee26e59a9802, type: 3}
   - Name: enemy2
-    Difficulty: 0
     Prefab: {fileID: 7829635670147028809, guid: c068a600d90f1944a96486e8d3d42071, type: 3}
   - Name: enemy3
-    Difficulty: 0
     Prefab: {fileID: 317357075254503586, guid: f5eeef1cccc085a418f6e0738626b30e, type: 3}
   - Name: boss
-    Difficulty: 0
     Prefab: {fileID: 545863818296485109, guid: d11ff07a24b1ffe4d976d56e8c4ae331, type: 3}
 --- !u!114 &966855639
 MonoBehaviour:
