@@ -4,7 +4,6 @@ using DanmakU;
 using DanmakU.Fireables;
 using UnityEngine;
 
-[AddComponentMenu("DanmakU/PDanmaku Emitter")]
 public class PlayerDanmakuEmitter : DanmakuBehaviour, IShootable
 {
 

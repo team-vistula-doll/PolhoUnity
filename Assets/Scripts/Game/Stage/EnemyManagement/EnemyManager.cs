@@ -1,5 +1,4 @@
-using System;
-using System.Collections;
+using DanmakU;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -17,7 +16,7 @@ public class EnemyManager : MonoBehaviour
     }
 
     public void SpawnEnemy(string enemyName, List<Vector2> path, List<int> eventWaypoints = null, List<DanmakU.IFireable> waypointEvents = null,
-        List<float> eventTimes = null, List<DanmakU.IFireable> timeEvents = null)
+        List<float> eventTimes = null, List<DanmakU.IFireable> timeEvents = null, float timer = 0, DanmakuConfig danmakuConfig = new DanmakuConfig())
     {
         GameObject enemy = Instantiate(_enemyBank.EnemyEntries[enemyName], path[0], Quaternion.identity, transform);
         enemy.GetComponent<WaypointWalker>().SetWaypointPath(path);

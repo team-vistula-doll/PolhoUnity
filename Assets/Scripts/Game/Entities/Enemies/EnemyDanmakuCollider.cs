@@ -7,13 +7,14 @@ public class EnemyDanmakuCollider : DanmakuCollider
 {
     public DanmakuCollider Collider;
 
-    private IShootable _enemyEmitter;
+    private IShootable _enemyEmitter, _playerEmitter;
     private IHitable _enemy;
 
     private void Start()
     {
         _enemyEmitter = GetComponentInChildren<IShootable>();
         _enemy = GetComponentInParent<IHitable>();
+        _playerEmitter = FindObjectOfType<Player>().GetComponentInChildren<PlayerDanmakuEmitter>();
     }
 
     /// <summary>
@@ -40,7 +41,7 @@ public class EnemyDanmakuCollider : DanmakuCollider
         bool hit = false;
         foreach (var collision in collisions)
         {
-            if (collision.Danmaku.Pool != _enemyEmitter.Set.Pool) //Ignore enemy emitter
+            if (collision.Danmaku.Pool == _playerEmitter.Set.Pool) //Ignore enemy emitter
             {
                 hit = true;
                 collision.Danmaku.Destroy();

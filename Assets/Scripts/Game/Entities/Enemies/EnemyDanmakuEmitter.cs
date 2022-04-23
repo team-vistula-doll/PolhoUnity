@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using DanmakU;
 using DanmakU.Fireables;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
@@ -13,7 +15,7 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
     public Range AngularSpeed = 0;
     public Color Color = Color.white;
     public Range FireRate = 1f;
-    public Arc  Arc;
+    public Arc Arc;
     public Line Line;
 
     public DanmakuSet Set { get; set; }
@@ -27,7 +29,7 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
     List<IFireable> _waypointEvents, _timeEvents;
     int _eventWaypointsIterator = 0, _eventTimesIterator = 0;
     float _time;
-    Action times;
+    Action eventTimes, timer;
 
     /// <summary>
     /// Start is called on the frame when a script is enabled just before
@@ -42,42 +44,77 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
         }
         Set = EnemyDanmakuSet.Set;
         Set.AddModifiers(GetComponents<IDanmakuModifier>());
+
         _time = 0f;
         _fireable = Arc.Of(Line).Of(Set);
+        Timer = 1f / FireRate.GetValue();
+        timer += StandardTimer;
     }
 
-    public void EventWaypoints(in List<int> eventWaypoints, in List<IFireable> waypointEvents)
+    DanmakuConfig CreateDanmakuConfig(DanmakuConfig danmakuConfig)
+    {
+        _config = danmakuConfig;
+        _config.Position += new Vector2(transform.position.x, transform.position.y);
+        _config.Rotation += transform.rotation.eulerAngles.z * Mathf.Deg2Rad;
+        return _config;
+    }
+
+    public void EventWaypoints(in List<int> eventWaypoints, in List<IFireable> waypointEvents, DanmakuConfig danmakuConfig)
     {
         _eventWaypoints = eventWaypoints;
         _waypointEvents = waypointEvents;
+        _config = danmakuConfig;
 
         GetComponentInParent<WaypointWalker>().WaypointEvent += WaypointEvents;
     }
 
     void WaypointEvents(object sender, int waypoint)
     {
-        if(_eventWaypoints[_eventWaypointsIterator] == waypoint)
+        if (_eventWaypoints[_eventWaypointsIterator] == waypoint)
         {
             _fireable = _waypointEvents[_eventWaypointsIterator++];
+            _fireable.Fire(CreateDanmakuConfig(_config));
         }
     }
 
-    public void EventTimes(in List<float> eventTimes, in List<IFireable> timeEvents)
+    public void EventTimes(in List<float> eventTimes, in List<IFireable> timeEvents, DanmakuConfig danmakuConfig)
     {
 
         _eventTimes = eventTimes;
         _timeEvents = timeEvents;
+        _config = danmakuConfig;
 
-        times += TimeEvents;
+        this.eventTimes += TimeEvents;
     }
 
     void TimeEvents()
     {
-        if(_eventTimes[_eventTimesIterator] >= _time)
+        if (_eventTimes[_eventTimesIterator] >= _time)
         {
             _fireable = _timeEvents[_eventTimesIterator++];
+            _fireable.Fire(CreateDanmakuConfig(_config));
         }
     }
+
+    public void ShotTimer(in float fireRate, in IFireable timerShot, DanmakuConfig danmakuConfig)
+    {
+        Timer = fireRate;
+        _fireable = timerShot;
+        _config = danmakuConfig;
+    }
+
+    void StandardTimer()
+    {
+        Timer -= Time.deltaTime;
+        if (Timer < 0)
+        {
+            _fireable.Fire(CreateDanmakuConfig(_config));
+            Timer = 1f / FireRate.GetValue();
+        }
+    }
+
+    public void EnableTimer() => timer += StandardTimer;
+    public void DisableTimer() => timer -= StandardTimer;
 
     /// <summary>
     /// Update is called every frame, if the MonoBehaviour is enabled.
@@ -85,21 +122,9 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
     void Update()
     {
         if (_fireable == null) return;
-        times?.Invoke();
-        Timer -= Time.deltaTime;
-        if (Timer < 0)
-        {
-            _config = new DanmakuConfig
-            {
-                Position = transform.position,
-                Rotation = transform.rotation.eulerAngles.z * Mathf.Deg2Rad,
-                Speed = Speed,
-                AngularSpeed = AngularSpeed,
-                Color = Color
-            };
-            _fireable.Fire(_config);
-            Timer = 1f / FireRate.GetValue();
-        }
+        eventTimes?.Invoke();
+        timer?.Invoke();
+        
         _time += Time.deltaTime;
     }
 
