@@ -29,7 +29,7 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
     List<IFireable> _waypointEvents, _timeEvents;
     int _eventWaypointsIterator = 0, _eventTimesIterator = 0;
     float _time;
-    Action eventTimes, timer;
+    Action timedEvents, timer;
 
     /// <summary>
     /// Start is called on the frame when a script is enabled just before
@@ -48,7 +48,7 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
         _time = 0f;
         _fireable = Arc.Of(Line).Of(Set);
         Timer = 1f / FireRate.GetValue();
-        timer += StandardTimer;
+        timer = ShotTimer;
     }
 
     DanmakuConfig CreateDanmakuConfig(DanmakuConfig danmakuConfig)
@@ -77,6 +77,12 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
         }
     }
 
+    public void SetWaypointEvents(bool set)
+    {
+        GetComponentInParent<WaypointWalker>().WaypointEvent -= WaypointEvents;
+        if (set) GetComponentInParent<WaypointWalker>().WaypointEvent += WaypointEvents;
+    }
+
     public void EventTimes(in List<float> eventTimes, in List<IFireable> timeEvents, DanmakuConfig danmakuConfig)
     {
 
@@ -84,7 +90,7 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
         _timeEvents = timeEvents;
         _config = danmakuConfig;
 
-        this.eventTimes += TimeEvents;
+        timedEvents = TimeEvents;
     }
 
     void TimeEvents()
@@ -96,14 +102,20 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
         }
     }
 
-    public void ShotTimer(in float fireRate, in IFireable timerShot, DanmakuConfig danmakuConfig)
+    public void SetTimeEvents(bool set)
+    {
+        timedEvents -= TimeEvents;
+        if (set) timedEvents += TimeEvents;
+    }
+
+    public void TimerShots(in float fireRate, in IFireable timerShot, DanmakuConfig danmakuConfig)
     {
         Timer = fireRate;
         _fireable = timerShot;
         _config = danmakuConfig;
     }
 
-    void StandardTimer()
+    void ShotTimer()
     {
         Timer -= Time.deltaTime;
         if (Timer < 0)
@@ -113,8 +125,11 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
         }
     }
 
-    public void EnableTimer() => timer += StandardTimer;
-    public void DisableTimer() => timer -= StandardTimer;
+    public void SetTimer(bool set)
+    {
+        timer -= ShotTimer;
+        if (set) timer += ShotTimer;
+    }
 
     /// <summary>
     /// Update is called every frame, if the MonoBehaviour is enabled.
@@ -122,7 +137,7 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
     void Update()
     {
         if (_fireable == null) return;
-        eventTimes?.Invoke();
+        timedEvents?.Invoke();
         timer?.Invoke();
         
         _time += Time.deltaTime;

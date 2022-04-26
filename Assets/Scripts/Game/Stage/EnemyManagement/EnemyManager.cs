@@ -6,47 +6,79 @@ using UnityEngine;
 [RequireComponent(typeof(EnemyBank))]
 public class EnemyManager : MonoBehaviour
 {
-    private List<GameObject> _enemies;
+    private Dictionary<int, GameObject> _enemies;
+    private int _enemyIDs = 0;
     private EnemyBank _enemyBank;
     // Start is called before the first frame update
     void Start()
     {
-        _enemies = new List<GameObject>();
+        _enemies = new Dictionary<int, GameObject>();
         _enemyBank = GetComponent<EnemyBank>();
     }
 
-    public void SpawnEnemy(string enemyName, List<Vector2> path, List<int> eventWaypoints = null, List<DanmakU.IFireable> waypointEvents = null,
-        List<float> eventTimes = null, List<DanmakU.IFireable> timeEvents = null, float timer = 0, DanmakuConfig danmakuConfig = new DanmakuConfig())
+    public int SpawnEnemy(string enemyName, List<Vector2> path)
     {
         GameObject enemy = Instantiate(_enemyBank.EnemyEntries[enemyName], path[0], Quaternion.identity, transform);
         enemy.GetComponent<WaypointWalker>().SetWaypointPath(path);
 
-        if (eventWaypoints == null ^ waypointEvents == null)
-            Debug.LogWarning("Event waypoints or waypoint events are null!");
-        else if (eventWaypoints != null && waypointEvents != null)
-            enemy.GetComponentInChildren<EnemyDanmakuEmitter>().EventWaypoints(in eventWaypoints, in waypointEvents);
+        _enemies.Add(++_enemyIDs, enemy);
+        return _enemyIDs;
+    }
 
-        if (eventTimes == null ^ timeEvents == null)
-        {
-            Debug.LogWarning("Event times or time events are null!");
-        }
-        else if (eventTimes != null && timeEvents != null)
-            enemy.GetComponentInChildren<EnemyDanmakuEmitter>().EventTimes(in eventTimes, in timeEvents);
+    public bool AddEventWaypoints(int enemyID, in List<int> eventWaypoints, in List<IFireable> waypointEvents, DanmakuConfig danmakuConfig)
+    {
+        try { _enemies[enemyID].GetComponentInChildren<EnemyDanmakuEmitter>().EventWaypoints(eventWaypoints, waypointEvents, danmakuConfig); }
+        catch (KeyNotFoundException) { return false; }
+        return true;
+    }
 
-        _enemies.Add(enemy);
+    public bool SetWaypointEvents(int enemyID, bool set)
+    {
+        try { _enemies[enemyID].GetComponentInChildren<EnemyDanmakuEmitter>().SetWaypointEvents(set); }
+        catch (KeyNotFoundException) { return false; }
+        return true;
+    }
+
+    public bool AddEventTimes(int enemyID, in List<float> eventTimes, in List<IFireable> timeEvents, DanmakuConfig danmakuConfig)
+    {
+        try { _enemies[enemyID].GetComponentInChildren<EnemyDanmakuEmitter>().EventTimes(eventTimes, timeEvents, danmakuConfig); }
+        catch (KeyNotFoundException) { return false; }
+        return true;
+    }
+
+    public bool SetTimeEvents(int enemyID, bool set)
+    {
+        try { _enemies[enemyID].GetComponentInChildren<EnemyDanmakuEmitter>().SetTimeEvents(set); }
+        catch (KeyNotFoundException){ return false; }
+        return true;
+    }
+
+    public bool AddTimerShots(int enemyID, in float fireRate, in IFireable timerShot, DanmakuConfig danmakuConfig)
+    {
+        try { _enemies[enemyID].GetComponentInChildren<EnemyDanmakuEmitter>().TimerShots(fireRate, timerShot, danmakuConfig); }
+        catch (KeyNotFoundException) { return false; }
+        return true;
+    }
+
+    public bool SetTimer(int enemyID, bool set)
+    {
+        try { _enemies[enemyID].GetComponentInChildren<EnemyDanmakuEmitter>().SetTimer(set); }
+        catch (KeyNotFoundException) { return false; }
+        return true;
     }
 
     public bool NoEnemiesPresent()
     {
-        return _enemies.All(e => !e.activeInHierarchy);
+        return _enemies.Values.All(e => !e.activeInHierarchy);
     }
 
     public void Clear()
     {
-        foreach (var enemy in _enemies)
+        foreach (var enemy in _enemies.Values)
         {
             Destroy(enemy);
         }
         _enemies.Clear();
+        _enemyIDs = 0;
     }
 }
