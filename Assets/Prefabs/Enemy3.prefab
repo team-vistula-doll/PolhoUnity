@@ -123,6 +123,8 @@ MonoBehaviour:
   Speed: 150
   HealthPoints: 3
   ScoreValue: 100
+  HitSound: {fileID: 8300000, guid: 27401145953c3bc4090829848910d781, type: 3}
+  DeathSound: {fileID: 8300000, guid: a78e7033603a6ab45af4975ccbe3c41a, type: 3}
 --- !u!114 &2419037630045480664
 MonoBehaviour:
   m_ObjectHideFlags: 0
