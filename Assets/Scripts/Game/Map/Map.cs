@@ -38,7 +38,12 @@ public class Map : MonoBehaviour
         if (!Paused)
             mapMaterial.mainTextureOffset += new Vector2(0f, Speed * Time.deltaTime);
     }
-    
+
+    private void OnApplicationQuit()
+    {
+        ResetPosition();
+    }
+
     public void SetMapTexture(Texture mapTexture)
     {
         RawImage rawImage = GetComponent<RawImage>();

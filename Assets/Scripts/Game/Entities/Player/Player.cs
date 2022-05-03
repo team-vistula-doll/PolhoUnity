@@ -9,6 +9,11 @@ using UnityEngine.EventSystems;
 public class Player : MonoBehaviour, IMoveable
 {
     public float Speed;
+    public AudioClip HitSound;
+    public AudioClip ShootSound;
+    
+    private static AudioClip hitSound;
+    public static AudioClip shootSound;
 
     [HideInInspector]
     public Rigidbody2D Rigidbody2D { get; set; }
@@ -57,11 +62,15 @@ public class Player : MonoBehaviour, IMoveable
     public static void OnHit()
     {
         Lives -= 1;
+        if(hitSound)
+            AudioSource.PlayClipAtPoint(hitSound, Camera.main.transform.position);
         // Future hit functionality
     }
 
     void Start()
     {
         Rigidbody2D = GetComponent<Rigidbody2D>();
+        hitSound = HitSound;
+        shootSound = ShootSound;
     }
 }
