@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "TestStage",menuName = "Stage/TestStage",order=1)]
 public class TestStage : Stage
 {
-    List<int> _enemyIDs;
+    List<int> _enemyIDs = new List<int>();
     public override IEnumerator StageScript(StageArgs args)
     {
         yield return new WaitForSeconds(1f);

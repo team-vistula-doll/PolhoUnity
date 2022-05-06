@@ -12,13 +12,13 @@ public class PlayerDanmakuEmitter : DanmakuBehaviour, IShootable
     public Range Speed = 15f;
     public Range AngularSpeed;
     public Color Color = Color.white;
-    public Range FireRate = 5;
     public Arc Arc;
     public Line Line;
 
-    public DanmakuSet Set { get; set; }
-
+    [field: SerializeField]
+    public Range FireRate { get; set; } = 5;
     public float Timer { get; set; }
+    public DanmakuSet Set { get; set; }
     public bool CanShoot { get; set; } = false;
 
     DanmakuConfig config;
