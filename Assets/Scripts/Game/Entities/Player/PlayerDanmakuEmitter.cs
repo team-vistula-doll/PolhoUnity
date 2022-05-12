@@ -19,10 +19,15 @@ public class PlayerDanmakuEmitter : DanmakuBehaviour, IShootable
     public Range FireRate { get; set; } = 5;
     public float Timer { get; set; }
     public DanmakuSet Set { get; set; }
-    public bool CanShoot { get; set; } = false;
+    public bool CanShoot { get; set; } = false;    
+    public IFireable Fireable { get; set; }
+    public DanmakuConfig Config
+    {
+        get { return config; }
+        set { config = value; }
+    }
 
     DanmakuConfig config;
-    IFireable fireable;
 
     /// <summary>
     /// Start is called on the frame when a script is enabled just before
@@ -37,7 +42,7 @@ public class PlayerDanmakuEmitter : DanmakuBehaviour, IShootable
         }
         Set = CreateSet(DanmakuType);
         Set.AddModifiers(GetComponents<IDanmakuModifier>());
-        fireable = Arc.Of(Line).Of(Set);
+        Fireable = Arc.Of(Line).Of(Set);
     }
 
     /// <summary>
@@ -45,7 +50,7 @@ public class PlayerDanmakuEmitter : DanmakuBehaviour, IShootable
     /// </summary>
     void Update()
     {
-        if (fireable == null) return;
+        if (Fireable == null) return;
         Timer -= Time.deltaTime;
         if (Timer < 0 && CanShoot)
         {
@@ -57,9 +62,7 @@ public class PlayerDanmakuEmitter : DanmakuBehaviour, IShootable
                 AngularSpeed = AngularSpeed,
                 Color = Color
             };
-            fireable.Fire(config);
-            if(Player.shootSound)
-                Player._AudioSource.PlayOneShot(Player.shootSound);
+            Fireable.Fire(config);
             Timer = 1f / FireRate.GetValue();
         }
     }

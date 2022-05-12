@@ -21,9 +21,14 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
     public Range FireRate { get; set; } = 1f;
     public float Timer { get; set; }
     public DanmakuSet Set { get; set; }
+    public IFireable Fireable { get; set; }
+    public DanmakuConfig Config
+    {
+        get { return config; }
+        set { config = value; }
+    }
 
-    DanmakuConfig _config;
-    IFireable _fireable;
+    DanmakuConfig config;
 
     List<int> _eventWaypoints;
     List<float> _eventTimes;
@@ -47,11 +52,11 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
         Set.AddModifiers(GetComponents<IDanmakuModifier>());
 
         _time = 0f;
-        _fireable = Arc.Of(Line).Of(Set);
+        Fireable = Arc.Of(Line).Of(Set);
         Timer = 1f / FireRate.GetValue();
         timerEvent = ShotTimer;
 
-        _config = new DanmakuConfig
+        config = new DanmakuConfig
         {
             Position = new Vector2(0, 0),
             Rotation = 0,
@@ -61,11 +66,9 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
         };
     }
 
-    public void AddDanmakuConfig(DanmakuConfig danmakuConfig) => _config = danmakuConfig;
 
-    DanmakuConfig UpdateDanmakuConfig(DanmakuConfig danmakuConfig)
+    DanmakuConfig UpdateDanmakuConfig()
     {
-        DanmakuConfig config = danmakuConfig;
         config.Position += new Vector2(transform.position.x, transform.position.y);
         config.Rotation += transform.rotation.eulerAngles.z * Mathf.Deg2Rad;
         return config;
@@ -75,7 +78,7 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
     {
         _eventWaypoints = eventWaypoints;
         _waypointEvents = waypointEvents;
-        _config = danmakuConfig;
+        config = danmakuConfig;
 
         GetComponentInParent<WaypointWalker>().WaypointEvent += WaypointEvents;
     }
@@ -84,12 +87,12 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
     {
         if (_eventWaypoints[_eventWaypointsIterator] == waypoint)
         {
-            _fireable = _waypointEvents[_eventWaypointsIterator++];
-            _fireable.Fire(UpdateDanmakuConfig(_config));
+            Fireable = _waypointEvents[_eventWaypointsIterator++];
+            Fireable.Fire(UpdateDanmakuConfig());
         }
     }
 
-    public void SetWaypointEvents(bool set)
+    public void SetWaypointEventsAction(bool set)
     {
         GetComponentInParent<WaypointWalker>().WaypointEvent -= WaypointEvents;
         if (set) GetComponentInParent<WaypointWalker>().WaypointEvent += WaypointEvents;
@@ -100,7 +103,7 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
 
         _eventTimes = eventTimes;
         _timeEvents = timeEvents;
-        _config = danmakuConfig;
+        config = danmakuConfig;
 
         timedEvents = TimeEvents;
     }
@@ -109,12 +112,12 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
     {
         if (_eventTimes[_eventTimesIterator] >= _time)
         {
-            _fireable = _timeEvents[_eventTimesIterator++];
-            _fireable.Fire(UpdateDanmakuConfig(_config));
+            Fireable = _timeEvents[_eventTimesIterator++];
+            Fireable.Fire(UpdateDanmakuConfig());
         }
     }
 
-    public void SetTimeEvents(bool set)
+    public void SetTimeEventsAction(bool set)
     {
         timedEvents -= TimeEvents;
         if (set) timedEvents += TimeEvents;
@@ -123,8 +126,8 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
     public void TimerShots(in Range fireRate, in IFireable timerShot, DanmakuConfig danmakuConfig)
     {
         Timer = 1f / fireRate.GetValue();
-        _fireable = timerShot;
-        _config = danmakuConfig;
+        Fireable = timerShot;
+        config = danmakuConfig;
     }
 
     void ShotTimer()
@@ -132,7 +135,7 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
         Timer -= Time.deltaTime;
         if (Timer < 0)
         {
-            _fireable.Fire(UpdateDanmakuConfig(_config));
+            Fireable.Fire(UpdateDanmakuConfig());
             Timer = 1f / FireRate.GetValue();
         }
     }
@@ -148,7 +151,7 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
     /// </summary>
     void Update()
     {
-        if (_fireable == null) return;
+        if (Fireable == null) return;
         timedEvents?.Invoke();
         timerEvent?.Invoke();
         

@@ -34,7 +34,7 @@ public class EnemyManager : MonoBehaviour
 
     public bool SetWaypointEvents(int enemyID, bool set)
     {
-        try { _enemies[enemyID].GetComponentInChildren<EnemyDanmakuEmitter>().SetWaypointEvents(set); }
+        try { _enemies[enemyID].GetComponentInChildren<EnemyDanmakuEmitter>().SetWaypointEventsAction(set); }
         catch (KeyNotFoundException) { return false; }
         return true;
     }
@@ -48,7 +48,7 @@ public class EnemyManager : MonoBehaviour
 
     public bool SetTimeEvents(int enemyID, bool set)
     {
-        try { _enemies[enemyID].GetComponentInChildren<EnemyDanmakuEmitter>().SetTimeEvents(set); }
+        try { _enemies[enemyID].GetComponentInChildren<EnemyDanmakuEmitter>().SetTimeEventsAction(set); }
         catch (KeyNotFoundException){ return false; }
         return true;
     }
