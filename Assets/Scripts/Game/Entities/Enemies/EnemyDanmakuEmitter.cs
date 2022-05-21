@@ -27,7 +27,7 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
         set { config = value; }
     }
 
-    DanmakuConfig config;
+    DanmakuConfig config, newConfig;
 
     List<int> _eventWaypoints;
     List<float> _eventTimes;
@@ -63,11 +63,13 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
             AngularSpeed = AngularSpeed,
             Color = Color
         };
+        newConfig = config;
     }
 
 
     DanmakuConfig UpdateDanmakuConfig()
     {
+        config = newConfig;
         config.Position += new Vector2(transform.position.x, transform.position.y);
         config.Rotation += transform.rotation.eulerAngles.z * Mathf.Deg2Rad;
         return config;
@@ -77,7 +79,7 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
     {
         _eventWaypoints = eventWaypoints;
         _waypointEvents = waypointEvents;
-        config = danmakuConfig;
+        newConfig = danmakuConfig;
 
         GetComponentInParent<WaypointWalker>().WaypointEvent += WaypointEvents;
     }
@@ -102,7 +104,7 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
 
         _eventTimes = eventTimes;
         _timeEvents = timeEvents;
-        config = danmakuConfig;
+        newConfig = danmakuConfig;
 
         timedEvents = TimeEvents;
     }
@@ -126,7 +128,7 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
     {
         Timer = 1f / fireRate.GetValue();
         Fireable = timerShot;
-        config = danmakuConfig;
+        newConfig = danmakuConfig;
     }
 
     void ShotTimer()

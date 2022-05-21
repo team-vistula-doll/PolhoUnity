@@ -41,7 +41,7 @@ public class WaypointWalker : MonoBehaviour
     {
         _path = pathToSet;
         _currentWaypoint = 0;
-        _waypoints = _path.Count - 1;
+        _waypoints = _path.Count;
         _nextWaypoint = _path[1];
         _isMoving = true;
         move += Move;
@@ -69,13 +69,12 @@ public class WaypointWalker : MonoBehaviour
 
     public void ChangeNextWaypoint() //changes _nextWaypoint if you are close enough to the next waypoint
     {
-        if (Vector2.Distance(transform.position, _nextWaypoint) < 0.1f && _currentWaypoint < _waypoints)
+        if (Vector2.Distance(transform.position, _nextWaypoint) < 0.1f && _currentWaypoint + 1 < _waypoints)
         {
-            _currentWaypoint++;
-            _nextWaypoint = _path[_currentWaypoint + 1];
+            _nextWaypoint = _path[++_currentWaypoint];
             WaypointEvent?.Invoke(this, _currentWaypoint);
         }
-        else if (_currentWaypoint >= _waypoints)
+        else if (_currentWaypoint + 1 >= _waypoints)
             _isMoving = false;
     }
 
