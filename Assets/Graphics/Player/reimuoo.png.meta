@@ -132,6 +132,7 @@ TextureImporter:
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
+  ignoreMasterTextureLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -1000,6 +1001,43 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
+    nameFileIdTable:
+      reimuoo_9: 4140170997862115944
+      reimuoo_27: 5856944911680776174
+      reimuoo_35: -5662052720312196120
+      reimuoo_30: 1547126852990942493
+      reimuoo_32: 176914672186573978
+      reimuoo_5: 7713447869903734803
+      reimuoo_0: 7676378489267532047
+      reimuoo_10: -3590911436670257333
+      reimuoo_1: 8365962162855350743
+      reimuoo_23: 3358156234748221659
+      reimuoo_31: 2514963941307488363
+      reimuoo_25: -4251324772736350493
+      reimuoo_2: 900369190741306662
+      reimuoo_15: 3304768074843847560
+      reimuoo_19: -2241496780356121800
+      reimuoo_6: 6641724691872181660
+      reimuoo_22: 1370367395338967438
+      reimuoo_3: -1961078678048085703
+      reimuoo_24: 1784047497702918083
+      reimuoo_28: -4506399766893212312
+      reimuoo_17: -5389025861552960833
+      reimuoo_11: 4067558608706994047
+      reimuoo_20: -1641411973376467549
+      reimuoo_26: 6417615606709649204
+      reimuoo_12: 8832553774834022970
+      reimuoo_18: -7908679103136792934
+      reimuoo_8: 6734530201409144614
+      reimuoo_16: -1493150683998722439
+      reimuoo_33: 3357595625607211154
+      reimuoo_29: 1396050234285569929
+      reimuoo_34: 1269101839401271766
+      reimuoo_21: -3378916148739995467
+      reimuoo_7: 8996710229360202941
+      reimuoo_13: 185648755494273073
+      reimuoo_4: -7704123971242279149
+      reimuoo_14: -934712992911273339
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
