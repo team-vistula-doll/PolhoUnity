@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using DanmakU;
 using DanmakU.Fireables;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
@@ -11,14 +10,14 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
 
     public DanmakuPrefab DanmakuType;
 
-    public Range Speed = 2f;
-    public Range AngularSpeed = 0;
+    public DanmakU.Range Speed = 2f;
+    public DanmakU.Range AngularSpeed = 0;
     public Color Color = Color.white;
     public Arc Arc;
     public Line Line;
 
     [field: SerializeField]
-    public Range FireRate { get; set; } = 1f;
+    public DanmakU.Range FireRate { get; set; } = 1f;
     public float Timer { get; set; }
     public DanmakuSet Set { get; set; }
     public IFireable Fireable { get; set; }
@@ -123,7 +122,7 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
         if (set) timedEvents += TimeEvents;
     }
 
-    public void TimerShots(in Range fireRate, in IFireable timerShot, DanmakuConfig danmakuConfig)
+    public void TimerShots(in DanmakU.Range fireRate, in IFireable timerShot, DanmakuConfig danmakuConfig)
     {
         Timer = 1f / fireRate.GetValue();
         Fireable = timerShot;
