@@ -1,0 +1,10 @@
+[Enemy]
+
+[Enemy.Enemy]
+SpawnTime = 5
+SpawnPosition = [ 0, 0 ]
+PathLengths = [ 10, 20, 5 ]
+PathExpressions = [ "x", "x^2", "sin(x)" ]
+PathAngles = [ 0, 90, 45 ]
+SpawnRepeatsDelays = [ 5, 2.5, 7 ]
+SpawnRepeatsAmounts = [ 2, 1, 4 ]

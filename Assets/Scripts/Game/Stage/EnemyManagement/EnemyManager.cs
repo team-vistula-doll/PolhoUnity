@@ -2,6 +2,7 @@ using DanmakU;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using EnemyStruct;
 
 [RequireComponent(typeof(EnemyBank))]
 public class EnemyManager : MonoBehaviour
@@ -16,7 +17,12 @@ public class EnemyManager : MonoBehaviour
         _enemyBank = GetComponent<EnemyBank>();
     }
 
-    public int SpawnEnemy(string enemyName, List<Vector2> path)
+    public Dictionary<int, Enemy> AddEnemiesFromFile(string filename)
+    {
+        return;
+    }
+
+    public int SpawnNewEnemy(string enemyName, List<Vector2> path)
     {
         GameObject enemy = Instantiate(_enemyBank.EnemyEntries[enemyName], path[0], Quaternion.identity, transform);
         enemy.GetComponent<WaypointWalker>().SetWaypointPath(path);

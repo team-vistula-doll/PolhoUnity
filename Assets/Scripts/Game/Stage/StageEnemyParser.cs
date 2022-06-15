@@ -10,20 +10,19 @@ using EnemyStruct;
 
 public class StageEnemyParser
 {
-    public List<Enemy> Enemies { get; set; } = new List<Enemy>();
-
     /// <summary>
     /// Parses stage enemies data from a TOML file
     /// </summary>
     /// <param name="filepath">Path to the file, relative from "\Scripts\Game\Stage\"</param>
-    public List<Enemy> ParseStageEnemies(string filepath)
+    /// <param name="ids">List of IDs passed by reference</param>
+    public List<Enemy> ParseStageEnemies(string filepath, ref List<int> ids)
     {
         List<Enemy> enemies = new();
-        int id = 1;
 
         using (StreamReader reader = File.OpenText(filepath))
         {
             TomlTable table;
+            int id = ids.Max() + 1;
 
             try
             {
@@ -41,8 +40,9 @@ public class StageEnemyParser
             {
                 Enemy enemy = new();
 
-                enemy.ID = id++;
-                enemy.Name = node.HasValue ? node : "NONAME";
+                enemy.ID = id;
+                ids.Add(id++);
+                enemy.Name = node.HasValue ? node : "Enemy";
                 if (node["SpawnTime"].HasValue) enemy.SpawnTime = node["SpawnTime"];
                 else
                 {
