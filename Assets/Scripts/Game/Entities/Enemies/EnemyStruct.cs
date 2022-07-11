@@ -13,7 +13,7 @@ namespace EnemyStruct
         public string Name;
         public float SpawnTime;
         public Vector2 SpawnPosition;
-        public List<List<Vector2>> Waypoints;
+        public List<Vector2> Path;
         public List<(float delay, int amount)> SpawnRepeats; //delay between spawns, amount of spawns; Optional
     }
 }

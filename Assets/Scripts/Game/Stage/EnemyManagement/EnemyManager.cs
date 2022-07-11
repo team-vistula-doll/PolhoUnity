@@ -7,84 +7,129 @@ using EnemyStruct;
 [RequireComponent(typeof(EnemyBank))]
 public class EnemyManager : MonoBehaviour
 {
-    private Dictionary<int, GameObject> _enemies;
-    private int _enemyIDs = 0;
+    private Dictionary<int, GameObject> _enemyObjects;
+    private List<Enemy> _enemies;
+    private int _enemyObjectIDs = 0;
+    private int _enemyStructIDs = 0;
     private EnemyBank _enemyBank;
     // Start is called before the first frame update
     void Start()
     {
-        _enemies = new Dictionary<int, GameObject>();
+        _enemyObjects = new Dictionary<int, GameObject>();
+        _enemies = new List<Enemy>();
         _enemyBank = GetComponent<EnemyBank>();
     }
 
-    public Dictionary<int, Enemy> AddEnemiesFromFile(string filename)
+    //public Dictionary<int, Enemy> AddEnemiesFromFile(string filename)
+    //{
+    //    return;
+    //}
+
+    /// <summary>
+    /// Creates a new enemy struct adding it to the list of all enemy structs
+    /// </summary>
+    /// <param name="spawnRepeats">optional</param>
+    /// <returns>Enemy struct ID</returns>
+    public int CreateNewEnemy (string name, float spawnTime, Vector2 spawnPosition, List<Vector2> path, List<(float delay, int amount)> spawnRepeats = null)
     {
-        return;
+        _enemies.Add(new Enemy
+        {
+            ID = ++_enemyStructIDs,
+            Name = name,
+            SpawnTime = spawnTime,
+            SpawnPosition = spawnPosition,
+            Path = path,
+            SpawnRepeats = spawnRepeats
+        });
+        return _enemyStructIDs;
     }
 
-    public int SpawnNewEnemy(string enemyName, List<Vector2> path)
+    /// <summary>
+    /// Adds waypoints to enemy's path
+    /// </summary>
+    /// <param name="id">Enemy struct ID</param>
+    /// <param name="waypoints">List of waypoints to add</param>
+    /// <param name="insertAt">Optional; inserts the waypoints at the given index (at the end by default)</param>
+    public void AddWaypointsToEnemy(int id, List<Vector2> waypoints, int insertAt = -1)
     {
-        GameObject enemy = Instantiate(_enemyBank.EnemyEntries[enemyName], path[0], Quaternion.identity, transform);
-        enemy.GetComponent<WaypointWalker>().SetWaypointPath(path);
+        id--;
+        if(insertAt == -1)
+        {
+            if (insertAt < 0) Debug.LogWarning("AddWaypointsToEnemy: insertAt value less than -1; adding to the end");
+            _enemies[id].Path.AddRange(waypoints);
+        }
+        else _enemies[id].Path.InsertRange(insertAt, waypoints);
+    }
 
-        _enemies.Add(++_enemyIDs, enemy);
-        return _enemyIDs;
+    /// <summary>
+    /// Spawns an enemy on the stage
+    /// </summary>
+    /// <param name="enemy">The enemy struct ID</param>
+    /// <returns>Spawned enemy object ID</returns>
+    public int SpawnNewEnemy(int id)
+    {
+        id--;
+        GameObject enemyObject = Instantiate(_enemyBank.EnemyEntries[_enemies[id].Name], _enemies[id].SpawnPosition, Quaternion.identity, transform);
+        enemyObject.GetComponent<WaypointWalker>().SetWaypointPath(_enemies[id].Path);
+
+        _enemyObjects.Add(++_enemyObjectIDs, enemyObject);
+        return _enemyObjectIDs;
     }
 
     public bool AddEventWaypoints(int enemyID, in List<int> eventWaypoints, in List<IFireable> waypointEvents, DanmakuConfig danmakuConfig)
     {
-        try { _enemies[enemyID].GetComponentInChildren<EnemyDanmakuEmitter>().EventWaypoints(eventWaypoints, waypointEvents, danmakuConfig); }
+        try { _enemyObjects[enemyID].GetComponentInChildren<EnemyDanmakuEmitter>().EventWaypoints(eventWaypoints, waypointEvents, danmakuConfig); }
         catch (KeyNotFoundException) { return false; }
         return true;
     }
 
     public bool SetWaypointEvents(int enemyID, bool set)
     {
-        try { _enemies[enemyID].GetComponentInChildren<EnemyDanmakuEmitter>().SetWaypointEventsAction(set); }
+        try { _enemyObjects[enemyID].GetComponentInChildren<EnemyDanmakuEmitter>().SetWaypointEventsAction(set); }
         catch (KeyNotFoundException) { return false; }
         return true;
     }
 
     public bool AddEventTimes(int enemyID, in List<float> eventTimes, in List<IFireable> timeEvents, DanmakuConfig danmakuConfig)
     {
-        try { _enemies[enemyID].GetComponentInChildren<EnemyDanmakuEmitter>().EventTimes(eventTimes, timeEvents, danmakuConfig); }
+        try { _enemyObjects[enemyID].GetComponentInChildren<EnemyDanmakuEmitter>().EventTimes(eventTimes, timeEvents, danmakuConfig); }
         catch (KeyNotFoundException) { return false; }
         return true;
     }
 
     public bool SetTimeEvents(int enemyID, bool set)
     {
-        try { _enemies[enemyID].GetComponentInChildren<EnemyDanmakuEmitter>().SetTimeEventsAction(set); }
+        try { _enemyObjects[enemyID].GetComponentInChildren<EnemyDanmakuEmitter>().SetTimeEventsAction(set); }
         catch (KeyNotFoundException){ return false; }
         return true;
     }
 
     public bool AddTimerShots(int enemyID, in float fireRate, in IFireable timerShot, DanmakuConfig danmakuConfig)
     {
-        try { _enemies[enemyID].GetComponentInChildren<EnemyDanmakuEmitter>().TimerShots(fireRate, timerShot, danmakuConfig); }
+        try { _enemyObjects[enemyID].GetComponentInChildren<EnemyDanmakuEmitter>().TimerShots(fireRate, timerShot, danmakuConfig); }
         catch (KeyNotFoundException) { return false; }
         return true;
     }
 
     public bool SetTimer(int enemyID, bool set)
     {
-        try { _enemies[enemyID].GetComponentInChildren<EnemyDanmakuEmitter>().SetTimer(set); }
+        try { _enemyObjects[enemyID].GetComponentInChildren<EnemyDanmakuEmitter>().SetTimer(set); }
         catch (KeyNotFoundException) { return false; }
         return true;
     }
 
     public bool NoEnemiesPresent()
     {
-        return _enemies.Values.All(e => !e.activeInHierarchy);
+        return _enemyObjects.Values.All(e => !e.activeInHierarchy);
     }
 
     public void Clear()
     {
-        foreach (var enemy in _enemies.Values)
+        foreach (var enemy in _enemyObjects.Values)
         {
             Destroy(enemy);
         }
-        _enemies.Clear();
-        _enemyIDs = 0;
+        _enemyObjects.Clear();
+        _enemyObjectIDs = 0;
     }
 }

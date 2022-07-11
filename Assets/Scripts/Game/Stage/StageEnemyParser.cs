@@ -56,7 +56,7 @@ public class StageEnemyParser
                     continue;
                 }
 
-                List<List<Vector2>> Waypoints = new();
+                List<Vector2> Waypoints = new();
 
                 if(!(node["PathLengths"].HasValue && node["PathExpressions"].HasValue && node["PathAngles"].HasValue))
                 {
@@ -81,11 +81,11 @@ public class StageEnemyParser
                         angles.Add(angle);
                     }
 
-                    Waypoints.Add(WaypointPathCreator.GeneratePathFromExpression(enemy.SpawnPosition, lengths[0], expressions[0], angles[0]));
+                    Waypoints.AddRange(WaypointPathCreator.GeneratePathFromExpression(enemy.SpawnPosition, lengths[0], expressions[0], angles[0]));
                     int w = 1;
                     for (; w < lengths.Count && w < expressions.Count && w < angles.Count; w++)
                     {
-                        Waypoints.Add(WaypointPathCreator.GeneratePathFromExpression(Waypoints[w - 1].Last(), lengths[w], expressions[w], angles[w]));
+                        Waypoints.AddRange(WaypointPathCreator.GeneratePathFromExpression(Waypoints.Last(), lengths[w], expressions[w], angles[w]));
                     }
 
                     if (w < lengths.Count || w < expressions.Count || w < angles.Count)
