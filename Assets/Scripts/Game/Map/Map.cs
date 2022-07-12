@@ -8,7 +8,7 @@ public class Map : MonoBehaviour
 {
     public Texture MapTexture;
     public float Speed = 0.1f;
-    public bool Paused = false;
+    public static bool Paused = false;
 
     private Material mapMaterial;
 
@@ -24,6 +24,7 @@ public class Map : MonoBehaviour
     {
         RawImage rawImage = GetComponent<RawImage>();
         mapMaterial = rawImage.material;
+        ResetPosition();
     }
 
     private void Start()
@@ -37,7 +38,12 @@ public class Map : MonoBehaviour
         if (!Paused)
             mapMaterial.mainTextureOffset += new Vector2(0f, Speed * Time.deltaTime);
     }
-    
+
+    private void OnApplicationQuit()
+    {
+        ResetPosition();
+    }
+
     public void SetMapTexture(Texture mapTexture)
     {
         RawImage rawImage = GetComponent<RawImage>();

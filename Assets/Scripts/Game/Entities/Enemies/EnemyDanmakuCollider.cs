@@ -3,15 +3,17 @@ using System.Collections.Generic;
 using DanmakU;
 using UnityEngine;
 
-public class PlayerDanmakuCollider : DanmakuCollider
+public class EnemyDanmakuCollider : DanmakuCollider
 {
     public DanmakuCollider Collider;
 
-    private PlayerDanmakuEmitter playerEmitter;
+    private IShootable _enemyEmitter;
+    private IHitable _enemy;
 
     private void Start()
     {
-        playerEmitter = GetComponentInChildren<PlayerDanmakuEmitter>();
+        _enemyEmitter = GetComponentInChildren<IShootable>();
+        _enemy = GetComponentInParent<IHitable>();
     }
 
     /// <summary>
@@ -23,7 +25,7 @@ public class PlayerDanmakuCollider : DanmakuCollider
         Debug.Log("Subscribed");
         Collider.OnDanmakuCollision += OnDanmakuCollision;
     }
-    
+
     /// <summary>
     /// This function is called when the behaviour becomes disabled or inactive.
     /// </summary>
@@ -38,16 +40,16 @@ public class PlayerDanmakuCollider : DanmakuCollider
         bool hit = false;
         foreach (var collision in collisions)
         {
-            if(collision.Danmaku.Pool != playerEmitter.Set.Pool) //Ignore player emitter
+            if (collision.Danmaku.Pool != _enemyEmitter.Set.Pool) //Ignore enemy emitter
             {
                 hit = true;
                 collision.Danmaku.Destroy();
             }
-            
+
         }
 
         if (hit)
-            Player.OnHit();
+            _enemy.OnHit();
     }
 
     /// <summary>

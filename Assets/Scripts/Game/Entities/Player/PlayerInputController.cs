@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(IMoveable))]
 [RequireComponent(typeof(IShootable))]
@@ -13,13 +14,13 @@ public class PlayerInputController : MonoBehaviour
     public float FocusMultiplier = 1f;
 
     private IMoveable _player;
-    private IShootable _playerEmitter;
+    private PlayerDanmakuEmitter _playerEmitter;
 
     // Start is called before the first frame update
     void Start()
     {
         _player = GetComponent<IMoveable>();
-        _playerEmitter = GetComponentInChildren<IShootable>();
+        _playerEmitter = GetComponentInChildren<PlayerDanmakuEmitter>();
     }
 
     public void Move(InputAction.CallbackContext context)
@@ -47,5 +48,10 @@ public class PlayerInputController : MonoBehaviour
                 _playerEmitter.Timer = 0.5f / _playerEmitter.FireRate.GetValue();
         }
         else _playerEmitter.CanShoot = true;
+    }
+
+    public void Restart(InputAction.CallbackContext context)
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

@@ -6,7 +6,7 @@ public class EnemyKillZone : MonoBehaviour
 {
     public void OnTriggerExit2D(Collider2D collider)
     {
-        if(collider.gameObject.tag!="Player")
-            collider.gameObject.SetActive(false);
+        if(collider.gameObject.transform.parent.gameObject.tag != "Player")
+            collider.gameObject.transform.parent.gameObject.SetActive(false);
     }
 }
