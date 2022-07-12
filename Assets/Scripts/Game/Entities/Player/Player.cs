@@ -5,7 +5,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.EventSystems;
 
-[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Rigidbody2D), typeof(AudioSource))]
 public class Player : MonoBehaviour, IMoveable
 {
     public float Speed;
@@ -15,8 +15,9 @@ public class Player : MonoBehaviour, IMoveable
     private static AudioClip hitSound;
     public static AudioClip shootSound;
 
-    [HideInInspector]
-    public Rigidbody2D Rigidbody2D { get; set; }
+    [HideInInspector] public Rigidbody2D Rigidbody2D { get; set; }
+
+    public static AudioSource _AudioSource;
 
     private static int lives = 3;
     private static uint score = 0;
@@ -63,13 +64,14 @@ public class Player : MonoBehaviour, IMoveable
     {
         Lives -= 1;
         if(hitSound)
-            AudioSource.PlayClipAtPoint(hitSound, Camera.main.transform.position);
+            _AudioSource.PlayOneShot(hitSound);
         // Future hit functionality
     }
 
     void Start()
     {
         Rigidbody2D = GetComponent<Rigidbody2D>();
+        _AudioSource = GetComponent<AudioSource>();
         hitSound = HitSound;
         shootSound = ShootSound;
     }

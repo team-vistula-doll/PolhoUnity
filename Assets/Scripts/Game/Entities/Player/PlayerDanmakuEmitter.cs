@@ -60,7 +60,7 @@ public class PlayerDanmakuEmitter : DanmakuBehaviour, IShootable
             };
             fireable.Fire(config);
             if(Player.shootSound)
-                AudioSource.PlayClipAtPoint(Player.shootSound, Camera.main.transform.position);
+                Player._AudioSource.PlayOneShot(Player.shootSound);
             Timer = 1f / FireRate.GetValue();
         }
     }
