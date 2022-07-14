@@ -63,6 +63,8 @@ public class PlayerDanmakuEmitter : DanmakuBehaviour, IShootable
                 Color = Color
             };
             Fireable.Fire(config);
+            if (Player.shootSound)
+                Player._AudioSource.PlayOneShot(Player.shootSound);
             Timer = 1f / FireRate.GetValue();
         }
     }

@@ -30,7 +30,6 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 0.3, y: 0.3, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 289260190654801620}
   m_Father: {fileID: 0}
@@ -123,6 +122,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Speed: 150
   HealthPoints: 75
+  ScoreValue: 1000
+  HitSound: {fileID: 8300000, guid: 27401145953c3bc4090829848910d781, type: 3}
+  DeathSound: {fileID: 8300000, guid: a78e7033603a6ab45af4975ccbe3c41a, type: 3}
 --- !u!114 &5935798291472033304
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -167,7 +169,6 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6131977065519996122}
   m_Father: {fileID: 6749061649888613985}
@@ -252,7 +253,6 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 289260190654801620}
   m_RootOrder: 0
@@ -277,6 +277,9 @@ MonoBehaviour:
     _min: 0
     _max: 0
   Color: {r: 1, g: 1, b: 1, a: 1}
+  FireRate:
+    _min: 3
+    _max: 3
   Arc:
     Count:
       _min: 7
@@ -294,9 +297,6 @@ MonoBehaviour:
     DeltaSpeed:
       _min: 0
       _max: 0
-  <FireRate>k__BackingField:
-    _min: 2
-    _max: 2
 --- !u!114 &6815873938281370040
 MonoBehaviour:
   m_ObjectHideFlags: 0
