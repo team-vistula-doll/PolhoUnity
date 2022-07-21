@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using EnemyStruct;
+
 [CreateAssetMenu(fileName = "TestStage",menuName = "Stage/TestStage",order=1)]
 public class TestStage : Stage
 {
@@ -9,21 +10,58 @@ public class TestStage : Stage
     public override IEnumerator StageScript(StageArgs args)
     {
         yield return new WaitForSeconds(1f);
-        int enemy1a = args.EnemyManager.CreateNewEnemy("enemy1", -1, new Vector2(-6, 5),
-            WaypointPathCreator.GeneratePathFromExpression(new Vector2(-6, 5), 20, "-x", 0));
-        int enemy1b = args.EnemyManager.CreateNewEnemy("enemy1", -1, new Vector2(6, 5),
-            WaypointPathCreator.GeneratePathFromExpression(new Vector2(6, 5), 20, "-x", -90));
-        for (int i = 0; i < 3; i++)
+
+        List<Vector2> enemy1aVectors = new List<Vector2>()
+        {
+            new Vector2(-6, 5), new Vector2(7, -2), new Vector2(-6, -1), new Vector2(2, -3)
+        };
+        List<Vector2> enemy1bVectors = new List<Vector2>();
+        foreach (Vector2 v in enemy1aVectors)
+        {
+            v.Set(v.x - 0.5f, v.y - 0.5f);
+            enemy1bVectors.Add(v);
+        }
+
+        List<Vector2> enemy1cVectors = new List<Vector2>();
+        foreach (Vector2 v in enemy1aVectors)
+        {
+            v.Set(v.x * -1, v.y);
+            enemy1cVectors.Add(v);
+        }
+
+        List<Vector2> enemy1dVectors = new List<Vector2>();
+        foreach (Vector2 v in enemy1cVectors)
+        {
+            v.Set(v.x + 0.5f, v.y - 0.5f);
+            enemy1dVectors.Add(v);
+        }
+
+        int enemy1a = args.EnemyManager.CreateNewEnemy("enemy1", -1, enemy1aVectors[0],
+            WaypointPathCreator.GeneratePathFromCurve(enemy1aVectors[0], enemy1aVectors[1],
+            enemy1aVectors[2], enemy1aVectors[3]));
+        int enemy1b = args.EnemyManager.CreateNewEnemy("enemy1", -1, enemy1bVectors[0],
+            WaypointPathCreator.GeneratePathFromCurve(enemy1bVectors[0], enemy1bVectors[1],
+            enemy1bVectors[2], enemy1bVectors[3]));
+        int enemy1c = args.EnemyManager.CreateNewEnemy("enemy1", -1, enemy1cVectors[0],
+            WaypointPathCreator.GeneratePathFromCurve(enemy1cVectors[0], enemy1cVectors[1],
+            enemy1cVectors[2], enemy1cVectors[3]));
+        int enemy1d = args.EnemyManager.CreateNewEnemy("enemy1", -1, enemy1dVectors[0],
+            WaypointPathCreator.GeneratePathFromCurve(enemy1dVectors[0], enemy1dVectors[1],
+            enemy1dVectors[2], enemy1dVectors[3]));
+
+        for (int i = 0; i < 8; i++)
         {
             _enemyIDs.Add(args.EnemyManager.SpawnNewEnemy(enemy1a));
+            _enemyIDs.Add(args.EnemyManager.SpawnNewEnemy(enemy1c));
 
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.2f);
 
             _enemyIDs.Add(args.EnemyManager.SpawnNewEnemy(enemy1b));
+            _enemyIDs.Add(args.EnemyManager.SpawnNewEnemy(enemy1d));
 
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.2f);
         }
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(5f);
 
         int enemy2a, enemy2b;
         for (int i = 4; i >= 0; i -= 2)

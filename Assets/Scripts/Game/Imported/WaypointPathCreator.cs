@@ -52,7 +52,7 @@ public static class WaypointPathCreator
     /// <param name="endControl">Control point of the end position</param>
     /// <param name="numberOfPoints">Number of waypoints in the path</param>
     /// <returns>Waypoints of the path</returns>
-    public static List<Vector2> GeneratePathFromCurve(Vector2 startPos, Vector2 endPos, Vector2 startControl, Vector2 endControl, ushort numberOfPoints = 10)
+    public static List<Vector2> GeneratePathFromCurve(Vector2 startPos, Vector2 endPos, Vector2 startControl, Vector2 endControl, ushort numberOfPoints = 40)
     {
         if (numberOfPoints <= 0)
         {
@@ -61,10 +61,10 @@ public static class WaypointPathCreator
         }
 
         List<Vector2> waypoints = new List<Vector2>();
-        float step = 1f / numberOfPoints;
-        for (float t = step; t <= 1f; t += step)
+        int step = 100 / numberOfPoints;
+        for (int t = step; t <= 100; t += step)
         {
-            waypoints.Add(Bezier.CubicCurve(startPos, startControl, endControl, endPos, t));
+            waypoints.Add(Bezier.CubicCurve(startPos, startControl, endControl, endPos, (float)t / 100 ));
         }
 
         return waypoints;
