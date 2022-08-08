@@ -31,15 +31,6 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
-                },
-                {
-                    "name": "Restart",
-                    "type": "Button",
-                    "id": "ea47f4b7-a501-4d67-a7d3-0f2c9e522616",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -130,10 +121,27 @@
                     "action": "Focus",
                     "isComposite": false,
                     "isPartOfComposite": false
-                },
+                }
+            ]
+        },
+        {
+            "name": "Pause Menu",
+            "id": "d9776039-744c-4b69-afaf-a64024c4d8fc",
+            "actions": [
+                {
+                    "name": "Restart",
+                    "type": "Button",
+                    "id": "54e5b923-7161-40f4-b5fe-247e5e9f8987",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
                 {
                     "name": "",
-                    "id": "fae516f0-ad8c-4d09-93b1-1a72a188ab30",
+                    "id": "2163e15e-152b-4655-831e-89760f31d3a9",
                     "path": "<Keyboard>/escape",
                     "interactions": "",
                     "processors": "",

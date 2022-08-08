@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.EventSystems;
+using DanmakU;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(AudioSource))]
 public class Player : MonoBehaviour, IMoveable
@@ -12,15 +13,32 @@ public class Player : MonoBehaviour, IMoveable
     public AudioClip HitSound;
     public AudioClip ShootSound;
     
-    private static AudioClip hitSound;
     public static AudioClip shootSound;
 
-    [HideInInspector] public Rigidbody2D Rigidbody2D { get; set; }
+    public Rigidbody2D Rigidbody2D { get; set; }
+
+    public PlayerInputController playerInputController;
+
+    public Animator animator;
 
     public static AudioSource _AudioSource;
 
+    public PlayerSprite playerSprite;
+
+    private new PlayerDanmakuCollider collider;
+
     private static int lives = 3;
     private static uint score = 0;
+    private bool isDeathResetPosition;
+
+    void Start()
+    {
+        Rigidbody2D = GetComponent<Rigidbody2D>();
+        _AudioSource = GetComponent<AudioSource>();
+        collider = GetComponentInChildren<PlayerDanmakuCollider>();
+        shootSound = ShootSound;
+        isDeathResetPosition = false;
+    }
 
     public static int Lives
     {
@@ -60,19 +78,34 @@ public class Player : MonoBehaviour, IMoveable
         Rigidbody2D.velocity = new Vector2(input.x, input.y) * Speed;
     }
 
-    public static void OnHit()
+    public IEnumerator OnHit()
     {
+        collider.IsInvincible = true;
+        playerInputController.DisableMap("Gameplay");
         Lives -= 1;
-        if(hitSound)
-            _AudioSource.PlayOneShot(hitSound);
-        // Future hit functionality
+        if(HitSound)
+            _AudioSource.PlayOneShot(HitSound);
+        playerSprite.ColorPlayerSprite(default, 2);
+        animator.SetTrigger("Death");
+        transform.localScale = new Vector3(2, 2, 2);
+        yield return new WaitUntil(() => isDeathResetPosition); //WaitForSeconds(1.5f);
+
+        transform.localScale = Vector3.one;
+        transform.position = new Vector2(0, -4);
+        playerInputController.EnableMap("Gameplay");
+        isDeathResetPosition = false;
+        Color normalColor = new Color(1, 1, 1);
+        playerSprite.ColorPlayerSprite(normalColor, 2);
+        for (int i = 0; i < 10; i++)
+        {
+            yield return new WaitForSeconds(0.1f);
+            playerSprite.ColorPlayerSprite();
+            yield return new WaitForSeconds(0.1f);
+            playerSprite.ColorPlayerSprite(normalColor);
+        }
+
+        collider.IsInvincible = false;
     }
 
-    void Start()
-    {
-        Rigidbody2D = GetComponent<Rigidbody2D>();
-        _AudioSource = GetComponent<AudioSource>();
-        hitSound = HitSound;
-        shootSound = ShootSound;
-    }
+    public void DeathResetPosition() => isDeathResetPosition = true;
 }

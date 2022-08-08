@@ -6,13 +6,21 @@ using UnityEngine;
 public class PlayerDanmakuCollider : DanmakuCollider
 {
     public DanmakuCollider Collider;
-    private IShootable _playerEmitter;
+    public bool IsInvincible = false;
+    public Player player;
 
+    private IShootable _playerEmitter;
     private PlayerDanmakuEmitter playerEmitter;
 
     private void Start()
     {
         playerEmitter = GetComponentInChildren<PlayerDanmakuEmitter>();
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (!IsInvincible)
+            StartCoroutine(player.OnHit());
     }
 
     /// <summary>
@@ -47,8 +55,8 @@ public class PlayerDanmakuCollider : DanmakuCollider
             
         }
 
-        if (hit)
-            Player.OnHit();
+        if (hit && !IsInvincible)
+            StartCoroutine(player.OnHit());
     }
 
     /// <summary>

@@ -13,6 +13,9 @@ public class PlayerInputController : MonoBehaviour
     [HideInInspector]
     public float FocusMultiplier = 1f;
 
+    public PlayerInput input;
+    public Animator animator;
+        
     private IMoveable _player;
     private PlayerDanmakuEmitter _playerEmitter;
 
@@ -21,6 +24,7 @@ public class PlayerInputController : MonoBehaviour
     {
         _player = GetComponent<IMoveable>();
         _playerEmitter = GetComponentInChildren<PlayerDanmakuEmitter>();
+        EnableMap("Pause Menu");
     }
 
     public void Move(InputAction.CallbackContext context)
@@ -50,8 +54,16 @@ public class PlayerInputController : MonoBehaviour
         else _playerEmitter.CanShoot = true;
     }
 
+    public void Update()
+    {
+        animator.SetFloat("X speed", MoveVal.x);
+    }
+
     public void Restart(InputAction.CallbackContext context)
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
+
+    public void DisableMap(string mapName) => input.actions.FindActionMap(mapName).Disable();
+    public void EnableMap(string mapName) => input.actions.FindActionMap(mapName).Enable();
 }
