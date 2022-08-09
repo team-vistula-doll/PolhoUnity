@@ -39,6 +39,14 @@ public class Soundtrack : MonoBehaviour
         audioSource.loop = looped;
         audioSource.clip = clip;
         audioSource.volume = volume;
-        audioSource.Play();
+
+        if(PauseMenu.GameIsPaused)
+        {
+            audioSource.Stop();
+        }
+        else
+        {
+            audioSource.Play();
+        }
     }
 }
