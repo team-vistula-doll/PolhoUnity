@@ -11,8 +11,9 @@ public class Soundtrack : MonoBehaviour
     [Range(0f, 1f)] public float Volume;
     
     private static AudioSource audioSource;
+    private bool WasPaused = false;
 
-    private void Start()
+    public void Start()
     {
         audioSource = GetComponent<AudioSource>();
         if (RunOnStartup)
@@ -24,6 +25,22 @@ public class Soundtrack : MonoBehaviour
         }
     }
 
+    public void Update() {
+        if(PauseMenu.GameIsPaused)
+        {
+            Pause();
+            WasPaused=true;
+        }
+        else
+        {
+            if(WasPaused)
+            {
+                audioSource.Play();
+                WasPaused=false;
+            } 
+        }      
+    }
+    
     public static void ChangeVolume(float volume)
     {
         audioSource.volume = volume;
@@ -39,14 +56,6 @@ public class Soundtrack : MonoBehaviour
         audioSource.loop = looped;
         audioSource.clip = clip;
         audioSource.volume = volume;
-
-        if(PauseMenu.GameIsPaused)
-        {
-            audioSource.Stop();
-        }
-        else
-        {
-            audioSource.Play();
-        }
+        audioSource.Play();
     }
 }
