@@ -11,7 +11,8 @@
                     "id": "59787297-b255-4e09-8e75-52f05cde3a7e",
                     "expectedControlType": "",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": true
                 },
                 {
                     "name": "Shoot",
@@ -19,7 +20,8 @@
                     "id": "8db250e3-347c-45db-ae75-5088fbde594f",
                     "expectedControlType": "",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": true
                 },
                 {
                     "name": "Focus",
@@ -27,15 +29,17 @@
                     "id": "9533d3eb-f233-4854-9eaa-38e8b08a76fb",
                     "expectedControlType": "",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": true
                 },
                 {
-                    "name": "Restart",
-                    "type": "Button",
-                    "id": "ea47f4b7-a501-4d67-a7d3-0f2c9e522616",
+                    "name": "Menu",
+                    "type": "Value",
+                    "id": "51967c54-7491-4476-803a-bd5bfe79a229",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -118,12 +122,12 @@
                 },
                 {
                     "name": "",
-                    "id": "fae516f0-ad8c-4d09-93b1-1a72a188ab30",
+                    "id": "8060792d-e3fb-426a-958d-1f761509f609",
                     "path": "<Keyboard>/escape",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard & Mouse",
-                    "action": "Restart",
+                    "action": "Menu",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

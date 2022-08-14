@@ -49,9 +49,10 @@ public class PlayerInputController : MonoBehaviour
         }
         else _playerEmitter.CanShoot = true;
     }
+    //pozostałości po resecie gry pod escapem
 
-    public void Restart(InputAction.CallbackContext context)
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
+    //public void Restart(InputAction.CallbackContext context)
+    //{
+    //     SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    //}
 }
