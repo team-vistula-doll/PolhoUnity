@@ -3,12 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class PauseMenu : MonoBehaviour
 {
     public static bool GameIsPaused=false;
-
     public GameObject PauseMenuUI;
+    Button FirstButton;
+
+    void Start()
+    {
+        FirstButton=transform.GetChild(0).GetChild(0).GetComponent<Button>();
+        FirstButton.Select();
+    }
+    
 
     public void Resume(){
         PauseMenuUI.SetActive(false);
