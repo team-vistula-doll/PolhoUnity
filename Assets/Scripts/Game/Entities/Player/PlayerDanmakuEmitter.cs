@@ -23,8 +23,8 @@ public class PlayerDanmakuEmitter : DanmakuBehaviour, IShootable
     public IFireable Fireable { get; set; }
     public DanmakuConfig Config
     {
-        get { return config; }
-        set { config = value; }
+        get => config;
+        set => config = value;
     }
 
     DanmakuConfig config;
