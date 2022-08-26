@@ -130,7 +130,8 @@ public class DanmakuCollider : MonoBehaviour {
     }
   }
 
-  internal static void FlushAll() {
+  internal static void FlushAll()
+  {
     foreach (var collider in Colliders) {
       collider.Flush();
     }

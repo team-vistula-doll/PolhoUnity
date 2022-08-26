@@ -45,7 +45,6 @@ public class EnemyDanmakuCollider : DanmakuCollider
                 hit = true;
                 collision.Danmaku.Destroy();
             }
-
         }
 
         if (hit)
