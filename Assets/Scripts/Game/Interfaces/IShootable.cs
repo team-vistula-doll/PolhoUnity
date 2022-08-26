@@ -5,6 +5,6 @@ using DanmakU;
 
 public interface IShootable
 {
-    public float Timer { get; set; }
-    public DanmakuSet Set { get; set; }
+    float Timer { get; set; }
+    DanmakuSet Set { get; set; }
 }

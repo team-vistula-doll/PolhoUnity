@@ -4,6 +4,6 @@ using UnityEngine;
 
 public interface IMoveable
 {
-    public Rigidbody2D Rigidbody2D{ get; set; }
-    public void Move(Vector2 input);
+    Rigidbody2D Rigidbody2D{ get; set; }
+    void Move(Vector2 input);
 }

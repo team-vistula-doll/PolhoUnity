@@ -47,7 +47,7 @@ public class WaypointWalker : MonoBehaviour
 
     public void FixedUpdate()
     {
-        if(move != null) move();
+        move?.Invoke();
     }
 
     public void Move()
@@ -97,7 +97,5 @@ public class WaypointWalker : MonoBehaviour
                 Gizmos.DrawSphere(point, 0.05f);
             }
         }
-
     }
-
 }

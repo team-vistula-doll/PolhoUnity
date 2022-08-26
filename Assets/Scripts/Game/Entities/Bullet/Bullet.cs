@@ -8,11 +8,6 @@ public class Bullet : MonoBehaviour
 
     public void Update()
     {
-        Move();
-    }
-    
-    public virtual void Move()
-    {
         transform.position += transform.up * Speed * Time.deltaTime;
     }
 }

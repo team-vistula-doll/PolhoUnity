@@ -7,9 +7,7 @@ using UnityEngine;
 [AddComponentMenu("DanmakU/PDanmaku Emitter")]
 public class PlayerDanmakuEmitter : DanmakuBehaviour, IShootable
 {
-
     public DanmakuPrefab DanmakuType;
-
     public Range Speed = 15f;
     public Range AngularSpeed;
     public Color Color = Color.white;
@@ -18,19 +16,16 @@ public class PlayerDanmakuEmitter : DanmakuBehaviour, IShootable
     public Line Line;
 
     public DanmakuSet Set { get; set; }
-
     public float Timer { get; set; }
     public bool CanShoot { get; set; } = false;
 
-    DanmakuConfig config;
-    IFireable fireable;
-
-    /// <summary>
-    /// Start is called on the frame when a script is enabled just before
-    /// any of the Update methods is called the first time.
-    /// </summary>
+    private DanmakuConfig config;
+    private IFireable fireable;
+    private Player player;
+        
     void Start()
     {
+        player = GameObject.FindWithTag("Player").GetComponent<Player>();
         if (DanmakuType == null)
         {
             Debug.LogWarning($"Emitter doesn't have a valid DanmakuPrefab", this);
@@ -40,10 +35,7 @@ public class PlayerDanmakuEmitter : DanmakuBehaviour, IShootable
         Set.AddModifiers(GetComponents<IDanmakuModifier>());
         fireable = Arc.Of(Line).Of(Set);
     }
-
-    /// <summary>
-    /// Update is called every frame, if the MonoBehaviour is enabled.
-    /// </summary>
+    
     void Update()
     {
         if (fireable == null) return;
@@ -59,8 +51,7 @@ public class PlayerDanmakuEmitter : DanmakuBehaviour, IShootable
                 Color = Color
             };
             fireable.Fire(config);
-            if(Player.shootSound)
-                Player._AudioSource.PlayOneShot(Player.shootSound);
+            player.PlayShootSound();
             Timer = 1f / FireRate.GetValue();
         }
     }

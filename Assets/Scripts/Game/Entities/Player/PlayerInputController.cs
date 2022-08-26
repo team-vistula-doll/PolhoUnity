@@ -4,8 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
-[RequireComponent(typeof(IMoveable))]
-[RequireComponent(typeof(IShootable))]
+[RequireComponent(typeof(IMoveable), typeof(IShootable))]
 public class PlayerInputController : MonoBehaviour
 {
     [HideInInspector]

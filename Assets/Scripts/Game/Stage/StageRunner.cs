@@ -10,5 +10,4 @@ public class StageRunner : MonoBehaviour
     {
         StartCoroutine(StageToRun.StageScript(new StageArgs() {EnemyManager = GetComponent<EnemyManager>()}));
     }
-
 }

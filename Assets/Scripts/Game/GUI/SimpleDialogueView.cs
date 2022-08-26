@@ -9,11 +9,11 @@ public class SimpleDialogueView : LineView
 {
     public UnityEvent OnDialogueStarted;
     public UnityEvent OnDialogueCompleted;
+    
     public override void DialogueStarted()
     {
         base.DialogueStarted();
         OnDialogueStarted?.Invoke();
-
     }
 
     public override void DialogueComplete()

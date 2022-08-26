@@ -6,9 +6,7 @@ using UnityEngine;
 
 public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
 {
-
     public DanmakuPrefab DanmakuType;
-
     public Range Speed = 5f;
     public Range AngularSpeed;
     public Color Color = Color.white;
@@ -22,11 +20,7 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
     float timer;
     DanmakuConfig config;
     IFireable fireable;
-
-    /// <summary>
-    /// Start is called on the frame when a script is enabled just before
-    /// any of the Update methods is called the first time.
-    /// </summary>
+    
     void Start()
     {
         if (DanmakuType == null)
@@ -38,10 +32,7 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
         Set.AddModifiers(GetComponents<IDanmakuModifier>());
         fireable = Arc.Of(Line).Of(Set);
     }
-
-    /// <summary>
-    /// Update is called every frame, if the MonoBehaviour is enabled.
-    /// </summary>
+    
     void Update()
     {
         if (fireable == null) return;
@@ -60,6 +51,5 @@ public class EnemyDanmakuEmitter : DanmakuBehaviour, IShootable
             Timer = 1f / FireRate.GetValue();
         }
     }
-
 }
 

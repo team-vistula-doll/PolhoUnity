@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(AudioSource))]
-public class SimpleEnemy : MonoBehaviour, IMoveable, IHitable
+public class SimpleEnemy : MonoBehaviour, IEntity
 {
     public float Speed;
     public int HealthPoints = 1;
@@ -11,9 +11,10 @@ public class SimpleEnemy : MonoBehaviour, IMoveable, IHitable
     public AudioClip HitSound;
     public AudioClip DeathSound;
 
-    [HideInInspector] public Rigidbody2D Rigidbody2D { get; set; }
-    
-    private AudioSource audioSource { get; set; }
+    public Rigidbody2D Rigidbody2D { get; set; }
+
+    private Player player;
+    private AudioSource audioSource;
 
     public void Move(Vector2 input)
     {
@@ -23,23 +24,18 @@ public class SimpleEnemy : MonoBehaviour, IMoveable, IHitable
         Rigidbody2D.velocity = input * Speed * Time.deltaTime;
     }
     
-    void Start()
+    private void Start()
     {
+        player = GameObject.FindWithTag("Player").GetComponent<Player>();
         Rigidbody2D = GetComponent<Rigidbody2D>();
         audioSource = GetComponent<AudioSource>();
-    }
-    
-    void Update()
-    {
     }
 
     public void OnHit()
     {
-        // Future hit functionality
         if (--HealthPoints <= 0) OnDeath();
         else
         {
-            Debug.Log("Enemy hit");
             if(HitSound)
                 audioSource.PlayOneShot(HitSound);
         }
@@ -47,9 +43,7 @@ public class SimpleEnemy : MonoBehaviour, IMoveable, IHitable
 
     public void OnDeath()
     {
-        // Future death functionality
-        Debug.Log("Enemy killed!");
-        Player.Score += ScoreValue;
+        player.Score += ScoreValue;
         if(DeathSound)
             AudioSource.PlayClipAtPoint(DeathSound, Camera.main.transform.position);
         gameObject.SetActive(false);
