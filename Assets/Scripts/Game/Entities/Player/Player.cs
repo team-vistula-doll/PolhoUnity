@@ -6,7 +6,7 @@ using TMPro;
 using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(AudioSource))]
-public class Player : MonoBehaviour, IMoveable
+public class Player : MonoBehaviour, IEntity
 {
     public float Speed;
     public AudioClip HitSound;
@@ -59,6 +59,11 @@ public class Player : MonoBehaviour, IMoveable
         
         if(hitSound)
             audioSource.PlayOneShot(hitSound);
+    }
+
+    public void OnDeath()
+    {
+        // TODO: Death
     }
 
     public void PlayShootSound()

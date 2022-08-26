@@ -9,7 +9,7 @@ public class Map : MonoBehaviour
     public Texture MapTexture;
     public float Speed = 0.1f;
     
-    public static bool Paused { get; set; } = false;
+    public static bool Paused { get; set; }
 
     private Material mapMaterial;
 

@@ -46,6 +46,6 @@ public class SimpleEnemy : MonoBehaviour, IEntity
         player.Score += ScoreValue;
         if(DeathSound)
             AudioSource.PlayClipAtPoint(DeathSound, Camera.main.transform.position);
-        gameObject.SetActive(false);
+        DelayedActions.AddDelayedAction(delegate { gameObject.SetActive(false); });
     }
 }

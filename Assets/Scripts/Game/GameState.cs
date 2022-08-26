@@ -10,6 +10,7 @@ public enum eGameState
     PAUSED,
     DIALOGUE
 }
+
 public static class GameState
 {
     public static int Difficulty { get; set; }
