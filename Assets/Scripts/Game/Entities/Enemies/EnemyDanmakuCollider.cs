@@ -33,10 +33,11 @@ public class EnemyDanmakuCollider : DanmakuCollider
     {
         bool hit = false;
 
-        var toDestroy = from col in collisions
-            where col.Danmaku.Pool != _enemyEmitter.Set.Pool
-            select col;
-        toDestroy.ToList().ForEach(c => { hit = true; c.Danmaku.Destroy(); });
+        foreach (var col in collisions.Where(c => c.Danmaku.Pool != _enemyEmitter.Set.Pool))
+        {
+            hit = true;
+            col.Danmaku.Destroy();
+        }
 
         if (hit)
             _enemy.OnHit();
