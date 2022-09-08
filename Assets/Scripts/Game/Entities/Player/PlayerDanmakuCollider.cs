@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using DanmakU;
 using UnityEngine;
 
@@ -8,25 +9,20 @@ public class PlayerDanmakuCollider : DanmakuCollider
     public DanmakuCollider Collider;
 
     private PlayerDanmakuEmitter playerEmitter;
+    private Player player;
 
     private void Start()
     {
+        player = GameObject.FindWithTag("Player").GetComponent<Player>();
         playerEmitter = GetComponentInChildren<PlayerDanmakuEmitter>();
     }
-
-    /// <summary>
-    /// This function is called when the object becomes enabled and active.
-    /// </summary>
+    
     void OnEnable()
     {
-        if (Collider == null) return;
-        Debug.Log("Subscribed");
-        Collider.OnDanmakuCollision += OnDanmakuCollision;
+        if (Collider != null)
+            Collider.OnDanmakuCollision += OnDanmakuCollision;
     }
     
-    /// <summary>
-    /// This function is called when the behaviour becomes disabled or inactive.
-    /// </summary>
     void OnDisable()
     {
         if (Collider != null)
@@ -36,24 +32,17 @@ public class PlayerDanmakuCollider : DanmakuCollider
     new void OnDanmakuCollision(DanmakuCollisionList collisions)
     {
         bool hit = false;
-        foreach (var collision in collisions)
+        
+        foreach (var collision in collisions.Where(collision => collision.Danmaku.Pool != playerEmitter.Set.Pool))
         {
-            if(collision.Danmaku.Pool != playerEmitter.Set.Pool) //Ignore player emitter
-            {
-                hit = true;
-                collision.Danmaku.Destroy();
-            }
-            
+            hit = true;
+            collision.Danmaku.Destroy();
         }
 
         if (hit)
-            Player.OnHit();
+            player.OnHit();
     }
-
-    /// <summary>
-    /// Reset is called when the user hits the Reset button in the Inspector's
-    /// context menu or when adding the component the first time.
-    /// </summary>
+    
     void Reset()
     {
         Collider = GetComponent<DanmakuCollider>();

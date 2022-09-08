@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class EnemyKillZone : MonoBehaviour
 {
-    public void OnTriggerExit2D(Collider2D collider)
+    public void OnTriggerExit2D(Collider2D col)
     {
-        if(collider.gameObject.transform.parent.gameObject.tag != "Player")
-            collider.gameObject.transform.parent.gameObject.SetActive(false);
+        var parent = col.transform.parent;
+        if(!parent.CompareTag("Player"))
+            parent.gameObject.SetActive(false);
     }
 }

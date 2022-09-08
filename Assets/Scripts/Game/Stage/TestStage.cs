@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using DanmakU;
 using UnityEngine;
-[CreateAssetMenu(fileName = "TestStage",menuName = "Stage/TestStage",order=1)]
+
+[CreateAssetMenu(fileName = "TestStage", menuName = "Stage/TestStage", order=1)]
 public class TestStage : Stage
 {
     public GameObject enemy1;

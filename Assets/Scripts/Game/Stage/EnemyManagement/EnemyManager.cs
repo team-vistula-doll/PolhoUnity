@@ -9,7 +9,7 @@ public class EnemyManager : MonoBehaviour
 {
     private List<GameObject> _enemies;
     private EnemyBank _enemyBank;
-    // Start is called before the first frame update
+    
     void Start()
     {
         _enemies = new List<GameObject>();
@@ -18,7 +18,7 @@ public class EnemyManager : MonoBehaviour
 
     public void SpawnEnemy(string enemyName, List<Vector2> path)
     {
-        GameObject enemy = Instantiate(_enemyBank.EnemyEntries[new Tuple<string, int>(enemyName, GameStateManager.Instance.Difficulty)], path[0], Quaternion.identity, transform);
+        GameObject enemy = Instantiate(_enemyBank.EnemyEntries[new Tuple<string, int>(enemyName, GameState.Difficulty)], path[0], Quaternion.identity, transform);
         enemy.GetComponent<WaypointWalker>().SetWaypointPath(path);
         _enemies.Add(enemy);
     }
@@ -30,10 +30,7 @@ public class EnemyManager : MonoBehaviour
 
     public void Clear()
     {
-        foreach (var enemy in _enemies)
-        {
-            Destroy(enemy);
-        }
+        _enemies.ForEach(Destroy);
         _enemies.Clear();
     }
 }

@@ -68,7 +68,7 @@ public class StageEnemyParser
             {
                 badLines.Add(currentLineNumber);
                 continue;
-        }
+            }
 
             string name = match.Groups[2].Value;
 
@@ -78,7 +78,7 @@ public class StageEnemyParser
                 continue;
             }
             currentLineNumber++;
-            }
+        }
         return badLines;
     }
 }

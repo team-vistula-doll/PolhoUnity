@@ -3,38 +3,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum GameState
+public enum eGameState
 {
     RUNNING,
     DEAD,
     PAUSED,
     DIALOGUE
 }
-public class GameStateManager
-{
-    public int Difficulty { get; set; }
-    
-    public static event Action<GameState> GameStateChanged;
-    private static GameStateManager instance = null;
-    private static GameState _currentState;
 
-    public static GameState gameState
+public static class GameState
+{
+    public static int Difficulty { get; set; }
+    public static event Action<eGameState> OnGameStateChange;
+
+    private static eGameState _state;
+    
+    public static eGameState State
     {
-        get => _currentState;
+        get => _state;
         set
         {
-            _currentState = value;
-            GameStateChanged?.Invoke(_currentState);
-        }
-    }
-
-    public static GameStateManager Instance
-    {
-        get
-        {
-            if (instance == null)
-                instance = new GameStateManager();
-            return instance;
+            _state = value;
+            OnGameStateChange?.Invoke(_state);
         }
     }
 }

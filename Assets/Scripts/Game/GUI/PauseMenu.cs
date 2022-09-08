@@ -6,20 +6,20 @@ using UnityEngine.InputSystem;
 
 public class PauseMenu : MonoBehaviour
 {
-    public static bool GameIsPaused=false;
-
     public GameObject PauseMenuUI;
 
-    public void Resume(){
+    public void Resume()
+    {
         PauseMenuUI.SetActive(false);
-        Time.timeScale=1f;
-        GameIsPaused=false;
+        Time.timeScale = 1f;
+        GameState.State = eGameState.RUNNING;
     }
 
-    public void Pause(){
+    public void Pause()
+    {
         PauseMenuUI.SetActive(true);
-        Time.timeScale=0f;
-        GameIsPaused=true;
+        Time.timeScale = 0f;
+        GameState.State = eGameState.PAUSED;
     }
 
     public void LoadMenu()
@@ -35,12 +35,9 @@ public class PauseMenu : MonoBehaviour
 
     public void OpenClosePauseMenu(InputAction.CallbackContext context)
     {
-        if(GameIsPaused){
+        if(GameState.State == eGameState.PAUSED)
             Resume();
-        }
         else
-        {
             Pause();
-        }
     }
 }

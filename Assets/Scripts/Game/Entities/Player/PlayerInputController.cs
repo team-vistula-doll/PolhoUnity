@@ -4,55 +4,43 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
-[RequireComponent(typeof(IMoveable))]
-[RequireComponent(typeof(IShootable))]
+[RequireComponent(typeof(IEntity), typeof(IShootable))]
 public class PlayerInputController : MonoBehaviour
 {
-    [HideInInspector]
-    public Vector2 MoveVal;
-    [HideInInspector]
-    public float FocusMultiplier = 1f;
+    public Vector2 MoveVal { get; set; }
+    public float FocusMultiplier { get; set; } = 1f;
 
-    private IMoveable _player;
-    private PlayerDanmakuEmitter _playerEmitter;
-
-    // Start is called before the first frame update
+    private IEntity player;
+    private PlayerDanmakuEmitter playerEmitter;
+    
     void Start()
     {
-        _player = GetComponent<IMoveable>();
-        _playerEmitter = GetComponentInChildren<PlayerDanmakuEmitter>();
+        player = GetComponent<IEntity>();
+        playerEmitter = GetComponentInChildren<PlayerDanmakuEmitter>();
     }
 
     public void Move(InputAction.CallbackContext context)
     {
         MoveVal = context.ReadValue<Vector2>();
-        _player.Move(new Vector2(MoveVal.x * FocusMultiplier, MoveVal.y * FocusMultiplier));
+        player.Move(new Vector2(MoveVal.x * FocusMultiplier, MoveVal.y * FocusMultiplier));
     }
 
     public void Focus(InputAction.CallbackContext context)
     {
-        if (context.canceled) FocusMultiplier = 1f;
-        else FocusMultiplier = 0.5f;
-
-        _player.Move(new Vector2(MoveVal.x * FocusMultiplier, MoveVal.y * FocusMultiplier));
+        FocusMultiplier = context.canceled ? 1f : 0.5f;
+        player.Move(new Vector2(MoveVal.x * FocusMultiplier, MoveVal.y * FocusMultiplier));
     }
 
     public void Shoot(InputAction.CallbackContext context)
     {
-        if (context.canceled) //if button released
+        if (context.canceled) // If button released
         {
-            _playerEmitter.CanShoot = false;
+            playerEmitter.CanShoot = false;
             
-            //This lets the player fire twice as fast if they spam the button
-            if(_playerEmitter.Timer > 0.5f/_playerEmitter.FireRate.GetValue())
-                _playerEmitter.Timer = 0.5f / _playerEmitter.FireRate.GetValue();
+            // This lets the player fire twice as fast if they spam the button
+            if (playerEmitter.Timer > 0.5f/playerEmitter.FireRate.GetValue())
+                playerEmitter.Timer = 0.5f / playerEmitter.FireRate.GetValue();
         }
-        else _playerEmitter.CanShoot = true;
+        else playerEmitter.CanShoot = true;
     }
-    //pozostałości po resecie gry pod escapem
-
-    //public void Restart(InputAction.CallbackContext context)
-    //{
-    //     SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    //}
 }

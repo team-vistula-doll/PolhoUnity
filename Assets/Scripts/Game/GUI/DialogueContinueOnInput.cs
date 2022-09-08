@@ -12,8 +12,7 @@ public class DialogueContinueOnInput : MonoBehaviour
     private DialogueRunner _dialogueRunner;
     private DialogueUI _dialogueUI;
     private LineView _dialogueLineView;
-
-    // Start is called before the first frame update
+    
     void Start()
     {
         _dialogueRunner = GetComponent<DialogueRunner>();
@@ -26,7 +25,6 @@ public class DialogueContinueOnInput : MonoBehaviour
         if(timeWaited < timeToWait)
             timeWaited += Time.unscaledDeltaTime;
     }
-
 
     public void ResetCooldown()
     {
@@ -46,8 +44,6 @@ public class DialogueContinueOnInput : MonoBehaviour
             if (e.type == EventType.KeyUp)
             {
                 _dialogueLineView.ReadyForNextLine();
-                //_dialogueUI.MarkLineComplete();
-                //_dialogueRunner.Dialogue.Continue();
                 ResetCooldown();
             }
         }

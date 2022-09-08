@@ -12,18 +12,14 @@ public struct EnemyEntry
 }
 public class EnemyBank : MonoBehaviour
 {
+    public Dictionary<Tuple<string, int>, GameObject> EnemyEntries;
+    
     [SerializeField]
     private List<EnemyEntry> DefinedEnemies;
-
-    public Dictionary<Tuple<string, int>, GameObject> EnemyEntries;
 
     public void Start()
     {
         EnemyEntries = new Dictionary<Tuple<string, int>, GameObject>();
-        foreach (var enemyEntry in DefinedEnemies)
-        {
-            EnemyEntries.Add(new Tuple<string, int>(enemyEntry.Name, enemyEntry.Difficulty),  enemyEntry.Prefab);
-        }
+        DefinedEnemies.ForEach(e => EnemyEntries.Add(new Tuple<string, int>(e.Name, e.Difficulty), e.Prefab));
     }
-
 }
