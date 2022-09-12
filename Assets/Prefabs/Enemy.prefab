@@ -29,7 +29,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2092912531510788433}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5, y: 5, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -76,7 +76,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 317677523
-  m_SortingLayer: 2
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 95987d6b402edb9439e008181342cff7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -139,9 +139,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cf58339d59065c4d905a95067333b2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _pathFormula: -x
-  _length: 20
-  _angle: -90
+  PathFormula: x
+  Length: 20
+  Angle: 0
+  PathTypeSelection: 1
+  StartControl: {x: 0, y: 0}
+  EndControl: {x: 0, y: 0}
+  EndPos: {x: 0, y: 0}
+  StepSize: 8.1
 --- !u!82 &6367404635937336396
 AudioSource:
   m_ObjectHideFlags: 0
@@ -291,23 +296,6 @@ MonoBehaviour:
     _min: 0
     _max: 0
   Color: {r: 1, g: 1, b: 1, a: 1}
-  Arc:
-    Count:
-      _min: 3
-      _max: 3
-    ArcLength:
-      _min: 1.5707964
-      _max: 1.5707964
-    Radius:
-      _min: 0
-      _max: 0
-  Line:
-    Count:
-      _min: 2
-      _max: 2
-    DeltaSpeed:
-      _min: 0
-      _max: 0
   <FireRate>k__BackingField:
     _min: 1
     _max: 1

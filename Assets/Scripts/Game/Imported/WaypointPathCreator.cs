@@ -17,15 +17,15 @@ public static class WaypointPathCreator
 
         List<Vector2> waypoints = new List<Vector2>();
 
-        angle = Mathf.Deg2Rad*angle;
-        for(int i = 1; i*stepSize<length;i++)
+        angle = Mathf.Deg2Rad * angle;
+        for (int i = 1; i * stepSize < length; i++)
         {
-            exp.Parameters["x"].Value = i*stepSize; //Put x-val to x in expression
+            exp.Parameters["x"].Value = i * stepSize; //Put x-val to x in expression
 
-            Vector2 p = new Vector2(i*stepSize, (float) exp.Value); //point on a graph with origin (0,0)
+            Vector2 p = new Vector2(i * stepSize, (float)exp.Value); //point on a graph with origin (0,0)
             Vector2 rotatedPoint = new Vector2(p.x * Mathf.Cos(angle) - p.y * Mathf.Sin(angle),
                                             p.x * Mathf.Sin(angle) + p.y * Mathf.Cos(angle));
-                                            //Rotate point using rotation matrix
+            //Rotate point using rotation matrix
             waypoints.Add(rotatedPoint + startPos); //Translate rotatedPoint to originate from the startPos
         }
 
@@ -44,56 +44,45 @@ public static class WaypointPathCreator
     }
 
     /// <summary>
-    /// Generates a path from a cubic Bezier curve
+    /// Generates a path from a Bezier curve
     /// </summary>
     /// <param name="startPos">Start position of the curve</param>
     /// <param name="endPos">End position of the curve</param>
-    /// <param name="startControl">Control point of the start position</param>
+    /// <param name="startControl">Control point of the start position/main control point for quadratic curve</param>
     /// <param name="endControl">Control point of the end position</param>
     /// <param name="numberOfPoints">Number of waypoints in the path</param>
     /// <returns>Waypoints of the path</returns>
-    public static List<Vector2> GeneratePathFromCurve(Vector2 startPos, Vector2 endPos, Vector2 startControl, Vector2 endControl, ushort numberOfPoints = 40)
+    public static List<Vector2> GeneratePathFromCurve(Vector2 startPos, Vector2 endPos, Vector2? startControl = null, Vector2? endControl = null, float stepSize = 0.5f)
     {
-        if (numberOfPoints <= 0)
-        {
-            numberOfPoints = 10;
-            Debug.LogWarning("GeneratePathFromCubicCurve: numberOfPoints is 0, defaulting to 10");
-        }
+        if (endPos == Vector2.zero) endPos = Vector2.one;
+        if (stepSize <= 0) stepSize = 0.5f;
+
+        Vector2 startCtrl = startControl ?? Vector2.zero,
+            endCtrl = endControl ?? Vector2.zero;
 
         List<Vector2> waypoints = new List<Vector2>();
-        int step = 100 / numberOfPoints;
-        for (int t = step; t <= 100; t += step)
+        if(startCtrl != Vector2.zero)
         {
-            waypoints.Add(Bezier.CubicCurve(startPos, startControl, endControl, endPos, (float)t / 100 ));
+            if(endCtrl != Vector2.zero)
+            {
+                for (int t = 1; t * stepSize <= 100; t++)
+                {
+                    waypoints.Add(Bezier.CubicCurve(startPos, startCtrl, endCtrl, endPos, t * stepSize / 100));
+                }
+            }
+            else
+            {
+                for (int t = 1; t * stepSize <= 100; t++)
+                {
+                    waypoints.Add(Bezier.QuadraticCurve(startPos, startCtrl, endPos, t * stepSize / 100));
+                }
+            }
+        }
+        else
+        {
+            waypoints.Add(Bezier.Lerp(startPos, endPos, 1));
         }
 
         return waypoints;
     }
-
-    /// <summary>
-    /// Generates a path from a quadratic Bezier curve
-    /// </summary>
-    /// <param name="startPos">Start position of the curve</param>
-    /// <param name="endPos">End position of the curve</param>
-    /// <param name="control">Control point of the curve</param>
-    /// <param name="numberOfPoints">Number of waypoints in the path</param>
-    /// <returns>Waypoints of the path</returns>
-    public static List<Vector2> GeneratePathFromCurve(Vector2 startPos, Vector2 endPos, Vector2 control, ushort numberOfPoints = 10)
-    {
-        if (numberOfPoints <= 0)
-        {
-            numberOfPoints = 10;
-            Debug.LogWarning("GeneratePathFromQuadraticCurve: numberOfPoints is 0, defaulting to 10");
-        }
-
-        List<Vector2> waypoints = new List<Vector2>();
-        float step = 1f / numberOfPoints;
-        for (float t = step; t <= 1f; t += step)
-        {
-            waypoints.Add(Bezier.QuadraticCurve(startPos, control, endPos, t));
-        }
-
-        return waypoints;
-    }
-
 }

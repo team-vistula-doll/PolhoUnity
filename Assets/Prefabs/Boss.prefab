@@ -76,7 +76,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 317677523
-  m_SortingLayer: 2
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 543dd10e059053b458cb12e7b66f2df0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -139,9 +139,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cf58339d59065c4d905a95067333b2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _pathFormula: -x
-  _length: 4
-  _angle: -45
+  PathFormula: x
+  Length: 0
+  Angle: 0
+  StartControl: {x: 0, y: 0}
+  EndControl: {x: 0, y: 0}
+  EndPos: {x: 0, y: 0}
+  StepSize: 0
+  PathTypeSelection: 0
 --- !u!82 &2841952140260978287
 AudioSource:
   m_ObjectHideFlags: 0
@@ -377,23 +382,6 @@ MonoBehaviour:
     _min: 0
     _max: 0
   Color: {r: 1, g: 1, b: 1, a: 1}
-  Arc:
-    Count:
-      _min: 7
-      _max: 7
-    ArcLength:
-      _min: 1.3962634
-      _max: 1.3962634
-    Radius:
-      _min: 0
-      _max: 0
-  Line:
-    Count:
-      _min: 2
-      _max: 2
-    DeltaSpeed:
-      _min: 0
-      _max: 0
   <FireRate>k__BackingField:
     _min: 1
     _max: 1

@@ -14,7 +14,7 @@ public class SimpleEnemy : MonoBehaviour, IMoveable, IHitable
     [HideInInspector]
     public Rigidbody2D Rigidbody2D { get; set; }
 
-    private AudioSource audioSource { get; set; }
+    private AudioSource AudioSource { get; set; }
 
     public void Move(Vector2 input)
     {
@@ -29,14 +29,9 @@ public class SimpleEnemy : MonoBehaviour, IMoveable, IHitable
     void Start()
     {
         Rigidbody2D = GetComponent<Rigidbody2D>();
-        audioSource = GetComponent<AudioSource>();
+        AudioSource = GetComponent<AudioSource>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 
     public void OnHit()
     {
@@ -46,7 +41,7 @@ public class SimpleEnemy : MonoBehaviour, IMoveable, IHitable
         {
             Debug.Log("Enemy hit");
             if (HitSound)
-                audioSource.PlayOneShot(HitSound);
+                AudioSource.PlayOneShot(HitSound);
         }
     }
 

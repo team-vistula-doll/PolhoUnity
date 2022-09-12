@@ -30,17 +30,10 @@ public class EnemyManager : MonoBehaviour
     /// </summary>
     /// <param name="spawnRepeats">optional</param>
     /// <returns>Enemy struct ID</returns>
-    public int CreateNewEnemy (string name, float spawnTime, Vector2 spawnPosition, List<Vector2> path, List<(float delay, int amount)> spawnRepeats = null)
+    public int CreateNewEnemy (Enemy enemy)
     {
-        _enemies.Add(new Enemy
-        {
-            ID = ++_enemyStructIDs,
-            Name = name,
-            SpawnTime = spawnTime,
-            SpawnPosition = spawnPosition,
-            Path = path,
-            SpawnRepeats = spawnRepeats
-        });
+        enemy.ID = ++_enemyStructIDs;
+        _enemies.Add(enemy);
         return _enemyStructIDs;
     }
 
@@ -70,6 +63,8 @@ public class EnemyManager : MonoBehaviour
     {
         id--;
         GameObject enemyObject = Instantiate(_enemyBank.EnemyEntries[_enemies[id].Name], _enemies[id].SpawnPosition, Quaternion.identity, transform);
+        if (_enemies[id].Fireable != null)
+            enemyObject.GetComponentInChildren<EnemyDanmakuEmitter>().Fireable = _enemies[id].Fireable;
         enemyObject.GetComponent<WaypointWalker>().SetWaypointPath(_enemies[id].Path);
 
         _enemyObjects.Add(++_enemyObjectIDs, enemyObject);
