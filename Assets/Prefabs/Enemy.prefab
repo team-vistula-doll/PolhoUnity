@@ -139,14 +139,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cf58339d59065c4d905a95067333b2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PathFormula: x
-  Length: 20
+  PathFormula: x^2
+  Length: 2
   Angle: 0
   PathTypeSelection: 1
   StartControl: {x: 0, y: 0}
   EndControl: {x: 0, y: 0}
   EndPos: {x: 0, y: 0}
-  StepSize: 8.1
+  StepSize: 7
 --- !u!82 &6367404635937336396
 AudioSource:
   m_ObjectHideFlags: 0

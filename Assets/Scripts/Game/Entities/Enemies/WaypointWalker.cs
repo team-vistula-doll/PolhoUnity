@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(SimpleEnemy))]
@@ -16,7 +17,7 @@ public class WaypointWalker : MonoBehaviour
     public float StepSize = 0.5f;
 
     private IMoveable _moveableEntity;
-    private List<Vector2> _path, _tempPath;
+    private List<Vector2> _path = new(), _tempPath = new();
     private Vector2 _nextWaypoint;
     private int _waypoints;
     private int _currentWaypoint;
@@ -27,30 +28,6 @@ public class WaypointWalker : MonoBehaviour
     private bool _isMoving = true;
     private Action move;
 
-    /// <summary>
-    /// Validates and sets the path from a function
-    /// </summary>
-    /// <param name="pathType">0: function, 1: curve</param>
-    /// <param name="isTemp">If true sets the temp path, if false sets the real path</param>
-    public void ValidatePath(int pathType = 0, bool isTemp = true)
-    {
-        _startPosition = transform.position;
-        switch (pathType)
-        {
-            case 1:
-                if (isTemp)
-                    _tempPath = WaypointPathCreator.GeneratePathFromCurve(_startPosition, EndPos, StartControl, EndControl, StepSize);
-                else
-                    SetWaypointPath();
-                break;
-            default:
-                if (isTemp)
-                    _tempPath = WaypointPathCreator.GeneratePathFromExpression(_startPosition, Length, PathFormula, Angle, StepSize);
-                else
-                    SetWaypointPath();
-                break;
-        }
-    }
 
     public void Start()
     {
@@ -60,11 +37,28 @@ public class WaypointWalker : MonoBehaviour
         _tempPath = _path;
     }
 
-    public void SetWaypointPath(List<Vector2> pathToSet = null)
+    /// <summary>
+    /// Validates and sets the path from a function
+    /// </summary>
+    /// <param name="isAdd">If true the path is added to the existing path, if false the path replaces the existing path</param>
+    /// <param name="isTemp">If true sets the temp path, if false sets the real path</param>
+    public void ValidatePath(bool isAdd = false, bool isTemp = true)
     {
-        _path = pathToSet ?? _tempPath;
+        _startPosition = transform.position;
+        if (isTemp)
+            SetTempPath(isAdd: isAdd);
+        else
+            SetWaypointPath(isAdd: isAdd);
+    }
+
+    public void SetWaypointPath(List<Vector2> pathToSet = null, bool isAdd = false)
+    {
+        if (isAdd)
+            _path.AddRange(pathToSet ?? _tempPath);
+        else
+            _path = pathToSet ?? _tempPath;
         if (pathToSet != null) _tempPath = _path;
-        _currentWaypoint = -1;
+        _currentWaypoint = 0;
         _waypoints = _path.Count;
         if (_path.Count != 0)
         {
@@ -72,6 +66,25 @@ public class WaypointWalker : MonoBehaviour
             _isMoving = true;
         }
         move += Move;
+    }
+
+    public void SetTempPath(List<Vector2> pathToSet = null, bool isAdd = false)
+    {
+        if (pathToSet != null)
+            _tempPath = pathToSet;
+        else
+        {
+            Vector2 startPos = (isAdd && _path.Count() != 0) ? _path.Last() : _startPosition;
+            switch (PathTypeSelection)
+            {
+                case 1:
+                    _tempPath = WaypointPathCreator.GeneratePathFromCurve(startPos, EndPos, StartControl, EndControl, StepSize);
+                    break;
+                default:
+                    _tempPath = WaypointPathCreator.GeneratePathFromExpression(startPos, Length, PathFormula, Angle, StepSize);
+                    break;
+            }
+        }
     }
 
     public void FixedUpdate()
@@ -94,16 +107,20 @@ public class WaypointWalker : MonoBehaviour
         }
     }
 
-    public void ChangeNextWaypoint() //changes _nextWaypoint if you are close enough to the next waypoint
+    /// <summary>
+    /// Changes _nextWaypoint if you are close enough to the next waypoint
+    /// </summary>
+    public void ChangeNextWaypoint()
     {
-        if (Vector2.Distance(transform.position, _nextWaypoint) < 0.1f && _currentWaypoint + 1 < _waypoints)
+        if (Vector2.Distance(transform.position, _nextWaypoint) < 0.1f && _currentWaypoint < _waypoints - 1)
         {
-            while (_path.Count > _currentWaypoint + 1 && Vector2.Distance(_nextWaypoint, _path[_currentWaypoint + 1]) < 0.01f)
-                _path.RemoveAt(_currentWaypoint + 1);
-            _nextWaypoint = _path[++_currentWaypoint];
+            while (_path.Count > _currentWaypoint && Vector2.Distance(_nextWaypoint, _path[_currentWaypoint]) < 0.01f)
+                _path.RemoveAt(_currentWaypoint);
+            _nextWaypoint = _path[_currentWaypoint];
             WaypointEvent?.Invoke(this, _currentWaypoint);
+            _currentWaypoint++;
         }
-        else if (_currentWaypoint + 1 >= _waypoints)
+        else if (_currentWaypoint >= _waypoints - 1)
             _isMoving = false;
     }
 

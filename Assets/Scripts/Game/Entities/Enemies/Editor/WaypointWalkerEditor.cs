@@ -4,6 +4,7 @@ using UnityEditor;
 [CustomEditor(typeof(WaypointWalker))]
 public class WaypointWalkerEditor : Editor
 {
+    bool isReplace = false;
     public override void OnInspectorGUI()
     {
         serializedObject.Update();
@@ -43,15 +44,21 @@ public class WaypointWalkerEditor : Editor
         SerializedProperty stepSize = serializedObject.FindProperty("StepSize");
         EditorGUILayout.PropertyField(stepSize);
 
-        if(GUILayout.Button("Set path"))
+        EditorGUILayout.BeginHorizontal();
         {
-            waypointWalker.ValidatePath(pathTypeSelection, false);
+            isReplace = EditorGUILayout.ToggleLeft("Replace", isReplace);
+
+            if (GUILayout.Button("Set path"))
+            {
+                waypointWalker.ValidatePath(!isReplace, false);
+            }
         }
+        EditorGUILayout.EndHorizontal();
 
         serializedObject.FindProperty("PathTypeSelection").intValue = pathTypeSelection;
         serializedObject.ApplyModifiedProperties();
 
-        waypointWalker.ValidatePath(pathTypeSelection, true);
+        waypointWalker.ValidatePath(!isReplace, true);
     }
 
 }
