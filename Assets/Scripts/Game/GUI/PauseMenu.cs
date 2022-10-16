@@ -30,6 +30,7 @@ public class PauseMenu : MonoBehaviour
 
     public void ResetGame()
     {
+        Resume();
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
