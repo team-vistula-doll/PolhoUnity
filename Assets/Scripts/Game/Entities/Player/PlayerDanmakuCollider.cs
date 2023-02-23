@@ -7,7 +7,9 @@ using UnityEngine;
 public class PlayerDanmakuCollider : DanmakuCollider
 {
     public DanmakuCollider Collider;
+    public bool IsInvincible = false;
 
+    private IShootable _playerEmitter;
     private PlayerDanmakuEmitter playerEmitter;
     private Player player;
 
@@ -16,7 +18,13 @@ public class PlayerDanmakuCollider : DanmakuCollider
         player = GameObject.FindWithTag("Player").GetComponent<Player>();
         playerEmitter = GetComponentInChildren<PlayerDanmakuEmitter>();
     }
-    
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (!IsInvincible)
+            StartCoroutine(player.OnHit());
+    }
+
     void OnEnable()
     {
         if (Collider != null)
@@ -39,8 +47,8 @@ public class PlayerDanmakuCollider : DanmakuCollider
             collision.Danmaku.Destroy();
         }
 
-        if (hit)
-            player.OnHit();
+        if (hit && !IsInvincible)
+            StartCoroutine(player.OnHit());
     }
     
     void Reset()

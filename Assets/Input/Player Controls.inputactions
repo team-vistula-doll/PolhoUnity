@@ -111,6 +111,17 @@
                 },
                 {
                     "name": "",
+                    "id": "d1cb2fe7-ad90-45b4-b16b-16785fb8b489",
+                    "path": "<Keyboard>/z",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard & Mouse",
+                    "action": "Shoot",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "4844a351-34dd-4ca3-aadf-afda91cdd546",
                     "path": "<Keyboard>/shift",
                     "interactions": "",
@@ -119,7 +130,24 @@
                     "action": "Focus",
                     "isComposite": false,
                     "isPartOfComposite": false
-                },
+                }
+            ]
+        },
+        {
+            "name": "Pause Menu",
+            "id": "d9776039-744c-4b69-afaf-a64024c4d8fc",
+            "actions": [
+                {
+                    "name": "Restart",
+                    "type": "Button",
+                    "id": "54e5b923-7161-40f4-b5fe-247e5e9f8987",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
                 {
                     "name": "",
                     "id": "8060792d-e3fb-426a-958d-1f761509f609",

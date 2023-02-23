@@ -51,3 +51,9 @@
 *.meta linguist-generated
 *.prefab linguist-generated
 *.unity linguist-generated
+# Line endings
+*.sln eol=crlf
+*.csproj eol=crlf
+*.asset eol=lf
+*.mat eol=lf
+*.unity eol=lf

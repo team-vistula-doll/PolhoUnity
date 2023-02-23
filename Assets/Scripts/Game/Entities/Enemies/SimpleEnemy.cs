@@ -18,10 +18,11 @@ public class SimpleEnemy : MonoBehaviour, IEntity
 
     public void Move(Vector2 input)
     {
+
         if (input.magnitude > 1)
             input = input.normalized;
 
-        Rigidbody2D.velocity = input * Speed * Time.deltaTime;
+        Rigidbody2D.velocity = Speed * Time.deltaTime * input;
     }
     
     private void Start()
@@ -36,13 +37,15 @@ public class SimpleEnemy : MonoBehaviour, IEntity
         if (--HealthPoints <= 0) OnDeath();
         else
         {
-            if(HitSound)
+            Debug.Log("Enemy hit");
+            if (HitSound)
                 audioSource.PlayOneShot(HitSound);
         }
     }
 
     public void OnDeath()
     {
+        Debug.Log("Enemy killed!");
         player.Score += ScoreValue;
         if(DeathSound)
             AudioSource.PlayClipAtPoint(DeathSound, Camera.main.transform.position);

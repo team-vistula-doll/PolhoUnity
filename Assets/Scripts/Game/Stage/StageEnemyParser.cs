@@ -4,81 +4,142 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Tommy;
 using UnityEngine;
-
-//Single line structure of stage enemies data file:
-//spawnTime, enemyName, spawnPosition.X, spawnPosition.Y: (length1, expression1, angle1), (len2, exp2, ang2), ...|
-// spawnRepeats.delay1, spawnRepeats.amount1| spawnRepeats.delay2, spawnRepeats.amount2| ...;
-
-public struct Enemy
-{
-    float spawnTime; //Enemies HAVE to be ordered by spawnTime from earliest to latest
-    string enemyName;
-    Vector2 spawnPosition;
-    List<Vector2> waypoints;
-    List<(float delay, int amount)> spawnRepeats; //delay between spawns, amount of spawns; OPTIONAL
-}
+using EnemyStruct;
 
 public class StageEnemyParser
 {
-    public List<Enemy> Enemies { get; set; } = new List<Enemy>();
-
-    //Single line structure of stage enemies data file:
-    //spawnTime, enemyName, spawnPosition.X, spawnPosition.Y: (length1, expression1, angle1), (len2, exp2, ang2), ...|
-    // spawnRepeats.delay1, spawnRepeats.amount1| spawnRepeats.delay2, spawnRepeats.amount2| ...;
-    private string pattern =
-    #region Line regex pattern
-            @"\s*((?:(?:[+]?[0-9]*)[mM])|(?:(?:[+]?[0-9]*\.?[0-9]+)[sS])|(?:(?:[+]?[0-9]*)[mM])(?:(?:[+]?[0-9]*\.?[0-9]+)[sS]))\,\s*([\w]+)\,\s*([-+]?[0-9]*\.?[0-9]+)\,\s*([-+]?[0-9]*\.?[0-9]+)\:\s*([ \(\)\,a-zA-Z0-9-+*\/\^]+)\s*(?:\|\s*((?:\s*(?:(?:(?:[+]?[0-9]*)[mM])|(?:(?:[+]?[0-9]*\.?[0-9]+)[sS])|(?:(?:[+]?[0-9]*)[mM])(?:(?:[+]?[0-9]*\.?[0-9]+)[sS]))\,\s*(?:[+]?[0-9]+)\|?)*))?[;]";
-    #endregion
-
     /// <summary>
-    /// Parses stage enemies data from a file
+    /// Parses stage enemies data from a TOML file
     /// </summary>
     /// <param name="filepath">Path to the file, relative from "\Scripts\Game\Stage\"</param>
-    public List<int> ParseEnemiesFile(string filepath)
+    /// <param name="ids">List of IDs passed by reference</param>
+    public List<Enemy> ParseStageEnemies(string filepath, ref List<int> ids)
     {
-        List<int> badLines = new List<int>();
+        List<Enemy> enemies = new();
 
-        int currentLineNumber = 1;
-        foreach (string line in File.ReadLines(@filepath))
+        using (StreamReader reader = File.OpenText(filepath))
         {
-            Match match;
-            try { match = Regex.Match(line, pattern); }
-            catch (ArgumentException)
+            TomlTable table;
+            int id = ids.Max() + 1;
+
+            try
             {
-                badLines.Add(currentLineNumber);
-                continue;
+                table = TOML.Parse(reader);
+            }
+            catch (TomlParseException ex)
+            {
+                table = ex.ParsedTable;
+
+                foreach(TomlSyntaxException syntaxEx in ex.SyntaxErrors)
+                    Console.WriteLine($"Error on {syntaxEx.Column}:{syntaxEx.Line}: {syntaxEx.Message}");
             }
 
-            int minutes = -1, seconds = -1;
-
-            string time = match.Groups[1].Value.ToLower();
-            for (int mIndex = time.IndexOf('m'); mIndex != -1; mIndex = -1)
+            foreach(TomlNode node in table["Enemy"])
             {
-                minutes = Int32.Parse(time.Substring(0, mIndex));
-                time.Remove(0, mIndex + 1);
+                Enemy enemy = new();
+
+                enemy.ID = id;
+                ids.Add(id++);
+                enemy.Name = node.HasValue ? node : "Enemy";
+                if (node["SpawnTime"].HasValue) enemy.SpawnTime = node["SpawnTime"];
+                else
+                {
+                    Debug.LogError($"ParseEnemiesFile: {enemy.Name} doesn't have a spawn time, discarding!");
+                    continue;
+                }
+                if (node["SpawnPosition"].HasValue) enemy.SpawnPosition = new Vector2(node["SpawnPosition"][0], node["SpawnPosition"][1]);
+                else
+                {
+                    Debug.LogError($"ParseEnemiesFile: {enemy.Name} doesn't have a spawn position, discarding!");
+                    continue;
+                }
+
+                List<Vector2> Waypoints = new();
+
+                if(!(node["PathLengths"].HasValue && node["PathExpressions"].HasValue && node["PathAngles"].HasValue))
+                {
+                    Debug.LogWarning($"ParseEnemiesFile: {enemy.Name} could not generate any path, discarding!");
+                    continue;
+                }
+                else
+                {
+                    List<float> lengths = new();
+                    foreach (float length in node["PathLengths"].AsArray)
+                    {
+                        lengths.Add(length);
+                    }
+                    List<string> expressions = new();
+                    foreach (string expression in node["PathExpressions"].AsArray)
+                    {
+                        expressions.Add(expression);
+                    }
+                    List<float> angles = new();
+                    foreach (float angle in node["PathAngles"].AsArray)
+                    {
+                        angles.Add(angle);
+                    }
+
+                    Waypoints.AddRange(WaypointPathCreator.GeneratePathFromExpression(enemy.SpawnPosition, lengths[0], expressions[0], angles[0]));
+                    int w = 1;
+                    for (; w < lengths.Count && w < expressions.Count && w < angles.Count; w++)
+                    {
+                        Waypoints.AddRange(WaypointPathCreator.GeneratePathFromExpression(Waypoints.Last(), lengths[w], expressions[w], angles[w]));
+                    }
+
+                    if (w < lengths.Count || w < expressions.Count || w < angles.Count)
+                    {
+                        Debug.LogWarning($"ParseEnemiesFile: {enemy.Name} only generated {w + 1} paths, rest discarded because of missing path data");
+                    }
+                }
+
+                if (node["SpawnRepeatsDelays"].HasValue && node["SpawnRepeatsAmounts"].HasValue)
+                {
+                    List<(float delay, int amount)> SpawnRepeats = new();
+
+                    List<float> delays = new();
+                    foreach (float delay in node["SpawnRepeatsDelays"].AsArray)
+                    {
+                        delays.Add(delay);
+                    }
+                    List<int> amounts = new();
+                    foreach (int amount in node["SpawnRepeatsAmounts"].AsArray)
+                    {
+                        amounts.Add(amount);
+                    }
+
+                    int r = 0;
+                    for (; r < delays.Count && r < amounts.Count; r++)
+                    {
+                        SpawnRepeats.Add((delays[r], amounts[r]));
+                    }
+
+                    if (r < delays.Count || r < amounts.Count)
+                    {
+                        Debug.LogWarning($"ParseEnemiesFile: {enemy.Name} has missing spawn repeat data, will still add with default values");
+                    }
+                    for (int n = r; n < delays.Count; n++)  //If there are more delay values, repeat them once
+                    {
+                        SpawnRepeats.Add((delays[n], 1));
+                    }
+                    for (int n = r; n < amounts.Count; n++) //If there are more amount values, use the previous delay time
+                    {
+                        SpawnRepeats.Add((delays[r], amounts[n]));
+                    }
+
+                    enemy.SpawnRepeats = SpawnRepeats;
+                }
+                else if(node["SpawnRepeatsDelays"].HasValue ^ node["SpawnRepeatsAmounts"].HasValue)
+                {
+                    Debug.LogWarning($"ParseEnemiesFile: {enemy.Name} could not generate spawn repeat info, either delays or amounts are empty");
+                }
+
+                enemies.Add(enemy);
             }
 
-            for (int sIndex = time.IndexOf('s'); sIndex != -1; sIndex = -1)
-            {
-                seconds = Int32.Parse(time.Substring(0, sIndex));
-            }
-
-            if (seconds == -1 && minutes == -1)
-            {
-                badLines.Add(currentLineNumber);
-                continue;
-            }
-
-            string name = match.Groups[2].Value;
-
-            if (name == "")
-            {
-                badLines.Add(currentLineNumber);
-                continue;
-            }
-            currentLineNumber++;
         }
-        return badLines;
+
+        return enemies;
     }
 }
