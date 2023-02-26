@@ -59,6 +59,7 @@ public class WaypointWalkerEditor : Editor
         serializedObject.ApplyModifiedProperties();
 
         waypointWalker.ValidatePath(!isReplace, true);
+        SceneView.RepaintAll();
     }
 
 }
