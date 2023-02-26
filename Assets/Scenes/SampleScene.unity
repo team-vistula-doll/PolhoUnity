@@ -1620,7 +1620,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d68adf5c2292dee4fac724fcb69acd88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DefinedEnemies:
+  definedEnemies:
   - Name: enemy1
     Difficulty: 0
     Prefab: {fileID: 2092912531510788433, guid: 1b25910f37cc1754a8c6ee26e59a9802, type: 3}

@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,11 +14,11 @@ public class EnemyBank : MonoBehaviour
     public Dictionary<Tuple<string, int>, GameObject> EnemyEntries;
     
     [SerializeField]
-    private List<EnemyEntry> DefinedEnemies;
+    private List<EnemyEntry> definedEnemies;
 
     public void Start()
     {
         EnemyEntries = new Dictionary<Tuple<string, int>, GameObject>();
-        DefinedEnemies.ForEach(e => EnemyEntries.Add(new Tuple<string, int>(e.Name, e.Difficulty), e.Prefab));
+        definedEnemies.ForEach(e => EnemyEntries.Add(new Tuple<string, int>(e.Name, e.Difficulty), e.Prefab));
     }
 }
