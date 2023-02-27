@@ -4,6 +4,7 @@ using UnityEngine;
 using EnemyStruct;
 using DanmakU.Fireables;
 using System.Linq;
+using WaypointPath;
 
 [CreateAssetMenu(fileName = "TestStage", menuName = "Stage/TestStage", order=1)]
 public class TestStage : Stage

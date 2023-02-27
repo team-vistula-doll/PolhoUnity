@@ -1,33 +1,43 @@
 using UnityEngine;
 using UnityEditor;
+using WaypointPath;
 
 [CustomEditor(typeof(WaypointWalker))]
 public class WaypointWalkerEditor : Editor
 {
     bool isReplace = false;
+
+    private WaypointPathData waypointPathData = new();
     public override void OnInspectorGUI()
     {
         serializedObject.Update();
-        int pathTypeSelection = serializedObject.FindProperty("PathTypeSelection").intValue;
         WaypointWalker waypointWalker = (WaypointWalker)target;
 
         EditorGUILayout.BeginHorizontal();
             GUILayout.Label("Path type: ");
             string[] pathOptions = new string[] { "Function", "Bezier" };
-            pathTypeSelection = GUILayout.Toolbar(pathTypeSelection, pathOptions, EditorStyles.radioButton);
+            waypointPathData.PathTypeSelection = GUILayout.Toolbar(waypointPathData.PathTypeSelection, pathOptions, EditorStyles.radioButton);
         EditorGUILayout.EndHorizontal();
 
-        switch (pathTypeSelection)
+        switch (waypointPathData.PathTypeSelection)
         {
             case 0:
-                SerializedProperty pathFormula = serializedObject.FindProperty("PathFormula");
-                SerializedProperty length = serializedObject.FindProperty("Length");
-                SerializedProperty angle = serializedObject.FindProperty("Angle");
+                EditorGUILayout.BeginHorizontal();
+                    GUILayout.Label("Path Formula");
+                    GUILayout.FlexibleSpace();
+                    waypointPathData.PathFormula = EditorGUILayout.DelayedTextField(waypointPathData.PathFormula);
+                EditorGUILayout.EndHorizontal();
+                EditorGUILayout.BeginHorizontal();
+                    GUILayout.Label("Length");
+                    GUILayout.FlexibleSpace();
+                    waypointPathData.Length = EditorGUILayout.FloatField(waypointPathData.Length);
+                EditorGUILayout.EndHorizontal();
+                EditorGUILayout.BeginHorizontal();
+                    GUILayout.Label("Angle");
+                    GUILayout.FlexibleSpace();
+                    waypointPathData.Angle = EditorGUILayout.FloatField(waypointPathData.Angle);
+                EditorGUILayout.EndHorizontal();
 
-                EditorGUILayout.PropertyField(pathFormula);
-                EditorGUILayout.PropertyField(length);
-                EditorGUILayout.PropertyField(angle);
-                
                 break;
             case 1:
                 SerializedProperty startControl = serializedObject.FindProperty("StartControl");
@@ -50,15 +60,14 @@ public class WaypointWalkerEditor : Editor
 
             if (GUILayout.Button("Set path"))
             {
-                waypointWalker.ValidatePath(!isReplace, false);
+                waypointPathData.ValidatePath(!isReplace, false);
             }
         }
         EditorGUILayout.EndHorizontal();
 
-        serializedObject.FindProperty("PathTypeSelection").intValue = pathTypeSelection;
         serializedObject.ApplyModifiedProperties();
 
-        waypointWalker.ValidatePath(!isReplace, true);
+        waypointPathData.ValidatePath(!isReplace, true);
         SceneView.RepaintAll();
     }
 

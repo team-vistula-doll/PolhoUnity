@@ -66,7 +66,7 @@ public class EnemyManager : MonoBehaviour
         GameObject enemyObject = Instantiate(_enemyBank.EnemyEntries[new Tuple<string, int>(_enemies[id].Name, GameState.Difficulty)], _enemies[id].SpawnPosition, Quaternion.identity, transform);
         if (_enemies[id].Fireable != null)
             enemyObject.GetComponentInChildren<EnemyDanmakuEmitter>().Fireable = _enemies[id].Fireable;
-        enemyObject.GetComponent<WaypointWalker>().SetWaypointPath(_enemies[id].Path);
+        enemyObject.GetComponent<WaypointWalker>().Path = _enemies[id].Path;
 
         _enemyObjects.Add(++_enemyObjectIDs, enemyObject);
         return _enemyObjectIDs;
