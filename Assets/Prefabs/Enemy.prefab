@@ -148,7 +148,7 @@ MonoBehaviour:
   StartControl: {x: 0, y: 0}
   EndControl: {x: 0, y: 0}
   EndPosition: {x: 0, y: 0}
-  StepSize: 0.5
+  StepSize: 7
   Path:
   - {x: 0, y: 0}
 --- !u!114 &2092912531510788426

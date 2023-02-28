@@ -22,6 +22,7 @@ public class WaypointWalker : MonoBehaviour
         _moveableEntity = GetComponent<IMoveable>();
         pathData = GetComponent<WaypointPathData>();
         transform.position = pathData.Path[0];
+        _waypoints = pathData.Path.Count;
     }
 
     /// <summary>

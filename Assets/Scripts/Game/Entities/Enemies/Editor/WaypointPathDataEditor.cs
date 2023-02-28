@@ -10,7 +10,7 @@ public class WaypointPathDataEditor : Editor
     public override void OnInspectorGUI()
     {
         serializedObject.Update();
-        WaypointPathData pathData = (WaypointPathData)target;
+        WaypointPathData pathData = target as WaypointPathData;
 
         SerializedProperty pathTypeSelection = serializedObject.FindProperty("PathTypeSelection");
         EditorGUILayout.BeginHorizontal();
@@ -40,9 +40,13 @@ public class WaypointPathDataEditor : Editor
                 SerializedProperty endControl = serializedObject.FindProperty("EndControl");
                 SerializedProperty endPosition = serializedObject.FindProperty("EndPosition");
 
-                EditorGUILayout.PropertyField(startControl);
-                EditorGUILayout.PropertyField(endControl);
                 EditorGUILayout.PropertyField(endPosition);
+                EditorGUI.BeginDisabledGroup(endPosition.vector2Value ==  Vector2.zero);
+                    EditorGUILayout.PropertyField(startControl);
+                EditorGUI.EndDisabledGroup();
+                EditorGUI.BeginDisabledGroup(startControl.vector2Value == Vector2.zero);
+                    EditorGUILayout.PropertyField(endControl);
+                EditorGUI.EndDisabledGroup();
 
                 break;
         }
@@ -66,4 +70,19 @@ public class WaypointPathDataEditor : Editor
         SceneView.RepaintAll();
     }
 
+    public void OnSceneGUI()
+    {
+        WaypointPathData pathData = target as WaypointPathData;
+
+        float size = HandleUtility.GetHandleSize(pathData.EndPosition) * 0.5f;
+        Vector2 snap = Vector2.one * 0.5f;
+
+        EditorGUI.BeginChangeCheck();
+        Vector2 newTargetPosition = Handles.FreeMoveHandle(pathData.EndPosition, Quaternion.identity, size, snap, Handles.RectangleHandleCap);
+        if (EditorGUI.EndChangeCheck())
+        {
+            Undo.RecordObject(pathData, "Change Control Position");
+            pathData.EndPosition = newTargetPosition;
+        }
+    }
 }
