@@ -1,19 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 using WaypointPath;
 
 [RequireComponent(typeof(SimpleEnemy))]
 public class WaypointWalker : MonoBehaviour
 {
-    public List<Vector2> Path = new() { Vector2.zero };
+    public event EventHandler<int> WaypointEvent;
 
+    private WaypointPathData pathData;
     private IMoveable _moveableEntity;
     private Vector2 _nextWaypoint;
     private int _waypoints;
     private int _currentWaypoint;
-
-    public event EventHandler<int> WaypointEvent;
 
     private bool _isMoving = true;
     private Action move;
@@ -22,7 +20,8 @@ public class WaypointWalker : MonoBehaviour
     public void Start()
     {
         _moveableEntity = GetComponent<IMoveable>();
-        transform.position = Path[0];
+        pathData = GetComponent<WaypointPathData>();
+        transform.position = pathData.Path[0];
     }
 
     /// <summary>
@@ -58,9 +57,9 @@ public class WaypointWalker : MonoBehaviour
     {
         if (Vector2.Distance(transform.position, _nextWaypoint) < 0.1f && _currentWaypoint < _waypoints - 1)
         {
-            while (Path.Count > _currentWaypoint && Vector2.Distance(_nextWaypoint, Path[_currentWaypoint]) < 0.01f)
-                Path.RemoveAt(_currentWaypoint);
-            _nextWaypoint = Path[_currentWaypoint];
+            while (pathData.Path.Count > _currentWaypoint && Vector2.Distance(_nextWaypoint, pathData.Path[_currentWaypoint]) < 0.01f)
+                pathData.Path.RemoveAt(_currentWaypoint);
+            _nextWaypoint = pathData.Path[_currentWaypoint];
             WaypointEvent?.Invoke(this, _currentWaypoint);
             _currentWaypoint++;
         }

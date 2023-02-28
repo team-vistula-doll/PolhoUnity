@@ -13,18 +13,18 @@ namespace WaypointPath
         public static List<Vector2> GeneratePathFromExpression(Vector2 startPos, float length, string expression, float angle, float stepSize = 0.5f)
         {
             //Create expression parser and envaluate expression
-            ExpressionParser parser = new ExpressionParser();
+            ExpressionParser parser = new();
             Expression exp = parser.EvaluateExpression(expression);
 
-            List<Vector2> waypoints = new List<Vector2>();
+            List<Vector2> waypoints = new();
 
             angle = Mathf.Deg2Rad * angle;
             for (int i = 1; i * stepSize < length; i++)
             {
                 exp.Parameters["x"].Value = i * stepSize; //Put x-val to x in expression
 
-                Vector2 p = new Vector2(i * stepSize, (float)exp.Value); //point on a graph with origin (0,0)
-                Vector2 rotatedPoint = new Vector2(p.x * Mathf.Cos(angle) - p.y * Mathf.Sin(angle),
+                Vector2 p = new(i * stepSize, (float)exp.Value); //point on a graph with origin (0,0)
+                Vector2 rotatedPoint = new(p.x * Mathf.Cos(angle) - p.y * Mathf.Sin(angle),
                                                 p.x * Mathf.Sin(angle) + p.y * Mathf.Cos(angle));
                 //Rotate point using rotation matrix
                 waypoints.Add(rotatedPoint + startPos); //Translate rotatedPoint to originate from the startPos
@@ -62,7 +62,7 @@ namespace WaypointPath
             Vector2 startCtrl = startControl ?? Vector2.zero,
                 endCtrl = endControl ?? Vector2.zero;
 
-            List<Vector2> waypoints = new List<Vector2>();
+            List<Vector2> waypoints = new();
             if (startCtrl != Vector2.zero)
             {
                 if (endCtrl != Vector2.zero)

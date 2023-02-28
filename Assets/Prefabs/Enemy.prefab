@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2092912531510788439}
   - component: {fileID: 2092912531510788437}
   - component: {fileID: 2092912531510788436}
+  - component: {fileID: 5535603154755681302}
   - component: {fileID: 2092912531510788426}
   - component: {fileID: 6367404635937336396}
   m_Layer: 8
@@ -127,6 +128,29 @@ MonoBehaviour:
   ScoreValue: 10
   HitSound: {fileID: 8300000, guid: 27401145953c3bc4090829848910d781, type: 3}
   DeathSound: {fileID: 8300000, guid: a78e7033603a6ab45af4975ccbe3c41a, type: 3}
+--- !u!114 &5535603154755681302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2092912531510788433}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a5eb7bd7283d7343b33b6af02002751, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PathTypeSelection: 1
+  PathFormula: x
+  Length: 20
+  Angle: 0
+  StartPosition: {x: 0, y: 0}
+  StartControl: {x: 0, y: 0}
+  EndControl: {x: 0, y: 0}
+  EndPosition: {x: 0, y: 0}
+  StepSize: 0.5
+  Path:
+  - {x: 0, y: 0}
 --- !u!114 &2092912531510788426
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -139,14 +163,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cf58339d59065c4d905a95067333b2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PathFormula: x^2
-  Length: 2
-  Angle: 0
-  PathTypeSelection: 1
-  StartControl: {x: 0, y: 0}
-  EndControl: {x: 0, y: 0}
-  EndPos: {x: 0, y: 0}
-  StepSize: 7
 --- !u!82 &6367404635937336396
 AudioSource:
   m_ObjectHideFlags: 0

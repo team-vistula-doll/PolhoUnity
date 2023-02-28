@@ -90,6 +90,7 @@ GameObject:
   - component: {fileID: 167490953488139897}
   - component: {fileID: 4269221037366217129}
   - component: {fileID: 4786486172495814134}
+  - component: {fileID: -8639517441321217510}
   m_Layer: 0
   m_Name: Enemy2
   m_TagString: Untagged
@@ -215,14 +216,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cf58339d59065c4d905a95067333b2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PathFormula: x
-  Length: 20
-  Angle: 0
-  StartControl: {x: 0, y: 0}
-  EndControl: {x: 0, y: 0}
-  EndPos: {x: 0, y: 0}
-  StepSize: 1
-  PathTypeSelection: 0
 --- !u!82 &4786486172495814134
 AudioSource:
   m_ObjectHideFlags: 0
@@ -319,6 +312,29 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &-8639517441321217510
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7829635670147028809}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a5eb7bd7283d7343b33b6af02002751, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PathTypeSelection: 0
+  PathFormula: x
+  Length: 20
+  Angle: 0
+  StartPosition: {x: 0, y: 0}
+  StartControl: {x: 0, y: 0}
+  EndControl: {x: 0, y: 0}
+  EndPosition: {x: 0, y: 0}
+  StepSize: 0.5
+  Path:
+  - {x: 0, y: 0}
 --- !u!1 &8180269336415126391
 GameObject:
   m_ObjectHideFlags: 0

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace WaypointPath
 {
-    public class WaypointPathData
+    public class WaypointPathData : MonoBehaviour
     {
         public int PathTypeSelection = 0;
 
@@ -12,7 +12,7 @@ namespace WaypointPath
         public string PathFormula = "x";
         public float Length = 20, Angle;
 
-        public Vector2 StartPosition, StartControl, EndControl, EndPosition = Vector2.zero;
+        public Vector2 StartPosition = Vector2.zero, StartControl, EndControl, EndPosition = Vector2.zero;
 
         [Range(0.2f, 50f)]
         public float StepSize = 0.5f;
@@ -52,14 +52,32 @@ namespace WaypointPath
             else
             {
                 Vector2 startPos = (isAdd && Path.Count() != 0) ? Path.Last() : StartPosition;
-                switch (PathTypeSelection)
+                _tempPath = PathTypeSelection switch
                 {
-                    case 1:
-                        _tempPath = WaypointPathCreator.GeneratePathFromCurve(startPos, EndPosition, StartControl, EndControl, StepSize);
-                        break;
-                    default:
-                        _tempPath = WaypointPathCreator.GeneratePathFromExpression(startPos, Length, PathFormula, Angle, StepSize);
-                        break;
+                    1 => WaypointPathCreator.GeneratePathFromCurve(startPos, EndPosition, StartControl, EndControl, StepSize),
+                    _ => WaypointPathCreator.GeneratePathFromExpression(startPos, Length, PathFormula, Angle, StepSize),
+                };
+            }
+        }
+
+        void OnDrawGizmosSelected()
+        {
+            if (_tempPath != null)
+            {
+                foreach (Vector2 point in _tempPath)
+                {
+                    // Draws a blue line from this transform to the target
+                    Gizmos.color = Color.red;
+                    Gizmos.DrawSphere(point, 0.03f);
+                }
+            }
+            if (Path != null)
+            {
+                foreach (Vector2 point in Path)
+                {
+                    // Draws a blue line from this transform to the target
+                    Gizmos.color = Color.green;
+                    Gizmos.DrawSphere(point, 0.05f);
                 }
             }
         }
