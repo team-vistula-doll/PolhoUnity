@@ -42,10 +42,10 @@ public class WaypointPathDataEditor : Editor
 
                 EditorGUILayout.PropertyField(endPosition);
                 EditorGUI.BeginDisabledGroup(endPosition.vector2Value ==  Vector2.zero);
-                    EditorGUILayout.PropertyField(startControl);
+                    EditorGUILayout.PropertyField(endControl);
                 EditorGUI.EndDisabledGroup();
                 EditorGUI.BeginDisabledGroup(startControl.vector2Value == Vector2.zero);
-                    EditorGUILayout.PropertyField(endControl);
+                    EditorGUILayout.PropertyField(startControl);
                 EditorGUI.EndDisabledGroup();
 
                 break;
@@ -71,8 +71,8 @@ public class WaypointPathDataEditor : Editor
     }
 
     bool isMousePressed = false;
-    bool isStartControlEnabled = false;
     bool isEndControlEnabled = false;
+    //bool isStartControlEnabled = false;
     public void OnSceneGUI()
     {
         WaypointPathData pathData = target as WaypointPathData;
@@ -88,55 +88,71 @@ public class WaypointPathDataEditor : Editor
 
             if (e.type == EventType.MouseDown) isMousePressed = true;
 
-            //If the Start Control handle is right under the End Position handle, the SC handle has priority in selecting it,
-            //however this doesn't happen with the End Control for some reason, both can overlap it and it won't get selected
-            //The commented-out code for the EC handle also doesn't work, even though it's the same as for the SC handle
+            //If the End Control handle is right under the End Position handle, the EC handle has priority in selecting it,
+            //however this doesn't happen with the Start Control for some reason, both can overlap it and it won't get selected
+            //The commented-out code for the SC handle also doesn't work, even though it's the same as for the EC handle
 
-            ////***Prevent End Control handle from getting selected when Start Control is zero
-            //if (e.type == EventType.MouseUp && pathData.StartControl != Vector2.zero && isMousePressed)
+            ////***Prevent Start Control handle from getting selected when End Control is zero
+            //if (e.type == EventType.MouseUp && pathData.EndControl != Vector2.zero && isMousePressed)
             //{
-            //    isEndControlEnabled = true;
+            //    isStartControlEnabled = true;
             //    isMousePressed = false;
             //}
-            //else if (e.type == EventType.MouseUp && pathData.StartControl == Vector2.zero && isMousePressed)
+            //else if (e.type == EventType.MouseUp && pathData.EndControl == Vector2.zero && isMousePressed)
             //{
-            //    isEndControlEnabled = false;
+            //    isStartControlEnabled = false;
             //    isMousePressed = false;
             //}
             ////***
 
-            //***Prevent Start Control handle from getting selected when End Position is zero
+            //***Prevent End Control handle from getting selected when End Position is zero
             if (e.type == EventType.MouseUp && pathData.EndPosition != Vector2.zero && isMousePressed)
             {
-                isStartControlEnabled = true;
+                isEndControlEnabled = true;
                 isMousePressed = false;
             }
             else if (e.type == EventType.MouseUp && pathData.EndPosition == Vector2.zero && isMousePressed)
             {
-                isStartControlEnabled = false;
+                isEndControlEnabled = false;
                 isMousePressed = false;
             }
             //***
 
-            //if (isEndControlEnabled)
+            //if (isStartControlEnabled)
             //{
-                size = HandleUtility.GetHandleSize(pathData.EndControl) * 0.15f;
-                Handles.color = Color.cyan;
-                endControlHandle = Handles.FreeMoveHandle(pathData.EndControl, Quaternion.identity, size, snap, Handles.SphereHandleCap);
-            //}
-            //else endControlHandle = Vector2.zero;
-
-            if (isStartControlEnabled)
-            {
                 size = HandleUtility.GetHandleSize(pathData.StartControl) * 0.15f;
                 Handles.color = Color.cyan;
                 startControlHandle = Handles.FreeMoveHandle(pathData.StartControl, Quaternion.identity, size, snap, Handles.SphereHandleCap);
+            //}
+            //else startControlHandle = Vector2.zero;
+
+            if (isEndControlEnabled)
+            {
+                size = HandleUtility.GetHandleSize(pathData.EndControl) * 0.15f;
+                Handles.color = Color.cyan;
+                endControlHandle = Handles.FreeMoveHandle(pathData.EndControl, Quaternion.identity, size, snap, Handles.SphereHandleCap);
             }
-            else startControlHandle = Vector2.zero;
+            else endControlHandle = Vector2.zero;
 
             size = HandleUtility.GetHandleSize(pathData.EndPosition) * 0.2f;
             Handles.color = Color.red;
             Vector2 endPositionHandle = Handles.FreeMoveHandle(pathData.EndPosition, Quaternion.identity, size, snap, Handles.SphereHandleCap);
+
+            Handles.color = new Color(1,0,0,0.5f);
+            if (startControlHandle !=  Vector2.zero)
+            {
+                Handles.DrawLine(endControlHandle, endPositionHandle, 2);
+                Handles.color = new Color(0, 0, 1, 0.5f);
+                Handles.DrawLine(startControlHandle, pathData.StartPosition, 2);
+                Handles.color = new Color(1, 0.92f, 0.016f, 0.5f);
+                Handles.DrawLine(endControlHandle, startControlHandle);
+            }
+            else if (endControlHandle != Vector2.zero)
+            {
+                Handles.DrawLine(endControlHandle, endPositionHandle, 2);
+                Handles.color = new Color(0, 0, 1, 0.5f);
+                Handles.DrawLine(endControlHandle, pathData.StartPosition, 2);
+            }
 
             if (EditorGUI.EndChangeCheck())
             {
