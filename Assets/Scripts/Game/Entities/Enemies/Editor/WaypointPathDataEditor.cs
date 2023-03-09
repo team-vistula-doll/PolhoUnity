@@ -5,7 +5,24 @@ using WaypointPath;
 [CustomEditor(typeof(WaypointPathData))]
 public class WaypointPathDataEditor : Editor
 {
+    SerializedProperty pathFormula;
+    SerializedProperty length;
+    SerializedProperty angle;
+    SerializedProperty startControl;
+    SerializedProperty endControl;
+    SerializedProperty endPosition;
+
     bool isReplace = false;
+
+    private void OnEnable()
+    {
+        pathFormula = serializedObject.FindProperty("PathFormula");
+        length = serializedObject.FindProperty("Length");
+        angle = serializedObject.FindProperty("Angle");
+        startControl = serializedObject.FindProperty("StartControl");
+        endControl = serializedObject.FindProperty("EndControl");
+        endPosition = serializedObject.FindProperty("EndPosition");
+    }
 
     public override void OnInspectorGUI()
     {
@@ -25,26 +42,17 @@ public class WaypointPathDataEditor : Editor
         switch (pathTypeSelection.intValue)
         {
             case 0:
-                SerializedProperty pathFormula = serializedObject.FindProperty("PathFormula");
-                SerializedProperty length = serializedObject.FindProperty("Length");
-                SerializedProperty angle = serializedObject.FindProperty("Angle");
-
                 EditorGUILayout.PropertyField(pathFormula);
                 EditorGUILayout.PropertyField(length);
                 EditorGUILayout.PropertyField(angle);
 
                 break;
             case 1:
-
-                SerializedProperty startControl = serializedObject.FindProperty("StartControl");
-                SerializedProperty endControl = serializedObject.FindProperty("EndControl");
-                SerializedProperty endPosition = serializedObject.FindProperty("EndPosition");
-
                 EditorGUILayout.PropertyField(endPosition);
                 EditorGUI.BeginDisabledGroup(endPosition.vector2Value ==  Vector2.zero);
                     EditorGUILayout.PropertyField(endControl);
                 EditorGUI.EndDisabledGroup();
-                EditorGUI.BeginDisabledGroup(startControl.vector2Value == Vector2.zero);
+                EditorGUI.BeginDisabledGroup(endControl.vector2Value == Vector2.zero);
                     EditorGUILayout.PropertyField(startControl);
                 EditorGUI.EndDisabledGroup();
 
@@ -160,6 +168,7 @@ public class WaypointPathDataEditor : Editor
                 pathData.EndPosition = endPositionHandle;
                 pathData.StartControl = startControlHandle;
                 pathData.EndControl = endControlHandle;
+                pathData.ValidatePath(!isReplace, true);
             }
         }
     }

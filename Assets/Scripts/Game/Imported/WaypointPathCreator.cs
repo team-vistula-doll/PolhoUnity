@@ -63,9 +63,9 @@ namespace WaypointPath
                 endCtrl = endControl ?? Vector2.zero;
 
             List<Vector2> waypoints = new();
-            if (startCtrl != Vector2.zero)
+            if (endCtrl != Vector2.zero)
             {
-                if (endCtrl != Vector2.zero)
+                if (startCtrl != Vector2.zero)
                 {
                     for (int t = 1; t * stepSize <= 100; t++)
                     {
@@ -76,7 +76,7 @@ namespace WaypointPath
                 {
                     for (int t = 1; t * stepSize <= 100; t++)
                     {
-                        waypoints.Add(BezierCurve.QuadraticCurve(startPos, startCtrl, endPos, t * stepSize / 100));
+                        waypoints.Add(BezierCurve.QuadraticCurve(startPos, endCtrl, endPos, t * stepSize / 100));
                     }
                 }
             }

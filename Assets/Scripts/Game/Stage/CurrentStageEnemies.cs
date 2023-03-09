@@ -1,10 +1,8 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using EnemyStruct;
 using UnityEngine;
 
-public class TestStageEnemies : MonoBehaviour
+public class CurrentStageEnemies : MonoBehaviour
 {
     [SerializeField]
     private List<Enemy> enemies;
