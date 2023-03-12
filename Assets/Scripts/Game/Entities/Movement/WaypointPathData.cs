@@ -59,29 +59,5 @@ namespace WaypointPath
                 };
             }
         }
-
-        void OnDrawGizmosSelected()
-        {
-            if (_tempPath != null)
-            {
-                for (int i = 0; i < _tempPath.Count() - 1; i++)
-                {
-                    // Draws red spheres from this transform to the target
-                    Vector2 point = _tempPath[i];
-                    Gizmos.color = Color.red;
-                    Gizmos.DrawSphere(point, 0.03f);
-                }
-            }
-            if (Path != null)
-            {
-                for (int i = 0; i < Path.Count() - 1; i++)
-                {
-                    // Draws green spheres from this transform to the target
-                    Vector2 point = Path[i];
-                    Gizmos.color = Color.green;
-                    Gizmos.DrawSphere(point, 0.05f);
-                }
-            }
-        }
     }
 }

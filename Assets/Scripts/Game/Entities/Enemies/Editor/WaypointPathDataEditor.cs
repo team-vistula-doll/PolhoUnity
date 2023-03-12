@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using WaypointPath;
+using System.IO;
 
 [CustomEditor(typeof(WaypointPathData))]
 public class WaypointPathDataEditor : Editor
@@ -160,6 +161,25 @@ public class WaypointPathDataEditor : Editor
                 Handles.DrawLine(endControlHandle, endPositionHandle, 2);
                 Handles.color = new Color(0, 0, 1, 0.5f);
                 Handles.DrawLine(endControlHandle, pathData.StartPosition, 2);
+            }
+
+            if (pathData._tempPath != null)
+            {
+                foreach (Vector2 point in _tempPath)
+                {
+                    // Draws a blue line from this transform to the target
+                    Gizmos.color = Color.red;
+                    Gizmos.DrawSphere(point, 0.03f);
+                }
+            }
+            if (Path != null)
+            {
+                foreach (Vector2 point in Path)
+                {
+                    // Draws a blue line from this transform to the target
+                    Gizmos.color = Color.green;
+                    Gizmos.DrawSphere(point, 0.05f);
+                }
             }
 
             if (EditorGUI.EndChangeCheck())
