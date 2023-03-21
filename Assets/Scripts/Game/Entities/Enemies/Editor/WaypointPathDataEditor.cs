@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEditor;
 using WaypointPath;
-using System.IO;
+using System.Collections.Generic;
+using System.Linq;
 
 [CustomEditor(typeof(WaypointPathData))]
 public class WaypointPathDataEditor : Editor
@@ -13,6 +14,8 @@ public class WaypointPathDataEditor : Editor
     SerializedProperty endControl;
     SerializedProperty endPosition;
 
+    List<Vector2> tempPath = new();
+    int pathTypeSelection = 0;
     bool isReplace = false;
 
     private void OnEnable()
@@ -30,17 +33,16 @@ public class WaypointPathDataEditor : Editor
         serializedObject.Update();
         WaypointPathData pathData = target as WaypointPathData;
 
-        SerializedProperty pathTypeSelection = serializedObject.FindProperty("PathTypeSelection");
         EditorGUILayout.BeginHorizontal();
         {
             GUILayout.Label("Path type: ");
             string[] pathOptions = new string[] { "Function", "Bezier" };
 
-            pathTypeSelection.intValue = GUILayout.Toolbar(pathTypeSelection.intValue, pathOptions, EditorStyles.radioButton);
+            pathTypeSelection = GUILayout.Toolbar(pathTypeSelection, pathOptions, EditorStyles.radioButton);
         }
         EditorGUILayout.EndHorizontal();
 
-        switch (pathTypeSelection.intValue)
+        switch (pathTypeSelection)
         {
             case 0:
                 EditorGUILayout.PropertyField(pathFormula);
@@ -68,14 +70,14 @@ public class WaypointPathDataEditor : Editor
 
             if (GUILayout.Button("Set path"))
             {
-                pathData.ValidatePath(!isReplace, false);
+                pathData.SetWaypointPath(pathTypeSelection, !isReplace);
             }
         }
         EditorGUILayout.EndHorizontal();
 
         serializedObject.ApplyModifiedProperties();
 
-        pathData.ValidatePath(!isReplace, true);
+        tempPath = pathData.CreateWaypointPath((isReplace) ? pathData.StartPosition : pathData.Path.Last(), pathTypeSelection);
         SceneView.RepaintAll();
     }
 
@@ -163,22 +165,22 @@ public class WaypointPathDataEditor : Editor
                 Handles.DrawLine(endControlHandle, pathData.StartPosition, 2);
             }
 
-            if (pathData._tempPath != null)
+            if (tempPath != null)
             {
-                foreach (Vector2 point in _tempPath)
+                foreach (Vector2 point in tempPath)
                 {
                     // Draws a blue line from this transform to the target
-                    Gizmos.color = Color.red;
-                    Gizmos.DrawSphere(point, 0.03f);
+                    Handles.color = Color.red;
+                    Handles.SphereHandleCap(0, point, Quaternion.identity, 0.03f, EventType.Repaint);
                 }
             }
-            if (Path != null)
+            if (pathData.Path != null)
             {
-                foreach (Vector2 point in Path)
+                foreach (Vector2 point in pathData.Path)
                 {
                     // Draws a blue line from this transform to the target
-                    Gizmos.color = Color.green;
-                    Gizmos.DrawSphere(point, 0.05f);
+                    Handles.color = Color.green;
+                    Handles.SphereHandleCap(0, point, Quaternion.identity, 0.05f, EventType.Repaint);
                 }
             }
 
@@ -188,7 +190,7 @@ public class WaypointPathDataEditor : Editor
                 pathData.EndPosition = endPositionHandle;
                 pathData.StartControl = startControlHandle;
                 pathData.EndControl = endControlHandle;
-                pathData.ValidatePath(!isReplace, true);
+                tempPath = pathData.CreateWaypointPath((isReplace) ? pathData.StartPosition : pathData.Path.Last(), pathTypeSelection);
             }
         }
     }

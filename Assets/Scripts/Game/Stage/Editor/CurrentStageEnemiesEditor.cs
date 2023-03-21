@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using WaypointPath;
@@ -7,7 +9,11 @@ using WaypointPath;
 public class CurrentStageEnemiesEditor : Editor
 {
     SerializedProperty enemies;
+
+    List<Vector2> tempPath = new();
     bool isReplace = false;
+    int pathTypeSelection = 0;
+
     WaypointPathData pathData = new();
 
     private void OnEnable()
@@ -26,11 +32,11 @@ public class CurrentStageEnemiesEditor : Editor
             GUILayout.Label("Path type: ");
             string[] pathOptions = new string[] { "Function", "Bezier" };
 
-            pathData.PathTypeSelection = GUILayout.Toolbar(pathData.PathTypeSelection, pathOptions, EditorStyles.radioButton);
+            pathTypeSelection = GUILayout.Toolbar(pathTypeSelection, pathOptions, EditorStyles.radioButton);
         }
         EditorGUILayout.EndHorizontal();
 
-        switch (pathData.PathTypeSelection)
+        switch (pathTypeSelection)
         {
             case 0:
 
@@ -59,14 +65,14 @@ public class CurrentStageEnemiesEditor : Editor
 
             if (GUILayout.Button("Set path"))
             {
-                pathData.ValidatePath(!isReplace, false);
+                pathData.SetWaypointPath(pathTypeSelection, !isReplace);
             }
         }
         EditorGUILayout.EndHorizontal();
 
         serializedObject.ApplyModifiedProperties();
 
-        pathData.ValidatePath(!isReplace, true);
+        tempPath = pathData.CreateWaypointPath((isReplace) ? pathData.StartPosition : pathData.Path.Last(), pathTypeSelection);
         SceneView.RepaintAll();
 
         //base.OnInspectorGUI();
