@@ -1,99 +1,26 @@
-using UnityEngine;
-using UnityEditor;
-using WaypointPath;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
+using UnityEngine;
+using WaypointPath;
 
-[CustomEditor(typeof(WaypointPathData))]
-public class WaypointPathDataEditor : Editor
+
+//Not used for now because it's laggier
+public struct DrawPathHandles
 {
-    SerializedProperty pathFormula;
-    SerializedProperty length;
-    SerializedProperty angle;
-    SerializedProperty startControl;
-    SerializedProperty endControl;
-    SerializedProperty endPosition;
-
-    List<Vector2> tempPath = new();
-    int pathTypeSelection = 1;
-    bool isReplace = false;
-
-    private void OnEnable()
-    {
-        pathFormula = serializedObject.FindProperty("PathFormula");
-        length = serializedObject.FindProperty("Length");
-        angle = serializedObject.FindProperty("Angle");
-        startControl = serializedObject.FindProperty("StartControl");
-        endControl = serializedObject.FindProperty("EndControl");
-        endPosition = serializedObject.FindProperty("EndPosition");
-    }
-
-    public override void OnInspectorGUI()
-    {
-        serializedObject.Update();
-        WaypointPathData pathData = target as WaypointPathData;
-
-        EditorGUILayout.BeginHorizontal();
-        {
-            GUILayout.Label("Path type: ");
-            string[] pathOptions = new string[] { "Function", "Bezier" };
-
-            pathTypeSelection = GUILayout.Toolbar(pathTypeSelection, pathOptions, EditorStyles.radioButton);
-        }
-        EditorGUILayout.EndHorizontal();
-
-        switch (pathTypeSelection)
-        {
-            case 0:
-                EditorGUILayout.PropertyField(pathFormula);
-                EditorGUILayout.PropertyField(length);
-                EditorGUILayout.PropertyField(angle);
-
-                break;
-            case 1:
-                EditorGUILayout.PropertyField(endPosition);
-                EditorGUI.BeginDisabledGroup(endPosition.vector2Value ==  Vector2.zero);
-                    EditorGUILayout.PropertyField(endControl);
-                EditorGUI.EndDisabledGroup();
-                EditorGUI.BeginDisabledGroup(endControl.vector2Value == Vector2.zero);
-                    EditorGUILayout.PropertyField(startControl);
-                EditorGUI.EndDisabledGroup();
-
-                break;
-        }
-        SerializedProperty stepSize = serializedObject.FindProperty("StepSize");
-        EditorGUILayout.PropertyField(stepSize);
-
-        EditorGUILayout.BeginHorizontal();
-        {
-            isReplace = EditorGUILayout.ToggleLeft("Replace", isReplace);
-
-            if (GUILayout.Button("Set path"))
-            {
-                pathData.SetWaypointPath(pathTypeSelection, !isReplace);
-            }
-        }
-        EditorGUILayout.EndHorizontal();
-
-        serializedObject.ApplyModifiedProperties();
-
-        tempPath = pathData.CreateWaypointPath((isReplace) ? pathData.StartPosition : pathData.Path.Last(), pathTypeSelection);
-        SceneView.RepaintAll();
-    }
-
-    bool isMousePressed = false;
-    bool isEndControlEnabled = false;
+    bool isMousePressed;
+    bool isEndControlEnabled;
     //bool isStartControlEnabled = false;
-
-    //DrawPathHandles drawPathHandles = new(false, false); //Not used for now because it's laggier
-    public void OnSceneGUI()
+    public DrawPathHandles(bool isMousePressed, bool isEndControlEnabled)
     {
-        WaypointPathData pathData = target as WaypointPathData;
-        Event e = Event.current;
+        this.isMousePressed = isMousePressed;
+        this.isEndControlEnabled = isEndControlEnabled;
+    }
 
+    public void Draw(WaypointPathData pathData, Event e, List<Vector2> tempPath, int pathTypeSelection, bool isReplace)
+    {
         Vector2 snap = Vector2.one * 0.2f;
 
-        //drawPathHandles.Draw(pathData, e, tempPath, pathTypeSelection, isReplace); //Would do the code below but laggier
         EditorGUI.BeginChangeCheck();
         {
             float size;
