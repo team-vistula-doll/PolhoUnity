@@ -5,7 +5,6 @@ using UnityEngine;
 using WaypointPath;
 
 
-//Not used for now because it's laggier
 public struct DrawPathHandles
 {
     bool isMousePressed;
@@ -17,12 +16,11 @@ public struct DrawPathHandles
         this.isEndControlEnabled = isEndControlEnabled;
     }
 
-    public void Draw(WaypointPathData pathData, Event e, List<Vector2> tempPath, int pathTypeSelection, bool isReplace)
+    public void Draw(WaypointPathData pathData, Event e, ref List<Vector2> tempPath, int pathTypeSelection, bool isReplace)
     {
         Vector2 snap = Vector2.one * 0.2f;
 
         EditorGUI.BeginChangeCheck();
-        {
             float size;
             Vector2 startControlHandle = pathData.StartPosition;
             Vector2 endControlHandle = pathData.StartPosition;
@@ -117,14 +115,13 @@ public struct DrawPathHandles
                 Handles.DrawLine(endControlHandle, pathData.StartPosition, 2);
             }
 
-            if (EditorGUI.EndChangeCheck())
-            {
-                Undo.RecordObject(pathData, "Change Handle Position");
-                pathData.EndPosition = endPositionHandle;
-                pathData.StartControl = startControlHandle;
-                pathData.EndControl = endControlHandle;
-                tempPath = pathData.CreateWaypointPath((isReplace) ? pathData.StartPosition : pathData.Path.Last(), pathTypeSelection);
-            }
+        if (EditorGUI.EndChangeCheck())
+        {
+            Undo.RecordObject(pathData, "Change Handle Position");
+            pathData.EndPosition = endPositionHandle;
+            pathData.StartControl = startControlHandle;
+            pathData.EndControl = endControlHandle;
+            tempPath = pathData.CreateWaypointPath((isReplace) ? pathData.StartPosition : pathData.Path.Last(), pathTypeSelection);
         }
     }
 }
