@@ -7,12 +7,14 @@ using System.Linq;
 [CustomEditor(typeof(WaypointPathData))]
 public class WaypointPathDataEditor : Editor
 {
-    SerializedProperty pathFormula;
-    SerializedProperty length;
-    SerializedProperty angle;
-    SerializedProperty startControl;
-    SerializedProperty endControl;
-    SerializedProperty endPosition;
+    public Vector2 StartPosition = Vector2.zero, StartControl, EndControl, EndPosition = Vector2.zero;
+
+    [Delayed]
+    public string PathFormula = "x";
+    public float Length = 20, Angle;
+
+    [Range(0.2f, 50f)]
+    public float StepSize = 0.5f;
 
     List<Vector2> tempPath = new();
     int pathTypeSelection = 1;
@@ -20,12 +22,6 @@ public class WaypointPathDataEditor : Editor
 
     private void OnEnable()
     {
-        pathFormula = serializedObject.FindProperty("PathFormula");
-        length = serializedObject.FindProperty("Length");
-        angle = serializedObject.FindProperty("Angle");
-        startControl = serializedObject.FindProperty("StartControl");
-        endControl = serializedObject.FindProperty("EndControl");
-        endPosition = serializedObject.FindProperty("EndPosition");
     }
 
     public override void OnInspectorGUI()
@@ -70,20 +66,19 @@ public class WaypointPathDataEditor : Editor
 
             if (GUILayout.Button("Set path"))
             {
-                pathData.SetWaypointPath(pathTypeSelection, !isReplace);
+                List<Vector2> path = CreateWaypointPath(
+                    (!isReplace && pathData.Path.Count() != 0) ? pathData.Path.Last() : StartPosition);
+                if (!isReplace) pathData.Path.AddRange(path);
+                else pathData.Path = path;
             }
         }
         EditorGUILayout.EndHorizontal();
 
         serializedObject.ApplyModifiedProperties();
 
-        tempPath = pathData.CreateWaypointPath((isReplace) ? pathData.StartPosition : pathData.Path.Last(), pathTypeSelection);
+        tempPath = CreateWaypointPath((isReplace) ? StartPosition : pathData.Path.Last());
         SceneView.RepaintAll();
     }
-
-    bool isMousePressed = false;
-    bool isEndControlEnabled = false;
-    //bool isStartControlEnabled = false;
 
     DrawPathHandles drawPathHandles = new(false, false);
     public void OnSceneGUI()
@@ -91,8 +86,15 @@ public class WaypointPathDataEditor : Editor
         WaypointPathData pathData = target as WaypointPathData;
         Event e = Event.current;
 
-        Vector2 snap = Vector2.one * 0.2f;
-
         drawPathHandles.Draw(pathData, e, ref tempPath, pathTypeSelection, isReplace);
+    }
+
+    List<Vector2> CreateWaypointPath(Vector2 startPos)
+    {
+        return pathTypeSelection switch
+        {
+            1 => WaypointPathCreator.GeneratePathFromCurve(startPos, EndPosition, StartControl, EndControl, StepSize),
+            _ => WaypointPathCreator.GeneratePathFromExpression(startPos, Length, PathFormula, Angle, StepSize),
+        };
     }
 }
