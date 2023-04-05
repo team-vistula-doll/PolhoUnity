@@ -10,11 +10,15 @@ public class CurrentStageEnemiesEditor : Editor
 {
     SerializedProperty enemies;
 
+    WaypointPathData pathData = new();
+    BezierControlPoints bezier = new(Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero);
+    ExpressionProperties expression = new("x", 20, 0);
+    [Range(0.2f, 50f)]
+    public float StepSize = 0.5f;
+
     List<Vector2> tempPath = new();
     bool isReplace = false;
     int pathTypeSelection = 0;
-
-    WaypointPathData pathData = new();
 
     private void OnEnable()
     {
@@ -26,7 +30,7 @@ public class CurrentStageEnemiesEditor : Editor
         serializedObject.Update();
         CurrentStageEnemies stageEnemies = target as CurrentStageEnemies;
 
-        pathData.StartPosition = EditorGUILayout.Vector2Field("Start Position", pathData.StartPosition);
+        bezier.StartPosition = EditorGUILayout.Vector2Field("Start Position", bezier.StartPosition);
         EditorGUILayout.BeginHorizontal();
         {
             GUILayout.Label("Path type: ");
@@ -40,24 +44,24 @@ public class CurrentStageEnemiesEditor : Editor
         {
             case 0:
 
-                pathData.PathFormula = EditorGUILayout.DelayedTextField("Path Formula", pathData.PathFormula);
-                pathData.Length = EditorGUILayout.FloatField("Length", pathData.Length);
-                pathData.Angle = EditorGUILayout.FloatField("Angle", pathData.Angle);
+                expression.PathFormula = EditorGUILayout.DelayedTextField("Path Formula", expression.PathFormula);
+                expression.Length = EditorGUILayout.FloatField("Length", expression.Length);
+                expression.Angle = EditorGUILayout.FloatField("Angle", expression.Angle);
 
                 break;
             case 1:
 
-                pathData.EndPosition = EditorGUILayout.Vector2Field("End Position", pathData.EndPosition);
-                EditorGUI.BeginDisabledGroup(pathData.EndPosition == Vector2.zero);
-                    pathData.EndControl = EditorGUILayout.Vector2Field("End Control", pathData.EndControl);
+                bezier.EndPosition = EditorGUILayout.Vector2Field("End Position", bezier.EndPosition);
+                EditorGUI.BeginDisabledGroup(bezier.EndPosition == Vector2.zero);
+                    bezier.EndControl = EditorGUILayout.Vector2Field("End Control", bezier.EndControl);
                 EditorGUI.EndDisabledGroup();
-                EditorGUI.BeginDisabledGroup(pathData.EndControl == Vector2.zero);
-                    pathData.StartControl = EditorGUILayout.Vector2Field("Start Control", pathData.StartControl);
+                EditorGUI.BeginDisabledGroup(bezier.EndControl == Vector2.zero);
+                    bezier.StartControl = EditorGUILayout.Vector2Field("Start Control", bezier.StartControl);
                 EditorGUI.EndDisabledGroup();
 
                 break;
         }
-        pathData.StepSize = EditorGUILayout.FloatField("Step Size", pathData.StepSize);
+        StepSize = EditorGUILayout.FloatField("Step Size", StepSize);
 
         EditorGUILayout.BeginHorizontal();
         {
@@ -65,14 +69,14 @@ public class CurrentStageEnemiesEditor : Editor
 
             if (GUILayout.Button("Set path"))
             {
-                pathData.SetWaypointPath(pathTypeSelection, !isReplace);
+                WaypointPathCreator.SetWaypointPath(pathTypeSelection, !isReplace);
             }
         }
         EditorGUILayout.EndHorizontal();
 
         serializedObject.ApplyModifiedProperties();
 
-        tempPath = pathData.CreateWaypointPath((isReplace) ? pathData.StartPosition : pathData.Path.Last(), pathTypeSelection);
+        tempPath = WaypointPathCreator.CreateWaypointPath((isReplace) ? pathData.StartPosition : pathData.Path.Last(), pathTypeSelection);
         SceneView.RepaintAll();
 
         //base.OnInspectorGUI();

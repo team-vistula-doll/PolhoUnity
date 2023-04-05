@@ -1,27 +1,50 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using B83.ExpressionParser;
 using Bezier;
-using System.IO;
 
 namespace WaypointPath
 {
-    public struct BezierControlPoints
+    struct BezierControlPoints
     {
         public Vector2 StartPosition;
         public Vector2 EndPosition;
-        public Vector2? StartControl;
-        public Vector2? EndControl;
+        public Vector2 StartControl;
+        public Vector2 EndControl;
+
+        public BezierControlPoints(Vector2 startPosition, Vector2 endPosition, Vector2 startControl, Vector2 endControl)
+        {
+            StartPosition = startPosition;
+            EndPosition = endPosition;
+            StartControl = startControl;
+            EndControl = endControl;
+        }
+    }
+
+    struct ExpressionProperties
+    {
+        [Delayed]
+        public string PathFormula;
+        public float Length;
+        public float Angle;
+
+        public ExpressionProperties(string pathFormula, float length, float angle)
+        {
+            PathFormula = pathFormula;
+            Length = length;
+            Angle = angle;
+        }
     }
 
 
-    public static class WaypointPathCreator
+    public class WaypointPathCreator
     //Given starting position to a selected function,
     //generates List of waypoints (Vectors2) that WaypointWalkers will follow
     {
+        BezierControlPoints bezier = new(Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero);
+        ExpressionProperties expression = new("x", 20, 0);
 
-        public static List<Vector2> GeneratePathFromExpression(Vector2 startPos, float length, string expression, float angle, float stepSize = 0.5f)
+        public List<Vector2> GeneratePathFromExpression(Vector2 startPos, float length, string expression, float angle, float stepSize = 0.5f)
         {
             //Create expression parser and envaluate expression
             ExpressionParser parser = new();
@@ -49,7 +72,7 @@ namespace WaypointPath
         /// </summary>
         /// <param name="length">Magnitude of the vector; if <= 0 defaults to 1</param>
         /// <param name="angle">Direction of the vector in degrees</param>
-        public static Vector2 CreateVector2(float length, float angle)
+        public Vector2 CreateVector2(float length, float angle)
         {
             if (length <= 0) length = 1;
             return new Vector2(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad)) * length;
@@ -63,32 +86,29 @@ namespace WaypointPath
         /// <param name="startControl">Control point of the start position/main control point for quadratic curve</param>
         /// <param name="endControl">Control point of the end position</param>
         /// <returns>Waypoints of the path</returns>
-        public static List<Vector2> GeneratePathFromCurve(BezierControlPoints bezierControlPoints, float stepSize = 0.5f)
+        public List<Vector2> GeneratePathFromCurve(BezierControlPoints bezierControlPoints, float stepSize = 0.5f)
         {
             if (bezierControlPoints.EndPosition == Vector2.zero)
                 return new List<Vector2>() { Vector2.zero };
 
             if (stepSize <= 0.1f) stepSize = 0.5f; //Prevent too many waypoints and game freezing
 
-            Vector2 startCtrl = bezierControlPoints.StartControl ?? Vector2.zero,
-                endCtrl = bezierControlPoints.StartControl ?? Vector2.zero;
-
             List<Vector2> waypoints = new();
-            if (endCtrl != Vector2.zero)
+            if (bezierControlPoints.StartControl != Vector2.zero)
             {
-                if (startCtrl != Vector2.zero)
+                if (bezierControlPoints.StartControl != Vector2.zero)
                 {
                     for (int t = 1; t * stepSize <= 100; t++)
                     {
-                        waypoints.Add(BezierCurve.CubicCurve(bezierControlPoints.StartPosition, startCtrl,
-                            endCtrl, bezierControlPoints.EndPosition, t * stepSize / 100));
+                        waypoints.Add(BezierCurve.CubicCurve(bezierControlPoints.StartPosition, bezierControlPoints.StartControl,
+                            bezierControlPoints.StartControl, bezierControlPoints.EndPosition, t * stepSize / 100));
                     }
                 }
                 else
                 {
                     for (int t = 1; t * stepSize <= 100; t++)
                     {
-                        waypoints.Add(BezierCurve.QuadraticCurve(bezierControlPoints.StartPosition, endCtrl,
+                        waypoints.Add(BezierCurve.QuadraticCurve(bezierControlPoints.StartPosition, bezierControlPoints.StartControl,
                             bezierControlPoints.EndPosition, t * stepSize / 100));
                     }
                 }
@@ -99,6 +119,17 @@ namespace WaypointPath
             }
 
             return waypoints;
+        }
+
+        public List<Vector2> CreateWaypointPath(Vector2 startPos, BezierControlPoints bezier,
+        ExpressionProperties expression, float StepSize, int pathTypeSelection)
+        {
+            return pathTypeSelection switch
+            {
+                1 => GeneratePathFromCurve(bezier, StepSize),
+                _ => GeneratePathFromExpression(startPos, expression.Length,
+                    expression.PathFormula, expression.Angle, StepSize),
+            };
         }
     }
 }

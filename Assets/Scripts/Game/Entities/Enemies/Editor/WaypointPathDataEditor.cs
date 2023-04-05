@@ -7,12 +7,8 @@ using System.Linq;
 [CustomEditor(typeof(WaypointPathData))]
 public class WaypointPathDataEditor : Editor
 {
-    public Vector2 StartPosition = Vector2.zero, StartControl, EndControl, EndPosition = Vector2.zero;
-
-    [Delayed]
-    public string PathFormula = "x";
-    public float Length = 20, Angle;
-
+    BezierControlPoints bezier = new(Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero);
+    ExpressionProperties expression = new("x", 20, 0);
     [Range(0.2f, 50f)]
     public float StepSize = 0.5f;
 
@@ -66,8 +62,8 @@ public class WaypointPathDataEditor : Editor
 
             if (GUILayout.Button("Set path"))
             {
-                List<Vector2> path = CreateWaypointPath(
-                    (!isReplace && pathData.Path.Count() != 0) ? pathData.Path.Last() : StartPosition);
+                List<Vector2> path = WaypointPathCreator.CreateWaypointPath(
+                    (!isReplace && pathData.Path.Count() != 0) ? pathData.Path.Last() : bezier.StartPosition);
                 if (!isReplace) pathData.Path.AddRange(path);
                 else pathData.Path = path;
             }
@@ -76,7 +72,7 @@ public class WaypointPathDataEditor : Editor
 
         serializedObject.ApplyModifiedProperties();
 
-        tempPath = CreateWaypointPath((isReplace) ? StartPosition : pathData.Path.Last());
+        tempPath = WaypointPathCreator.CreateWaypointPath(isReplace ? bezier.StartPosition : pathData.Path.Last());
         SceneView.RepaintAll();
     }
 
@@ -87,14 +83,5 @@ public class WaypointPathDataEditor : Editor
         Event e = Event.current;
 
         drawPathHandles.Draw(pathData, e, ref tempPath, pathTypeSelection, isReplace);
-    }
-
-    List<Vector2> CreateWaypointPath(Vector2 startPos)
-    {
-        return pathTypeSelection switch
-        {
-            1 => WaypointPathCreator.GeneratePathFromCurve(startPos, EndPosition, StartControl, EndControl, StepSize),
-            _ => WaypointPathCreator.GeneratePathFromExpression(startPos, Length, PathFormula, Angle, StepSize),
-        };
     }
 }
