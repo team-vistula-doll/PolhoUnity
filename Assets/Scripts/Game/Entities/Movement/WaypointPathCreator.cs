@@ -5,7 +5,7 @@ using Bezier;
 
 namespace WaypointPath
 {
-    struct BezierControlPoints
+    public struct BezierControlPoints
     {
         public Vector2 StartPosition;
         public Vector2 EndPosition;
@@ -21,52 +21,10 @@ namespace WaypointPath
         }
     }
 
-    struct ExpressionProperties
-    {
-        [Delayed]
-        public string PathFormula;
-        public float Length;
-        public float Angle;
-
-        public ExpressionProperties(string pathFormula, float length, float angle)
-        {
-            PathFormula = pathFormula;
-            Length = length;
-            Angle = angle;
-        }
-    }
-
-
-    public class WaypointPathCreator
+    public abstract class WaypointPathCreator
     //Given starting position to a selected function,
     //generates List of waypoints (Vectors2) that WaypointWalkers will follow
     {
-        BezierControlPoints bezier = new(Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero);
-        ExpressionProperties expression = new("x", 20, 0);
-
-        public List<Vector2> GeneratePathFromExpression(Vector2 startPos, float length, string expression, float angle, float stepSize = 0.5f)
-        {
-            //Create expression parser and envaluate expression
-            ExpressionParser parser = new();
-            Expression exp = parser.EvaluateExpression(expression);
-
-            List<Vector2> waypoints = new();
-
-            angle = Mathf.Deg2Rad * angle;
-            for (int i = 1; i * stepSize < length; i++)
-            {
-                exp.Parameters["x"].Value = i * stepSize; //Put x-val to x in expression
-
-                Vector2 p = new(i * stepSize, (float)exp.Value); //point on a graph with origin (0,0)
-                Vector2 rotatedPoint = new(p.x * Mathf.Cos(angle) - p.y * Mathf.Sin(angle),
-                                                p.x * Mathf.Sin(angle) + p.y * Mathf.Cos(angle));
-                //Rotate point using rotation matrix
-                waypoints.Add(rotatedPoint + startPos); //Translate rotatedPoint to originate from the startPos
-            }
-
-            return waypoints;
-        }
-
         /// <summary>
         /// Creates a Vector2 from its length and angle
         /// </summary>
@@ -78,23 +36,15 @@ namespace WaypointPath
             return new Vector2(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad)) * length;
         }
 
-        /// <summary>
-        /// Generates a path from a Bezier curve
-        /// </summary>
-        /// <param name="startPos">Start position of the curve</param>
-        /// <param name="endPos">End position of the curve</param>
-        /// <param name="startControl">Control point of the start position/main control point for quadratic curve</param>
-        /// <param name="endControl">Control point of the end position</param>
-        /// <returns>Waypoints of the path</returns>
         public List<Vector2> GeneratePathFromCurve(BezierControlPoints bezierControlPoints, float stepSize = 0.5f)
         {
             if (bezierControlPoints.EndPosition == Vector2.zero)
                 return new List<Vector2>() { Vector2.zero };
 
-            if (stepSize <= 0.1f) stepSize = 0.5f; //Prevent too many waypoints and game freezing
+            if (stepSize <= 0.1f) stepSize = 0.2f; //Prevent too many waypoints and Unity freezing
 
             List<Vector2> waypoints = new();
-            if (bezierControlPoints.StartControl != Vector2.zero)
+            if (bezierControlPoints.EndControl != Vector2.zero)
             {
                 if (bezierControlPoints.StartControl != Vector2.zero)
                 {
@@ -121,15 +71,6 @@ namespace WaypointPath
             return waypoints;
         }
 
-        public List<Vector2> CreateWaypointPath(Vector2 startPos, BezierControlPoints bezier,
-        ExpressionProperties expression, float StepSize, int pathTypeSelection)
-        {
-            return pathTypeSelection switch
-            {
-                1 => GeneratePathFromCurve(bezier, StepSize),
-                _ => GeneratePathFromExpression(startPos, expression.Length,
-                    expression.PathFormula, expression.Angle, StepSize),
-            };
-        }
+        public abstract List<Vector2> GeneratePath(Vector2 startPos, float stepSize = 0.5f);
     }
 }
