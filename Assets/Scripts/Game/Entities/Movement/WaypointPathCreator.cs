@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using B83.ExpressionParser;
 using Bezier;
+using System;
 
 namespace WaypointPath
 {
+    /// <summary>
+    /// A structure for constructing at most cubic Bezier curves
+    /// </summary>
     public struct BezierControlPoints
     {
         public Vector2 StartPosition;
@@ -18,6 +21,36 @@ namespace WaypointPath
             EndPosition = endPosition;
             StartControl = startControl;
             EndControl = endControl;
+        }
+
+        /// <summary>
+        /// Copies and modifies the curve; for simple operations that change all points
+        /// </summary>
+        /// <param name="vector">What vector to use</param>
+        /// <param name="mod">The operation to do, e.g. <c>(x, y) => x + y</c>, where 'x' is the curve control points 
+        /// and 'y' is <paramref name="vector"/></param>
+        /// <returns>A new modified Bezier curve</returns>
+        public BezierControlPoints GetModifiedCurveCopy(Vector2 vector, Func<Vector2, Vector2, Vector2> mod)
+        {
+            Vector2 startPosition = mod(StartPosition, vector);
+             Vector2 endPosition = mod(EndPosition, vector);
+             Vector2 startControl = mod(StartControl, vector);
+             Vector2 endControl = mod(EndControl, vector);
+            return new BezierControlPoints(startPosition, endPosition, startControl, endControl);
+        }
+
+        /// <summary>
+        /// Modifies the curve; for simple operations that change all points
+        /// </summary>
+        /// <param name="vector">What vector to use</param>
+        /// <param name="mod">The operation to do, e.g. <c>(x, y) => x + y</c>, where 'x' is the curve control points 
+        /// and 'y' is <paramref name="vector"/></param>
+        public void ModifyCurve(Vector2 vector, Func<Vector2, Vector2, Vector2> mod)
+        {
+            StartPosition = mod(StartPosition, vector);
+            EndPosition = mod(EndPosition, vector);
+            StartControl = mod(StartControl, vector);
+            EndControl = mod(EndControl, vector);
         }
     }
 

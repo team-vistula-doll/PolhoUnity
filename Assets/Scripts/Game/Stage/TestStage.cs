@@ -10,71 +10,49 @@ using WaypointPath;
 public class TestStage : Stage
 {
     List<int> _enemyIDs = new();
+    WaypointPathExpression _pathExpression = new();
     public override IEnumerator StageScript(StageArgs args)
     {
         yield return new WaitForSeconds(1f);
 
         //Spawn positions for the first enemies
-        List<Vector2> enemy1aVectors = new()
-        {
-            new Vector2(-6, 5), new Vector2(7, -2), new Vector2(-6, -1), new Vector2(2, -3)
-        };
 
-        List<Vector2> enemy1bVectors = new();
-        foreach (Vector2 v in enemy1aVectors)
-        {
-            v.Set(v.x - 0.5f, v.y - 0.5f);
-            enemy1bVectors.Add(v);
-        }
+        BezierControlPoints enemy1aVectors = new(new(-6, 5), new(7, -2), new(-6, -1), new(2, -3));
 
-        List<Vector2> enemy1cVectors = new();
-        foreach (Vector2 v in enemy1aVectors)
-        {
-            v.Set(v.x * -1, v.y);
-            enemy1cVectors.Add(v);
-        }
-
-        List<Vector2> enemy1dVectors = new();
-        foreach (Vector2 v in enemy1cVectors)
-        {
-            v.Set(v.x + 0.5f, v.y - 0.5f);
-            enemy1dVectors.Add(v);
-        }
+        BezierControlPoints enemy1bVectors = enemy1aVectors.GetModifiedCurveCopy(new(0.5f, 0.5f), (x, y) => x - y);
+        BezierControlPoints enemy1cVectors = enemy1aVectors.GetModifiedCurveCopy(new(-1f, 1f), (x, y) => x * y);
+        BezierControlPoints enemy1dVectors = enemy1cVectors.GetModifiedCurveCopy(new(0.5f, -0.5f), (x, y) => x + y);
 
         int enemy1a = args.EnemyManager.CreateNewEnemy(new Enemy
         {
             Name = "enemy1",
             SpawnTime = -1,
-            SpawnPosition = enemy1aVectors[0],
-            Path = WaypointPathCreator.GeneratePathFromCurve(enemy1aVectors[0], enemy1aVectors[1],
-            enemy1aVectors[2], enemy1aVectors[3]),
+            SpawnPosition = enemy1aVectors.StartPosition,
+            Path = _pathExpression.GeneratePathFromCurve(enemy1aVectors),
             Fireable = new Arc(3, 90, 0)
         });
         int enemy1b = args.EnemyManager.CreateNewEnemy(new Enemy
         {
             Name = "enemy1",
             SpawnTime = -1,
-            SpawnPosition = enemy1bVectors[0],
-            Path = WaypointPathCreator.GeneratePathFromCurve(enemy1bVectors[0], enemy1bVectors[1],
-            enemy1bVectors[2], enemy1bVectors[3]),
+            SpawnPosition = enemy1bVectors.StartPosition,
+            Path = _pathExpression.GeneratePathFromCurve(enemy1bVectors),
             Fireable = new Arc(3, 90, 0)
         });
         int enemy1c = args.EnemyManager.CreateNewEnemy(new Enemy
         {
             Name = "enemy1",
             SpawnTime = -1,
-            SpawnPosition = enemy1cVectors[0],
-            Path = WaypointPathCreator.GeneratePathFromCurve(enemy1cVectors[0], enemy1cVectors[1],
-            enemy1cVectors[2], enemy1cVectors[3]),
+            SpawnPosition = enemy1cVectors.StartPosition,
+            Path = _pathExpression.GeneratePathFromCurve(enemy1cVectors),
             Fireable = new Arc(3, 90, 0)
         });
         int enemy1d = args.EnemyManager.CreateNewEnemy(new Enemy
         {
             Name = "enemy1",
             SpawnTime = -1,
-            SpawnPosition = enemy1dVectors[0],
-            Path = WaypointPathCreator.GeneratePathFromCurve(enemy1dVectors[0], enemy1dVectors[1],
-            enemy1dVectors[2], enemy1dVectors[3]),
+            SpawnPosition = enemy1dVectors.StartPosition,
+            Path = _pathExpression.GeneratePathFromCurve(enemy1dVectors),
             Fireable = new Arc(3, 3, 45)
         });
         
@@ -103,7 +81,7 @@ public class TestStage : Stage
                 Name = "enemy2",
                 SpawnTime = -1,
                 SpawnPosition = new Vector2(-6, i + 0.5f),
-                Path = WaypointPathCreator.GeneratePathFromExpression(new Vector2(-6, i + 0.5f), 20,
+                Path = _pathExpression.GeneratePath(new Vector2(-6, i + 0.5f), 20,
                 "-x", 45)
             });
             enemy2b = args.EnemyManager.CreateNewEnemy(new Enemy
@@ -111,7 +89,7 @@ public class TestStage : Stage
                 Name = "enemy2",
                 SpawnTime = -1,
                 SpawnPosition = new Vector2(6, i),
-                Path = WaypointPathCreator.GeneratePathFromExpression(new Vector2(6, i), 20,
+                Path = _pathExpression.GeneratePath(new Vector2(6, i), 20,
                 "-x", 225)
             });
 
@@ -130,7 +108,7 @@ public class TestStage : Stage
                 Name = "enemy3",
                 SpawnTime = -1,
                 SpawnPosition = new Vector2(i, 7),
-                Path = WaypointPathCreator.GeneratePathFromExpression(new Vector2(i, 7), 20,
+                Path = _pathExpression.GeneratePath(new Vector2(i, 7), 20,
                 "sin(3*x)*0.5", -90)
             });
 
@@ -142,7 +120,7 @@ public class TestStage : Stage
             Name = "enemy3",
             SpawnTime = -1,
             SpawnPosition = new Vector2(0, 7),
-            Path = WaypointPathCreator.GeneratePathFromExpression(new Vector2(0, 7), 20,
+            Path = _pathExpression.GeneratePath(new Vector2(0, 7), 20,
             "sin(3*x)*0.5", -90)
         });
 
@@ -154,7 +132,7 @@ public class TestStage : Stage
             Name = "boss",
             SpawnTime = -1,
             SpawnPosition = new Vector2(0, 7),
-            Path = WaypointPathCreator.GeneratePathFromExpression(new Vector2(0, 7), 3.5f,
+            Path = _pathExpression.GeneratePath(new Vector2(0, 7), 3.5f,
             "-x", -45)
         });
 
