@@ -16,14 +16,14 @@ public struct DrawPathHandles
         this.isEndControlEnabled = isEndControlEnabled;
     }
 
-    public void Draw(WaypointPathData pathData, Event e, ref List<Vector2> tempPath, int pathTypeSelection, bool isReplace)
+    public void Draw(BezierProperties properties, WaypointPathData pathData, Event e, ref List<Vector2> tempPath, bool isReplace)
     {
         Vector2 snap = Vector2.one * 0.2f;
 
         EditorGUI.BeginChangeCheck();
             float size;
-            Vector2 startControlHandle = pathData.StartPosition;
-            Vector2 endControlHandle = pathData.StartPosition;
+            Vector2 startControlHandle = properties.StartPosition;
+            Vector2 endControlHandle = properties.StartPosition;
 
             if (e.type == EventType.Repaint)
             {
@@ -67,12 +67,12 @@ public struct DrawPathHandles
             ////***
 
             //***Prevent End Control handle from getting selected when End Position is zero
-            if (e.type == EventType.MouseUp && pathData.EndPosition != Vector2.zero && isMousePressed)
+            if (e.type == EventType.MouseUp && properties.EndPosition != Vector2.zero && isMousePressed)
             {
                 isEndControlEnabled = true;
                 isMousePressed = false;
             }
-            else if (e.type == EventType.MouseUp && pathData.EndPosition == Vector2.zero && isMousePressed)
+            else if (e.type == EventType.MouseUp && properties.EndPosition == Vector2.zero && isMousePressed)
             {
                 isEndControlEnabled = false;
                 isMousePressed = false;
@@ -81,30 +81,30 @@ public struct DrawPathHandles
 
             //if (isStartControlEnabled)
             //{
-            size = HandleUtility.GetHandleSize(pathData.StartControl) * 0.15f;
+            size = HandleUtility.GetHandleSize(properties.StartControl) * 0.15f;
             Handles.color = Color.cyan;
-            startControlHandle = Handles.FreeMoveHandle(pathData.StartControl, Quaternion.identity, size, snap, Handles.SphereHandleCap);
+            startControlHandle = Handles.FreeMoveHandle(properties.StartControl, Quaternion.identity, size, snap, Handles.SphereHandleCap);
             //}
             //else startControlHandle = Vector2.zero;
 
             if (isEndControlEnabled)
             {
-                size = HandleUtility.GetHandleSize(pathData.EndControl) * 0.15f;
+                size = HandleUtility.GetHandleSize(properties.EndControl) * 0.15f;
                 Handles.color = Color.cyan;
-                endControlHandle = Handles.FreeMoveHandle(pathData.EndControl, Quaternion.identity, size, snap, Handles.SphereHandleCap);
+                endControlHandle = Handles.FreeMoveHandle(properties.EndControl, Quaternion.identity, size, snap, Handles.SphereHandleCap);
             }
             else endControlHandle = Vector2.zero;
 
-            size = HandleUtility.GetHandleSize(pathData.EndPosition) * 0.2f;
+            size = HandleUtility.GetHandleSize(properties.EndPosition) * 0.2f;
             Handles.color = Color.red;
-            Vector2 endPositionHandle = Handles.FreeMoveHandle(pathData.EndPosition, Quaternion.identity, size, snap, Handles.SphereHandleCap);
+            Vector2 endPositionHandle = Handles.FreeMoveHandle(properties.EndPosition, Quaternion.identity, size, snap, Handles.SphereHandleCap);
 
             Handles.color = new Color(1, 0, 0, 0.5f);
             if (startControlHandle != Vector2.zero)
             {
                 Handles.DrawLine(endControlHandle, endPositionHandle, 2);
                 Handles.color = new Color(0, 0, 1, 0.5f);
-                Handles.DrawLine(startControlHandle, pathData.StartPosition, 2);
+                Handles.DrawLine(startControlHandle, properties.StartPosition, 2);
                 Handles.color = new Color(1, 0.92f, 0.016f, 0.5f);
                 Handles.DrawLine(endControlHandle, startControlHandle);
             }
@@ -112,16 +112,16 @@ public struct DrawPathHandles
             {
                 Handles.DrawLine(endControlHandle, endPositionHandle, 2);
                 Handles.color = new Color(0, 0, 1, 0.5f);
-                Handles.DrawLine(endControlHandle, pathData.StartPosition, 2);
+                Handles.DrawLine(endControlHandle, properties.StartPosition, 2);
             }
 
         if (EditorGUI.EndChangeCheck())
         {
             Undo.RecordObject(pathData, "Change Handle Position");
-            pathData.EndPosition = endPositionHandle;
-            pathData.StartControl = startControlHandle;
-            pathData.EndControl = endControlHandle;
-            tempPath = pathData.CreateWaypointPath((isReplace) ? pathData.StartPosition : pathData.Path.Last(), pathTypeSelection);
+            properties.EndPosition = endPositionHandle;
+            properties.StartControl = startControlHandle;
+            properties.EndControl = endControlHandle;
+            tempPath = pathData.CreateWaypointPath((isReplace) ? properties.StartPosition : properties.Path.Last(), pathTypeSelection);
         }
     }
 }

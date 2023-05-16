@@ -7,8 +7,8 @@ using System.Linq;
 [CustomEditor(typeof(WaypointPathData))]
 public class WaypointPathDataEditor : Editor
 {
-    BezierControlPoints bezier = new(Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero);
-    ExpressionProperties expression = new("x", 20, 0);
+    BezierProperties bezier = new(Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero);
+    ExpressionProperties expression = new(Vector2.zero, "x", 20, 0);
     [Range(0.2f, 50f)]
     public float StepSize = 0.5f;
 
@@ -82,6 +82,6 @@ public class WaypointPathDataEditor : Editor
         WaypointPathData pathData = target as WaypointPathData;
         Event e = Event.current;
 
-        drawPathHandles.Draw(pathData, e, ref tempPath, pathTypeSelection, isReplace);
+        if (pathTypeSelection == 2) drawPathHandles.Draw(bezier, pathData, e, ref tempPath, isReplace);
     }
 }

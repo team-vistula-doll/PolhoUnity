@@ -11,7 +11,7 @@ public class CurrentStageEnemiesEditor : Editor
     SerializedProperty enemies;
 
     WaypointPathData pathData = new();
-    BezierControlPoints bezier = new(Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero);
+    BezierProperties bezier = new(Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero);
     ExpressionProperties expression = new("x", 20, 0);
     [Range(0.2f, 50f)]
     public float StepSize = 0.5f;
