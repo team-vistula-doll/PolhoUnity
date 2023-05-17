@@ -4,11 +4,18 @@ using WaypointPath;
 using System.Collections.Generic;
 using System.Linq;
 
+//TODO: Make a class WaypointPathManager that modifies paths so it's possible from within the game and not just the editor
+//move some of the code from here
 [CustomEditor(typeof(WaypointPathData))]
 public class WaypointPathDataEditor : Editor
 {
+    //TODO: initialize these from somewhere
     BezierProperties bezier = new(Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero);
     ExpressionProperties expression = new(Vector2.zero, "x", 20, 0);
+    PathProperties properties;
+    DrawBezier drawBezier = new(false, false);
+    DrawPath drawPath;
+
     [Range(0.2f, 50f)]
     public float StepSize = 0.5f;
 
@@ -37,12 +44,15 @@ public class WaypointPathDataEditor : Editor
         switch (pathTypeSelection)
         {
             case 0:
+                properties = expression;
                 EditorGUILayout.PropertyField(pathFormula);
                 EditorGUILayout.PropertyField(length);
                 EditorGUILayout.PropertyField(angle);
 
                 break;
             case 1:
+                properties = bezier;
+                drawPath = drawBezier;
                 EditorGUILayout.PropertyField(endPosition);
                 EditorGUI.BeginDisabledGroup(endPosition.vector2Value ==  Vector2.zero);
                     EditorGUILayout.PropertyField(endControl);
@@ -76,12 +86,11 @@ public class WaypointPathDataEditor : Editor
         SceneView.RepaintAll();
     }
 
-    DrawPathHandles drawPathHandles = new(false, false);
     public void OnSceneGUI()
     {
         WaypointPathData pathData = target as WaypointPathData;
         Event e = Event.current;
 
-        if (pathTypeSelection == 2) drawPathHandles.Draw(bezier, pathData, e, ref tempPath, isReplace);
+        drawPath.Draw(properties, pathData, e, ref tempPath, isReplace);
     }
 }

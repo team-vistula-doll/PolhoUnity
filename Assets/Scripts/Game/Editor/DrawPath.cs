@@ -4,19 +4,19 @@ using UnityEditor;
 using UnityEngine;
 using WaypointPath;
 
-
-public struct DrawPathHandles
+public class DrawPath
 {
     bool isMousePressed;
     bool isEndControlEnabled;
     //bool isStartControlEnabled = false;
-    public DrawPathHandles(bool isMousePressed, bool isEndControlEnabled)
+    public DrawPath(bool isMousePressed, bool isEndControlEnabled)
     {
         this.isMousePressed = isMousePressed;
         this.isEndControlEnabled = isEndControlEnabled;
     }
 
-    public void Draw(BezierProperties properties, WaypointPathData pathData, Event e, ref List<Vector2> tempPath, bool isReplace)
+    //TODO: Polymorph DrawPath into Expression and Curve
+    protected void Draw(PathProperties properties, WaypointPathData pathData, Event e, ref List<Vector2> tempPath, bool isReplace)
     {
         Vector2 snap = Vector2.one * 0.2f;
 
