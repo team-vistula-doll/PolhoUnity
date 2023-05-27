@@ -14,6 +14,7 @@ public class WaypointPathDataEditor : Editor
     ExpressionProperties expression = new(Vector2.zero, "x", 20, 0);
     PathProperties properties;
     DrawBezier drawBezier = new(false, false);
+    DrawExpression drawExpression = new();
     DrawPath drawPath;
 
     [Range(0.2f, 50f)]
@@ -45,6 +46,7 @@ public class WaypointPathDataEditor : Editor
         {
             case 0:
                 properties = expression;
+                drawPath = drawExpression;
                 EditorGUILayout.PropertyField(pathFormula);
                 EditorGUILayout.PropertyField(length);
                 EditorGUILayout.PropertyField(angle);
