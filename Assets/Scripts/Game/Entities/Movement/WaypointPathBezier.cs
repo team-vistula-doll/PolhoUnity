@@ -51,6 +51,14 @@ namespace WaypointPath
             StartControl = mod(StartControl, vector);
             EndControl = mod(EndControl, vector);
         }
+
+        public override PathProperties GetNewAdjoinedPath(float percent)
+        {
+            if (percent < 0) percent = 0;
+            if (percent > 1) percent = 1;
+            Vector2 vector = BezierCurve.CubicCurve(StartPosition, StartControl, EndControl, EndPosition, percent);
+            return GetModifiedCurveCopy(vector, (x, y) => x + y);
+        }
     }
 
     public class WaypointPathBezier : WaypointPathCreator
@@ -78,7 +86,7 @@ namespace WaypointPath
                     for (int t = 1; t * stepSize <= 100; t++)
                     {
                         waypoints.Add(BezierCurve.CubicCurve(beProperties.StartPosition, beProperties.StartControl,
-                            beProperties.StartControl, beProperties.EndPosition, t * stepSize / 100));
+                            beProperties.EndControl, beProperties.EndPosition, t * stepSize / 100));
                     }
                 }
                 else

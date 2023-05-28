@@ -18,6 +18,12 @@ namespace WaypointPath
             Length = length;
             Angle = angle;
         }
+
+        public override PathProperties GetNewAdjoinedPath(float percent)
+        {
+            Vector2 start = WaypointPathExpression.GetPointVector(this, percent * Length);
+            return new ExpressionProperties(start, PathFormula, Length, Angle);
+        }
     }
     public class WaypointPathExpression : WaypointPathCreator
     {

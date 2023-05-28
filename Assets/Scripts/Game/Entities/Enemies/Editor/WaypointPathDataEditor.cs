@@ -13,6 +13,9 @@ public class WaypointPathDataEditor : Editor
     BezierProperties bezier = new(Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero);
     ExpressionProperties expression = new(Vector2.zero, "x", 20, 0);
     PathProperties properties;
+    WaypointPathBezier pathBezier = new();
+    WaypointPathExpression pathExpression = new();
+    WaypointPathCreator creator;
     DrawBezier drawBezier = new(false, false);
     DrawExpression drawExpression = new();
     DrawPath drawPath;
@@ -47,6 +50,7 @@ public class WaypointPathDataEditor : Editor
             case 0:
                 properties = expression;
                 drawPath = drawExpression;
+                creator = pathExpression;
                 EditorGUILayout.PropertyField(pathFormula);
                 EditorGUILayout.PropertyField(length);
                 EditorGUILayout.PropertyField(angle);
@@ -55,6 +59,7 @@ public class WaypointPathDataEditor : Editor
             case 1:
                 properties = bezier;
                 drawPath = drawBezier;
+                creator = pathBezier;
                 EditorGUILayout.PropertyField(endPosition);
                 EditorGUI.BeginDisabledGroup(endPosition.vector2Value ==  Vector2.zero);
                     EditorGUILayout.PropertyField(endControl);
@@ -74,8 +79,8 @@ public class WaypointPathDataEditor : Editor
 
             if (GUILayout.Button("Set path"))
             {
-                List<Vector2> path = WaypointPathCreator.CreateWaypointPath(
-                    (!isReplace && pathData.Path.Count() != 0) ? pathData.Path.Last() : bezier.StartPosition);
+                List<Vector2> path = creator.GeneratePath(
+                    isReplace || pathData.Path.Count() == 0 ? properties : properties.GetNewAdjoinedPath(1));
                 if (!isReplace) pathData.Path.AddRange(path);
                 else pathData.Path = path;
             }
@@ -84,7 +89,7 @@ public class WaypointPathDataEditor : Editor
 
         serializedObject.ApplyModifiedProperties();
 
-        tempPath = WaypointPathCreator.CreateWaypointPath(isReplace ? bezier.StartPosition : pathData.Path.Last());
+        tempPath = creator.GeneratePath(isReplace ? properties : properties.GetNewAdjoinedPath(1));
         SceneView.RepaintAll();
     }
 

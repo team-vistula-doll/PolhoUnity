@@ -9,6 +9,8 @@ namespace WaypointPath
     {
         [Delayed]
         public Vector2 StartPosition;
+
+        public abstract PathProperties GetNewAdjoinedPath(float percent);
     }
 
     public abstract class WaypointPathCreator
