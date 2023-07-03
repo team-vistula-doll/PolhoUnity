@@ -4,8 +4,6 @@ using WaypointPath;
 using System.Collections.Generic;
 using System.Linq;
 
-//TODO: Make a class WaypointPathManager that modifies paths so it's possible from within the game and not just the editor
-//move some of the code from here
 [CustomEditor(typeof(WaypointPathData))]
 public class WaypointPathDataEditor : Editor
 {
@@ -21,12 +19,12 @@ public class WaypointPathDataEditor : Editor
     DrawPath drawPath;
 
     [Range(0.2f, 50f)]
-    public float StepSize = 0.5f;
-
+    float stepSize = 0.5f;
     List<Vector2> tempPath = new();
     int pathTypeSelection = 1;
     bool isReplace = false;
 
+    string[] pathOptions = new string[] { "Function", "Bezier" };
     private void OnEnable()
     {
     }
@@ -39,7 +37,6 @@ public class WaypointPathDataEditor : Editor
         EditorGUILayout.BeginHorizontal();
         {
             GUILayout.Label("Path type: ");
-            string[] pathOptions = new string[] { "Function", "Bezier" };
 
             pathTypeSelection = GUILayout.Toolbar(pathTypeSelection, pathOptions, EditorStyles.radioButton);
         }
@@ -48,30 +45,29 @@ public class WaypointPathDataEditor : Editor
         switch (pathTypeSelection)
         {
             case 0:
+                EditorGUILayout.DelayedTextField("Path formula", expression.PathFormula);
+                EditorGUILayout.FloatField("Length", expression.Length);
+                EditorGUILayout.FloatField("Angle", expression.Angle);
                 properties = expression;
                 drawPath = drawExpression;
                 creator = pathExpression;
-                EditorGUILayout.PropertyField(pathFormula);
-                EditorGUILayout.PropertyField(length);
-                EditorGUILayout.PropertyField(angle);
 
                 break;
             case 1:
+                EditorGUILayout.Vector2Field("End", bezier.EndPosition);
+                EditorGUI.BeginDisabledGroup(bezier.EndPosition == Vector2.zero);
+                    EditorGUILayout.Vector2Field("1st control", bezier.EndControl);
+                EditorGUI.EndDisabledGroup();
+                EditorGUI.BeginDisabledGroup(bezier.EndControl == Vector2.zero);
+                    EditorGUILayout.Vector2Field("2nd control", bezier.StartControl);
+                EditorGUI.EndDisabledGroup();
                 properties = bezier;
                 drawPath = drawBezier;
                 creator = pathBezier;
-                EditorGUILayout.PropertyField(endPosition);
-                EditorGUI.BeginDisabledGroup(endPosition.vector2Value ==  Vector2.zero);
-                    EditorGUILayout.PropertyField(endControl);
-                EditorGUI.EndDisabledGroup();
-                EditorGUI.BeginDisabledGroup(endControl.vector2Value == Vector2.zero);
-                    EditorGUILayout.PropertyField(startControl);
-                EditorGUI.EndDisabledGroup();
 
                 break;
         }
-        SerializedProperty stepSize = serializedObject.FindProperty("StepSize");
-        EditorGUILayout.PropertyField(stepSize);
+        EditorGUILayout.Slider("Step size", stepSize, 0.2f, 50f);
 
         EditorGUILayout.BeginHorizontal();
         {
@@ -80,7 +76,7 @@ public class WaypointPathDataEditor : Editor
             if (GUILayout.Button("Set path"))
             {
                 List<Vector2> path = creator.GeneratePath(
-                    isReplace || pathData.Path.Count() == 0 ? properties : properties.GetNewAdjoinedPath(1));
+                    isReplace || pathData.Path.Count() == 0 ? properties : properties.GetNewAdjoinedPath(1), stepSize);
                 if (!isReplace) pathData.Path.AddRange(path);
                 else pathData.Path = path;
             }
@@ -89,7 +85,7 @@ public class WaypointPathDataEditor : Editor
 
         serializedObject.ApplyModifiedProperties();
 
-        tempPath = creator.GeneratePath(isReplace ? properties : properties.GetNewAdjoinedPath(1));
+        tempPath = creator.GeneratePath(isReplace ? properties : properties.GetNewAdjoinedPath(1), stepSize);
         SceneView.RepaintAll();
     }
 
