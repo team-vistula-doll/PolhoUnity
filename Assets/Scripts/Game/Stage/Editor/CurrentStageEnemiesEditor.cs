@@ -12,7 +12,7 @@ public class CurrentStageEnemiesEditor : Editor
 
     WaypointPathData pathData = new();
     BezierProperties bezier = new(Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero);
-    ExpressionProperties expression = new("x", 20, 0);
+    ExpressionProperties expression = new(Vector2.zero, "x", 20, 0);
     [Range(0.2f, 50f)]
     public float StepSize = 0.5f;
 
@@ -44,19 +44,19 @@ public class CurrentStageEnemiesEditor : Editor
         {
             case 0:
 
-                expression.PathFormula = EditorGUILayout.DelayedTextField("Path Formula", expression.PathFormula);
+                expression.PathFormula = EditorGUILayout.DelayedTextField("Path formula", expression.PathFormula);
                 expression.Length = EditorGUILayout.FloatField("Length", expression.Length);
                 expression.Angle = EditorGUILayout.FloatField("Angle", expression.Angle);
 
                 break;
             case 1:
 
-                bezier.EndPosition = EditorGUILayout.Vector2Field("End Position", bezier.EndPosition);
+                bezier.EndPosition = EditorGUILayout.Vector2Field("End", bezier.EndPosition);
                 EditorGUI.BeginDisabledGroup(bezier.EndPosition == Vector2.zero);
-                    bezier.EndControl = EditorGUILayout.Vector2Field("End Control", bezier.EndControl);
+                    bezier.EndControl = EditorGUILayout.Vector2Field("1st Control", bezier.EndControl);
                 EditorGUI.EndDisabledGroup();
                 EditorGUI.BeginDisabledGroup(bezier.EndControl == Vector2.zero);
-                    bezier.StartControl = EditorGUILayout.Vector2Field("Start Control", bezier.StartControl);
+                    bezier.StartControl = EditorGUILayout.Vector2Field("2nd Control", bezier.StartControl);
                 EditorGUI.EndDisabledGroup();
 
                 break;

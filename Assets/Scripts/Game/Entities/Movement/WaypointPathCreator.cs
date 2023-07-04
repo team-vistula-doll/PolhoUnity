@@ -17,6 +17,7 @@ namespace WaypointPath
     //Given starting position to a selected function,
     //generates List of waypoints (Path2) that WaypointWalkers will follow
     {
+        public PathProperties Properties;
         /// <summary>
         /// Creates a Vector2 from its length and angle
         /// </summary>
@@ -29,5 +30,6 @@ namespace WaypointPath
         }
 
         public abstract List<Vector2> GeneratePath(PathProperties properties, float stepSize = 0.5f);
+        public abstract List<Vector2> GeneratePath(float stepSize = 0.5f);
     }
 }
