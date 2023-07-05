@@ -27,7 +27,7 @@ namespace WaypointPath
     }
     public class WaypointPathExpression : WaypointPathCreator
     {
-        new public ExpressionProperties Properties;
+        new public ExpressionProperties Properties = new(Vector2.zero, "x", 20, 0);
         static ExpressionParser parser = new();
 
         public static Vector2 GetPointVector(Expression exp, float x, float angle)

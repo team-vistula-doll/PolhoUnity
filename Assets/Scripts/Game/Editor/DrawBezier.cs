@@ -16,11 +16,11 @@ public class DrawBezier : DrawPath
         this.isEndControlEnabled = isEndControlEnabled;
     }
 
-    public void Draw(BezierProperties properties, WaypointPathData pathData, Event e, ref List<Vector2> tempPath, bool isReplace)
+    public void Draw(BezierProperties properties, ref WaypointPathData pathData, Event e, ref WaypointPathData tempPath, bool isReplace)
     {
         EditorGUI.BeginChangeCheck();
 
-            base.Draw(properties, pathData, e, ref tempPath, isReplace);
+            base.Draw(properties, ref pathData, e, ref tempPath, isReplace);
 
             Vector2 snap = Vector2.one * 0.2f;
             float size;
@@ -101,7 +101,7 @@ public class DrawBezier : DrawPath
             properties.EndPosition = endPositionHandle;
             properties.StartControl = startControlHandle;
             properties.EndControl = endControlHandle;
-            tempPath = creator.GeneratePath((isReplace)
+            tempPath.Path = creator.GeneratePath((isReplace)
                 ? properties 
                 : properties.GetModifiedCurveCopy(properties.EndControl, (x, y) => x + y)
             );

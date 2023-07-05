@@ -6,13 +6,13 @@ using WaypointPath;
 
 public class DrawPath
 {
-    public void Draw(PathProperties properties, WaypointPathData pathData, Event e, ref List<Vector2> tempPath, bool isReplace)
+    public void Draw(PathProperties properties, ref WaypointPathData pathData, Event e, ref WaypointPathData tempPath, bool isReplace)
     {
         if (e.type == EventType.Repaint)
         {
-            if (tempPath != null)
+            if (tempPath.Path != null)
             {
-                foreach (Vector2 point in tempPath)
+                foreach (Vector2 point in tempPath.Path)
                 {
                     // Draws a blue line from this transform to the target
                     Handles.color = Color.red;

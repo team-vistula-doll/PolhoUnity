@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using Bezier;
-using System;
 
 namespace WaypointPath
 {

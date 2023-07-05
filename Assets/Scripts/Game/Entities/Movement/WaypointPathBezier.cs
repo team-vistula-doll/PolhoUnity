@@ -63,7 +63,7 @@ namespace WaypointPath
 
     public class WaypointPathBezier : WaypointPathCreator
     {
-        new public BezierProperties Properties;
+        new public BezierProperties Properties = new(Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero);
         public override List<Vector2> GeneratePath(PathProperties properties, float stepSize = 0.5f)
         {
             BezierProperties beProperties;
