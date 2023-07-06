@@ -15,9 +15,9 @@ namespace WaypointPath
         public WaypointPathExpression PathExpression = new();
         public WaypointPathCreator Creator; //base path creator class
 
-        public DrawBezier DrawBezier = new(false, false);
-        public DrawExpression DrawExpression = new();
-        public DrawPath DrawPath; //base Editor drawer class
+        //public DrawBezier DrawBezier = new();
+        //public DrawExpression DrawExpression = new();
+        //public DrawPath DrawPath; //base Editor drawer class
 
         [Range(0.2f, 50f)]
         public float StepSize = 0.5f;

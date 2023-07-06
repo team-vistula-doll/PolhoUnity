@@ -7,7 +7,6 @@ namespace WaypointPath
     public class ExpressionEditor : PathEditor
     {
         WaypointPathExpression pathExpression = new();
-        DrawExpression drawExpression = new();
         public override void PathOptions()
         {
             pathExpression.Properties.PathFormula = EditorGUILayout.DelayedTextField("Path formula", pathExpression.Properties.PathFormula);
@@ -21,9 +20,13 @@ namespace WaypointPath
             return pathExpression.GeneratePath(stepSize);
         }
 
-        public override void DrawPath(ref WaypointPathData pathData, Event e, ref WaypointPathData tempPath, bool isReplace)
+        new public void DrawPath(ref WaypointPathData pathData, Event e, ref WaypointPathData tempPath, bool isReplace)
         {
-            drawExpression.Draw(pathExpression.Properties, ref pathData, e, ref tempPath, isReplace);
+            base.DrawPath(ref pathData, e, ref tempPath, isReplace);
+
+            if (!isReplace) pathExpression.Properties.StartPosition = WaypointPathExpression.GetPointVector(pathExpression.Properties, pathExpression.Properties.Length);
+
+            tempPath.Path = pathExpression.GeneratePath(pathExpression.Properties);
         }
     }
 }

@@ -8,7 +8,7 @@ using System.Linq;
 public class WaypointPathDataEditor : Editor
 {
     WaypointPathEditorData data = new();
-    PathProperties properties { get { return data.Creator.Properties; } set { data.Creator.Properties = value; } }
+    //PathProperties properties { get { return data.Creator.Properties; } set { data.Creator.Properties = value; } }
 
     string[] pathOptions = new string[] { "Function", "Bezier" };
     private void OnEnable()
