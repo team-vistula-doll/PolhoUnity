@@ -10,15 +10,11 @@ public class CurrentStageEnemiesEditor : Editor
 {
     SerializedProperty enemies;
 
-    WaypointPathData pathData = new();
-    BezierProperties bezier = new(Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero);
-    ExpressionProperties expression = new(Vector2.zero, "x", 20, 0);
-    [Range(0.2f, 50f)]
-    public float StepSize = 0.5f;
+    WaypointPathEditorData data = new();
+    PathEditor pathEditor { get { return data.Options.ElementAt(data.PathTypeSelection).Value; } }
 
-    List<Vector2> tempPath = new();
-    bool isReplace = false;
-    int pathTypeSelection = 0;
+    WaypointPathData pathData = new WaypointPathData();
+    Vector2 startPosition = Vector2.zero;
 
     private void OnEnable()
     {
@@ -28,57 +24,48 @@ public class CurrentStageEnemiesEditor : Editor
     public override void OnInspectorGUI()
     {
         serializedObject.Update();
-        CurrentStageEnemies stageEnemies = target as CurrentStageEnemies;
 
-        bezier.StartPosition = EditorGUILayout.Vector2Field("Start Position", bezier.StartPosition);
+        startPosition = EditorGUILayout.Vector2Field("Start Position", startPosition);
         EditorGUILayout.BeginHorizontal();
         {
             GUILayout.Label("Path type: ");
             string[] pathOptions = new string[] { "Function", "Bezier" };
 
-            pathTypeSelection = GUILayout.Toolbar(pathTypeSelection, pathOptions, EditorStyles.radioButton);
+            data.PathTypeSelection = GUILayout.Toolbar(data.PathTypeSelection, data.Options.Keys.ToArray(), EditorStyles.radioButton);
         }
         EditorGUILayout.EndHorizontal();
 
-        switch (pathTypeSelection)
-        {
-            case 0:
+        pathEditor.PathOptions();
 
-                expression.PathFormula = EditorGUILayout.DelayedTextField("Path formula", expression.PathFormula);
-                expression.Length = EditorGUILayout.FloatField("Length", expression.Length);
-                expression.Angle = EditorGUILayout.FloatField("Angle", expression.Angle);
-
-                break;
-            case 1:
-
-                bezier.EndPosition = EditorGUILayout.Vector2Field("End", bezier.EndPosition);
-                EditorGUI.BeginDisabledGroup(bezier.EndPosition == Vector2.zero);
-                    bezier.EndControl = EditorGUILayout.Vector2Field("1st Control", bezier.EndControl);
-                EditorGUI.EndDisabledGroup();
-                EditorGUI.BeginDisabledGroup(bezier.EndControl == Vector2.zero);
-                    bezier.StartControl = EditorGUILayout.Vector2Field("2nd Control", bezier.StartControl);
-                EditorGUI.EndDisabledGroup();
-
-                break;
-        }
-        StepSize = EditorGUILayout.FloatField("Step Size", StepSize);
+        data.StepSize = EditorGUILayout.Slider("Step size", data.StepSize, 0.2f, 50f);
 
         EditorGUILayout.BeginHorizontal();
         {
-            isReplace = EditorGUILayout.ToggleLeft("Replace", isReplace);
+            data.IsReplace = EditorGUILayout.ToggleLeft("Replace", data.IsReplace);
 
             if (GUILayout.Button("Set path"))
             {
-                WaypointPathCreator.SetWaypointPath(pathTypeSelection, !isReplace);
+                List<Vector2> path = pathEditor.MakePath((data.IsReplace || pathData.Path.Count() == 0), data.StepSize);
+                if (data.IsReplace || pathData.Path.Count() == 0) pathData.Path = path;
+                else pathData.Path.AddRange(path);
+
+                
             }
         }
         EditorGUILayout.EndHorizontal();
 
         serializedObject.ApplyModifiedProperties();
 
-        tempPath = WaypointPathCreator.CreateWaypointPath((isReplace) ? pathData.StartPosition : pathData.Path.Last(), pathTypeSelection);
+        data.TempPath.Path = pathEditor.MakePath((data.IsReplace || pathData.Path.Count() == 0), data.StepSize);
         SceneView.RepaintAll();
 
         //base.OnInspectorGUI();
+    }
+
+    public void OnSceneGUI()
+    {
+        Event e = Event.current;
+
+        pathEditor.DrawPath(ref pathData, e, ref data.TempPath, data.IsReplace);
     }
 }

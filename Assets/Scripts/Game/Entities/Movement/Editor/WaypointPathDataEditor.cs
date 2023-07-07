@@ -8,17 +8,18 @@ using System.Linq;
 public class WaypointPathDataEditor : Editor
 {
     WaypointPathEditorData data = new();
-    //PathProperties properties { get { return data.Creator.Properties; } set { data.Creator.Properties = value; } }
+    PathEditor pathEditor { get { return data.Options.ElementAt(data.PathTypeSelection).Value; } }
 
-    string[] pathOptions = new string[] { "Function", "Bezier" };
-    private void OnEnable()
+    WaypointPathData pathData;
+
+    public void OnEnable()
     {
+        pathData = target as WaypointPathData;
     }
 
     public override void OnInspectorGUI()
     {
         serializedObject.Update();
-        WaypointPathData pathData = target as WaypointPathData;
 
         EditorGUILayout.BeginHorizontal();
         {
@@ -28,9 +29,9 @@ public class WaypointPathDataEditor : Editor
         }
         EditorGUILayout.EndHorizontal();
 
-        data.Options.ElementAt(data.PathTypeSelection).Value.PathOptions();
+        pathEditor.PathOptions();
 
-        EditorGUILayout.Slider("Step size", data.StepSize, 0.2f, 50f);
+        data.StepSize = EditorGUILayout.Slider("Step size", data.StepSize, 0.2f, 50f);
 
         EditorGUILayout.BeginHorizontal();
         {
@@ -38,8 +39,7 @@ public class WaypointPathDataEditor : Editor
 
             if (GUILayout.Button("Set path"))
             {
-                List<Vector2> path = data.Options.ElementAt(data.PathTypeSelection).Value.
-                    MakePath((data.IsReplace || pathData.Path.Count() == 0), data.StepSize);
+                List<Vector2> path = pathEditor.MakePath((data.IsReplace || pathData.Path.Count() == 0), data.StepSize);
                 if (data.IsReplace || pathData.Path.Count() == 0) pathData.Path = path;
                 else pathData.Path.AddRange(path);
             }
@@ -48,16 +48,14 @@ public class WaypointPathDataEditor : Editor
 
         serializedObject.ApplyModifiedProperties();
 
-        data.TempPath.Path = data.Options.ElementAt(data.PathTypeSelection).Value.
-            MakePath((data.IsReplace || pathData.Path.Count() == 0), data.StepSize);
+        data.TempPath.Path = pathEditor.MakePath((data.IsReplace || pathData.Path.Count() == 0), data.StepSize);
         SceneView.RepaintAll();
     }
 
     public void OnSceneGUI()
     {
-        WaypointPathData pathData = target as WaypointPathData;
         Event e = Event.current;
 
-        data.Options.ElementAt(data.PathTypeSelection).Value.DrawPath(ref pathData, e, ref data.TempPath, data.IsReplace);
+        pathEditor.DrawPath(ref pathData, e, ref data.TempPath, data.IsReplace);
     }
 }

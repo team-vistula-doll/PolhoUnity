@@ -80,17 +80,17 @@ public class StageEnemyParser
                         angles.Add(angle);
                     }
 
-                    Waypoints.AddRange(WaypointPathCreator.GeneratePathFromExpression(enemy.SpawnPosition, lengths[0], expressions[0], angles[0]));
-                    int w = 1;
-                    for (; w < lengths.Count && w < expressions.Count && w < angles.Count; w++)
-                    {
-                        Waypoints.AddRange(WaypointPathCreator.GeneratePathFromExpression(Waypoints.Last(), lengths[w], expressions[w], angles[w]));
-                    }
+                    //Waypoints.AddRange(WaypointPathCreator.GeneratePathFromExpression(enemy.SpawnPosition, lengths[0], expressions[0], angles[0]));
+                    //int w = 1;
+                    //for (; w < lengths.Count && w < expressions.Count && w < angles.Count; w++)
+                    //{
+                    //    Waypoints.AddRange(WaypointPathCreator.GeneratePathFromExpression(Waypoints.Last(), lengths[w], expressions[w], angles[w]));
+                    //}
 
-                    if (w < lengths.Count || w < expressions.Count || w < angles.Count)
-                    {
-                        Debug.LogWarning($"ParseEnemiesFile: {enemy.Name} only generated {w + 1} paths, rest discarded because of missing path data");
-                    }
+                    //if (w < lengths.Count || w < expressions.Count || w < angles.Count)
+                    //{
+                    //    Debug.LogWarning($"ParseEnemiesFile: {enemy.Name} only generated {w + 1} paths, rest discarded because of missing path data");
+                    //}
                 }
 
                 if (node["SpawnRepeatsDelays"].HasValue && node["SpawnRepeatsAmounts"].HasValue)

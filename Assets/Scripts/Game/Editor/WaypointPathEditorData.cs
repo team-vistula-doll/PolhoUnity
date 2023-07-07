@@ -11,9 +11,9 @@ namespace WaypointPath
             { "Bezier", new BezierEditor() }
         };
 
-        public WaypointPathBezier PathBezier = new();
-        public WaypointPathExpression PathExpression = new();
-        public WaypointPathCreator Creator; //base path creator class
+        //public WaypointPathBezier PathBezier = new();
+        //public WaypointPathExpression PathExpression = new();
+        //public WaypointPathCreator Creator; //base path creator class
 
         //public DrawBezier DrawBezier = new();
         //public DrawExpression DrawExpression = new();
