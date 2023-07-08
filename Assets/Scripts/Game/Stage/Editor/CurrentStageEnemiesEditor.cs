@@ -10,15 +10,16 @@ public class CurrentStageEnemiesEditor : Editor
 {
     SerializedProperty enemies;
 
-    WaypointPathEditorData data = new();
-    PathEditor pathEditor { get { return data.Options.ElementAt(data.PathTypeSelection).Value; } }
+    WaypointPathEditorData data;
+    PathEditor PathEditor { get { return data.Options.ElementAt(data.PathTypeSelection).Value; } }
 
-    WaypointPathData pathData = new WaypointPathData();
+    List<Vector2> pathData = new();
     Vector2 startPosition = Vector2.zero;
 
     private void OnEnable()
     {
         enemies = serializedObject.FindProperty("enemies");
+        data = (WaypointPathEditorData)ScriptableObject.CreateInstance(typeof(WaypointPathEditorData));
     }
 
     public override void OnInspectorGUI()
@@ -35,7 +36,7 @@ public class CurrentStageEnemiesEditor : Editor
         }
         EditorGUILayout.EndHorizontal();
 
-        pathEditor.PathOptions();
+        PathEditor.PathOptions();
 
         data.StepSize = EditorGUILayout.Slider("Step size", data.StepSize, 0.2f, 50f);
 
@@ -45,9 +46,9 @@ public class CurrentStageEnemiesEditor : Editor
 
             if (GUILayout.Button("Set path"))
             {
-                List<Vector2> path = pathEditor.MakePath((data.IsReplace || pathData.Path.Count() == 0), data.StepSize);
-                if (data.IsReplace || pathData.Path.Count() == 0) pathData.Path = path;
-                else pathData.Path.AddRange(path);
+                List<Vector2> path = PathEditor.MakePath(data.IsReplace, data.StepSize);
+                if (data.IsReplace || pathData.Count() == 0) pathData = path;
+                else pathData.AddRange(path);
 
                 
             }
@@ -56,7 +57,7 @@ public class CurrentStageEnemiesEditor : Editor
 
         serializedObject.ApplyModifiedProperties();
 
-        data.TempPath.Path = pathEditor.MakePath((data.IsReplace || pathData.Path.Count() == 0), data.StepSize);
+        data.TempPath = PathEditor.MakePath(data.IsReplace, data.StepSize);
         SceneView.RepaintAll();
 
         //base.OnInspectorGUI();
@@ -66,6 +67,6 @@ public class CurrentStageEnemiesEditor : Editor
     {
         Event e = Event.current;
 
-        pathEditor.DrawPath(ref pathData, e, ref data.TempPath, data.IsReplace);
+        PathEditor.DrawPath(ref pathData, e, ref data.TempPath, data.IsReplace);
     }
 }

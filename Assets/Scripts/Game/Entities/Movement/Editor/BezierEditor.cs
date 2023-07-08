@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Xml.XPath;
 using UnityEditor;
 using UnityEngine;
 
@@ -6,7 +7,12 @@ namespace WaypointPath
 {
     public class BezierEditor : PathEditor
     {
-        WaypointPathBezier pathBezier = new();
+        WaypointPathBezier pathBezier;
+
+        public void OnEnable()
+        {
+            pathBezier = (WaypointPathBezier)ScriptableObject.CreateInstance(typeof(WaypointPathBezier));
+        }
 
         bool isMousePressed = false;
         bool isEndControlEnabled = false;
@@ -28,7 +34,7 @@ namespace WaypointPath
             return pathBezier.GeneratePath(stepSize);
         }
 
-        new public void DrawPath(ref WaypointPathData pathData, Event e, ref WaypointPathData tempPath, bool isReplace)
+        new public void DrawPath(ref List<Vector2> pathData, Event e, ref List<Vector2> tempPath, bool isReplace)
         {
             EditorGUI.BeginChangeCheck();
 
@@ -109,11 +115,11 @@ namespace WaypointPath
 
             if (EditorGUI.EndChangeCheck())
             {
-                Undo.RecordObject(pathData, "Change Handle Position");
                 pathBezier.Properties.EndPosition = endPositionHandle;
                 pathBezier.Properties.StartControl = startControlHandle;
                 pathBezier.Properties.EndControl = endControlHandle;
-                tempPath.Path = pathBezier.GeneratePath((isReplace)
+                Undo.RecordObject(pathBezier, "Change Handle Position");
+                tempPath = pathBezier.GeneratePath((isReplace)
                     ? pathBezier.Properties
                     : pathBezier.Properties.GetModifiedCurveCopy(pathBezier.Properties.EndControl, (x, y) => x + y)
                 );

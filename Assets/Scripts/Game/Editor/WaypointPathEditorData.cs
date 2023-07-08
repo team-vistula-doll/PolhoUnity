@@ -4,12 +4,9 @@ using UnityEngine;
 
 namespace WaypointPath
 {
-    public class WaypointPathEditorData
+    public class WaypointPathEditorData : ScriptableObject
     {
-        public Dictionary<string, PathEditor> Options = new() {
-            { "Function", new ExpressionEditor() },
-            { "Bezier", new BezierEditor() }
-        };
+        public Dictionary<string, PathEditor> Options;
 
         //public WaypointPathBezier PathBezier = new();
         //public WaypointPathExpression PathExpression = new();
@@ -21,8 +18,16 @@ namespace WaypointPath
 
         [Range(0.2f, 50f)]
         public float StepSize = 0.5f;
-        public WaypointPathData TempPath = new();
+        public List<Vector2> TempPath = new();
         public bool IsReplace = false;
         public int PathTypeSelection = 0;
+
+        public void OnEnable()
+        {
+            Options = new() {
+            { "Function", (ExpressionEditor)ScriptableObject.CreateInstance(typeof(ExpressionEditor)) },
+            { "Bezier", (BezierEditor)ScriptableObject.CreateInstance(typeof(BezierEditor)) }
+        };
+        }
     }
 }

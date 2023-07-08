@@ -11,7 +11,7 @@ namespace WaypointPath
         public abstract PathProperties GetNewAdjoinedPath(float percent);
     }
 
-    public abstract class WaypointPathCreator
+    public abstract class WaypointPathCreator : ScriptableObject
     //Given starting position to a selected function,
     //generates List of waypoints (Path2) that WaypointWalkers will follow
     {

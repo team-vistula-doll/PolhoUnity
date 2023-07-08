@@ -10,7 +10,12 @@ using WaypointPath;
 public class TestStage : Stage
 {
     List<int> _enemyIDs = new();
-    WaypointPathCreator _pathCreator = new WaypointPathExpression();
+    WaypointPathCreator _pathCreator;
+
+    public void OnEnable()
+    {
+        _pathCreator = (WaypointPathExpression)ScriptableObject.CreateInstance(typeof(WaypointPathExpression));
+    }
     public override IEnumerator StageScript(StageArgs args)
     {
         yield return new WaitForSeconds(1f);
