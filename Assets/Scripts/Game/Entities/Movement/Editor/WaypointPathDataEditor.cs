@@ -8,7 +8,10 @@ using System.Linq;
 public class WaypointPathDataEditor : Editor
 {
     WaypointPathEditorData data;
-    PathEditor pathEditor { get { return data.Options.ElementAt(data.PathTypeSelection).Value; } }
+
+    SerializedObject serialData;
+    SerializedProperty stepSize, tempPath, isReplace, pathTypeSelection;
+    PathEditor PathEditor { get => data.Options.ElementAt(data.PathTypeSelection).Value; }
 
     WaypointPathData pathData;
 
@@ -16,6 +19,12 @@ public class WaypointPathDataEditor : Editor
     {
         pathData = target as WaypointPathData;
         data = (WaypointPathEditorData)ScriptableObject.CreateInstance(typeof(WaypointPathEditorData));
+        serialData = new SerializedObject(data);
+
+        stepSize = serialData.FindProperty("StepSize");
+        tempPath = serialData.FindProperty("TempPath");
+        isReplace = serialData.FindProperty("IsReplace");
+        pathTypeSelection = serialData.FindProperty("PathTypeSelection");
     }
 
     public override void OnInspectorGUI()
@@ -26,11 +35,11 @@ public class WaypointPathDataEditor : Editor
         {
             GUILayout.Label("Path type: ");
 
-            data.PathTypeSelection = GUILayout.Toolbar(data.PathTypeSelection, data.Options.Keys.ToArray(), EditorStyles.radioButton);
+            pathTypeSelection.intValue = GUILayout.Toolbar(pathTypeSelection.intValue, data.Options.Keys.ToArray(), EditorStyles.radioButton);
         }
         EditorGUILayout.EndHorizontal();
 
-        pathEditor.PathOptions();
+        PathEditor.PathOptions();
 
         data.StepSize = EditorGUILayout.Slider("Step size", data.StepSize, 0.2f, 50f);
 
@@ -40,7 +49,7 @@ public class WaypointPathDataEditor : Editor
 
             if (GUILayout.Button("Set path"))
             {
-                List<Vector2> path = pathEditor.MakePath(data.IsReplace, data.StepSize);
+                List<Vector2> path = PathEditor.MakePath(data.IsReplace, data.StepSize);
                 if (data.IsReplace || pathData.Path.Count() == 0) pathData.Path = path;
                 else pathData.Path.AddRange(path);
             }
@@ -49,7 +58,7 @@ public class WaypointPathDataEditor : Editor
 
         serializedObject.ApplyModifiedProperties();
 
-        data.TempPath = pathEditor.MakePath(data.IsReplace, data.StepSize);
+        data.TempPath = PathEditor.MakePath(data.IsReplace, data.StepSize);
         SceneView.RepaintAll();
     }
 
@@ -57,6 +66,6 @@ public class WaypointPathDataEditor : Editor
     {
         Event e = Event.current;
 
-        pathEditor.DrawPath(ref pathData.Path, e, ref data.TempPath, data.IsReplace);
+        PathEditor.DrawPath(ref pathData.Path, e, ref data.TempPath, data.IsReplace);
     }
 }

@@ -10,7 +10,7 @@ namespace WaypointPath
 
         public abstract List<Vector2> MakePath(bool isReplace, float stepSize);
 
-        public void DrawPath(ref List<Vector2> pathData, Event e, ref List<Vector2> tempPath, bool isReplace)
+        public void DrawPath(ref List<Vector2> pathData, Event e, ref List<Vector2> tempPath)
         {
             if (e.type == EventType.Repaint)
             {

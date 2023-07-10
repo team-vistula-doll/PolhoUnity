@@ -26,9 +26,9 @@ namespace WaypointPath
             return pathExpression.GeneratePath(stepSize);
         }
 
-        new public void DrawPath(ref List<Vector2> pathData, Event e, ref List<Vector2> tempPath, bool isReplace)
+        public void DrawPath(ref List<Vector2> pathData, Event e, ref List<Vector2> tempPath, bool isReplace)
         {
-            base.DrawPath(ref pathData, e, ref tempPath, isReplace);
+            base.DrawPath(ref pathData, e, ref tempPath);
 
             if (!isReplace) pathExpression.Properties.StartPosition = WaypointPathExpression.GetPointVector(pathExpression.Properties, pathExpression.Properties.Length);
 

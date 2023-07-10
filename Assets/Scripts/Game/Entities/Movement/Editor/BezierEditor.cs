@@ -34,11 +34,11 @@ namespace WaypointPath
             return pathBezier.GeneratePath(stepSize);
         }
 
-        new public void DrawPath(ref List<Vector2> pathData, Event e, ref List<Vector2> tempPath, bool isReplace)
+        public void DrawPath(ref List<Vector2> pathData, Event e, ref List<Vector2> tempPath, bool isReplace)
         {
             EditorGUI.BeginChangeCheck();
 
-            base.DrawPath(ref pathData, e, ref tempPath, isReplace);
+            base.DrawPath(ref pathData, e, ref tempPath);
 
             Vector2 snap = Vector2.one * 0.2f;
             float size;
@@ -115,10 +115,10 @@ namespace WaypointPath
 
             if (EditorGUI.EndChangeCheck())
             {
+                Undo.RecordObject(pathBezier, "Change Handle Position");
                 pathBezier.Properties.EndPosition = endPositionHandle;
                 pathBezier.Properties.StartControl = startControlHandle;
                 pathBezier.Properties.EndControl = endControlHandle;
-                Undo.RecordObject(pathBezier, "Change Handle Position");
                 tempPath = pathBezier.GeneratePath((isReplace)
                     ? pathBezier.Properties
                     : pathBezier.Properties.GetModifiedCurveCopy(pathBezier.Properties.EndControl, (x, y) => x + y)
