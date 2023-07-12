@@ -3,19 +3,15 @@ using UnityEngine;
 
 namespace WaypointPath
 {
-    public abstract class PathProperties
-    {
-        [Delayed]
-        public Vector2 StartPosition;
-
-        public abstract PathProperties GetNewAdjoinedPath(float percent);
-    }
-
     public abstract class WaypointPathCreator : ScriptableObject
     //Given starting position to a selected function,
     //generates List of waypoints (Path2) that WaypointWalkers will follow
     {
-        public PathProperties Properties;
+        [Delayed]
+        public Vector2 StartPosition = Vector2.zero;
+
+        public abstract WaypointPathCreator GetNewAdjoinedPath(float percent);
+
         /// <summary>
         /// Creates a Vector2 from its length and angle
         /// </summary>
@@ -27,7 +23,6 @@ namespace WaypointPath
             return new Vector2(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad)) * length;
         }
 
-        public abstract List<Vector2> GeneratePath(PathProperties properties, float stepSize = 0.5f);
         public abstract List<Vector2> GeneratePath(float stepSize = 0.5f);
     }
 }

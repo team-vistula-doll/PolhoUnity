@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Xml.XPath;
 using UnityEditor;
 using UnityEngine;
 
@@ -8,10 +7,26 @@ namespace WaypointPath
     public class BezierEditor : PathEditor
     {
         WaypointPathBezier pathBezier;
+        SerializedObject serialPath;
+        SerializedProperty startPosition, endPosition, startControl, endControl;
+        const string assetPath = "Assets/Editor Assets/BezierEditor.asset";
 
-        public void OnEnable()
+        private void OnEnable()
         {
-            pathBezier = (WaypointPathBezier)ScriptableObject.CreateInstance(typeof(WaypointPathBezier));
+            pathBezier = (WaypointPathBezier)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathBezier))
+                ?? (WaypointPathBezier)ScriptableObject.CreateInstance(typeof(WaypointPathBezier));
+            serialPath = new SerializedObject(pathBezier);
+
+            startPosition = serialPath.FindProperty("StartPosition");
+            endPosition = serialPath.FindProperty("EndPosition");
+            startControl = serialPath.FindProperty("StartControl");
+            endControl = serialPath.FindProperty("EndControl");
+        }
+
+        private void OnDisable()
+        {
+            if (!AssetDatabase.Contains(pathBezier)) AssetDatabase.CreateAsset(pathBezier, assetPath);
+            AssetDatabase.SaveAssets();
         }
 
         bool isMousePressed = false;
@@ -19,31 +34,39 @@ namespace WaypointPath
         //bool isStartControlEnabled = false;
         public override void PathOptions()
         {
-            pathBezier.Properties.EndPosition = EditorGUILayout.Vector2Field("End", pathBezier.Properties.EndPosition);
-            EditorGUI.BeginDisabledGroup(pathBezier.Properties.EndPosition == Vector2.zero);
-                pathBezier.Properties.EndControl = EditorGUILayout.Vector2Field("1st control", pathBezier.Properties.EndControl);
+            serialPath.Update();
+
+            EditorGUILayout.PropertyField(endPosition);
+            EditorGUI.BeginDisabledGroup(endPosition.vector2Value == Vector2.zero);
+                EditorGUILayout.PropertyField(endControl);
             EditorGUI.EndDisabledGroup();
-            EditorGUI.BeginDisabledGroup(pathBezier.Properties.EndControl == Vector2.zero);
-                pathBezier.Properties.StartControl = EditorGUILayout.Vector2Field("2nd control", pathBezier.Properties.StartControl);
+            EditorGUI.BeginDisabledGroup(endControl.vector2Value == Vector2.zero);
+                EditorGUILayout.PropertyField(startControl);
             EditorGUI.EndDisabledGroup();
+
+            serialPath.ApplyModifiedProperties();
         }
 
         public override List<Vector2> MakePath(bool isReplace, float stepSize)
         {
-            if (isReplace) pathBezier.Properties = (BezierProperties)pathBezier.Properties.GetNewAdjoinedPath(1);
+            if (!isReplace)
+            {
+                var value = (WaypointPathBezier)pathBezier.GetNewAdjoinedPath(1);
+                return value.GeneratePath(stepSize);
+            }
             return pathBezier.GeneratePath(stepSize);
         }
 
-        public void DrawPath(ref List<Vector2> pathData, Event e, ref List<Vector2> tempPath, bool isReplace)
+        public new void DrawPath(in List<Vector2> pathData, Event e, in WaypointPathEditorData data)
         {
             EditorGUI.BeginChangeCheck();
 
-            base.DrawPath(ref pathData, e, ref tempPath);
+            base.DrawPath(in pathData, e, in data);
 
             Vector2 snap = Vector2.one * 0.2f;
             float size;
-            Vector2 startControlHandle = pathBezier.Properties.StartPosition;
-            Vector2 endControlHandle = pathBezier.Properties.StartPosition;
+            Vector2 startControlHandle = startPosition.vector2Value;
+            Vector2 endControlHandle = startPosition.vector2Value;
 
             if (e.type == EventType.MouseDown) isMousePressed = true;
 
@@ -65,12 +88,12 @@ namespace WaypointPath
             ////***
 
             //***Prevent End Control handle from getting selected when End Position is zero
-            if (e.type == EventType.MouseUp && pathBezier.Properties.EndPosition != Vector2.zero && isMousePressed)
+            if (e.type == EventType.MouseUp && endPosition.vector2Value != Vector2.zero && isMousePressed)
             {
                 isEndControlEnabled = true;
                 isMousePressed = false;
             }
-            else if (e.type == EventType.MouseUp && pathBezier.Properties.EndPosition == Vector2.zero && isMousePressed)
+            else if (e.type == EventType.MouseUp && endPosition.vector2Value == Vector2.zero && isMousePressed)
             {
                 isEndControlEnabled = false;
                 isMousePressed = false;
@@ -79,30 +102,30 @@ namespace WaypointPath
 
             //if (isStartControlEnabled)
             //{
-            size = HandleUtility.GetHandleSize(pathBezier.Properties.StartControl) * 0.15f;
+            size = HandleUtility.GetHandleSize(startControl.vector2Value) * 0.15f;
             Handles.color = Color.cyan;
-            startControlHandle = Handles.FreeMoveHandle(pathBezier.Properties.StartControl, Quaternion.identity, size, snap, Handles.SphereHandleCap);
+            startControlHandle = Handles.FreeMoveHandle(startControl.vector2Value, Quaternion.identity, size, snap, Handles.SphereHandleCap);
             //}
             //else startControlHandle = Vector2.zero;
 
             if (isEndControlEnabled)
             {
-                size = HandleUtility.GetHandleSize(pathBezier.Properties.EndControl) * 0.15f;
+                size = HandleUtility.GetHandleSize(endControl.vector2Value) * 0.15f;
                 Handles.color = Color.cyan;
-                endControlHandle = Handles.FreeMoveHandle(pathBezier.Properties.EndControl, Quaternion.identity, size, snap, Handles.SphereHandleCap);
+                endControlHandle = Handles.FreeMoveHandle(endControl.vector2Value, Quaternion.identity, size, snap, Handles.SphereHandleCap);
             }
             else endControlHandle = Vector2.zero;
 
-            size = HandleUtility.GetHandleSize(pathBezier.Properties.EndPosition) * 0.2f;
+            size = HandleUtility.GetHandleSize(endPosition.vector2Value) * 0.2f;
             Handles.color = Color.red;
-            Vector2 endPositionHandle = Handles.FreeMoveHandle(pathBezier.Properties.EndPosition, Quaternion.identity, size, snap, Handles.SphereHandleCap);
+            Vector2 endPositionHandle = Handles.FreeMoveHandle(endPosition.vector2Value, Quaternion.identity, size, snap, Handles.SphereHandleCap);
 
             Handles.color = new Color(1, 0, 0, 0.5f);
             if (startControlHandle != Vector2.zero)
             {
                 Handles.DrawLine(endControlHandle, endPositionHandle, 2);
                 Handles.color = new Color(0, 0, 1, 0.5f);
-                Handles.DrawLine(startControlHandle, pathBezier.Properties.StartPosition, 2);
+                Handles.DrawLine(startControlHandle, startPosition.vector2Value, 2);
                 Handles.color = new Color(1, 0.92f, 0.016f, 0.5f);
                 Handles.DrawLine(endControlHandle, startControlHandle);
             }
@@ -110,19 +133,17 @@ namespace WaypointPath
             {
                 Handles.DrawLine(endControlHandle, endPositionHandle, 2);
                 Handles.color = new Color(0, 0, 1, 0.5f);
-                Handles.DrawLine(endControlHandle, pathBezier.Properties.StartPosition, 2);
+                Handles.DrawLine(endControlHandle, startPosition.vector2Value, 2);
             }
 
             if (EditorGUI.EndChangeCheck())
             {
                 Undo.RecordObject(pathBezier, "Change Handle Position");
-                pathBezier.Properties.EndPosition = endPositionHandle;
-                pathBezier.Properties.StartControl = startControlHandle;
-                pathBezier.Properties.EndControl = endControlHandle;
-                tempPath = pathBezier.GeneratePath((isReplace)
-                    ? pathBezier.Properties
-                    : pathBezier.Properties.GetModifiedCurveCopy(pathBezier.Properties.EndControl, (x, y) => x + y)
-                );
+                endPosition.vector2Value = endPositionHandle;
+                startControl.vector2Value = startControlHandle;
+                endControl.vector2Value = endControlHandle;
+                var path = (data.IsReplace) ? pathBezier : pathBezier.GetModifiedCurveCopy(pathBezier.EndControl, (x, y) => x + y);
+                    data.TempPath = path.GeneratePath(data.StepSize);
             }
         }
     }

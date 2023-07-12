@@ -10,13 +10,13 @@ namespace WaypointPath
 
         public abstract List<Vector2> MakePath(bool isReplace, float stepSize);
 
-        public void DrawPath(ref List<Vector2> pathData, Event e, ref List<Vector2> tempPath)
+        public void DrawPath(in List<Vector2> pathData, Event e, in WaypointPathEditorData data)
         {
             if (e.type == EventType.Repaint)
             {
-                if (tempPath != null)
+                if (data.TempPath != null)
                 {
-                    foreach (Vector2 point in tempPath)
+                    foreach (Vector2 point in data.TempPath)
                     {
                         // Draws a blue line from this transform to the target
                         Handles.color = Color.red;

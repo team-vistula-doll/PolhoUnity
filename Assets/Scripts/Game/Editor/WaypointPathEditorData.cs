@@ -6,7 +6,7 @@ namespace WaypointPath
 {
     public class WaypointPathEditorData : ScriptableObject
     {
-        public Dictionary<string, PathEditor> Options;
+        public Dictionary<string, PathEditor> Options { get; private set; }
 
         //public WaypointPathBezier PathBezier = new();
         //public WaypointPathExpression PathExpression = new();

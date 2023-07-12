@@ -5,16 +5,14 @@ using UnityEngine;
 
 namespace WaypointPath
 {
-    /// <summary>
-    /// A class for constructing at most cubic Bezier curves
-    /// </summary>
-    public class BezierProperties : PathProperties
-    {
-        public Vector2 EndPosition;
-        public Vector2 StartControl;
-        public Vector2 EndControl;
 
-        public BezierProperties(Vector2 startPosition, Vector2 endPosition, Vector2 startControl, Vector2 endControl)
+    public class WaypointPathBezier : WaypointPathCreator
+    {
+        public Vector2 EndPosition = Vector2.zero;
+        public Vector2 StartControl = Vector2.zero;
+        public Vector2 EndControl = Vector2.zero;
+
+        public void Init(Vector2 startPosition, Vector2 endPosition, Vector2 startControl, Vector2 endControl)
         {
             StartPosition = startPosition;
             EndPosition = endPosition;
@@ -29,13 +27,15 @@ namespace WaypointPath
         /// <param name="mod">The operation to do, e.g. <c>(x, y) => x + y</c>, where 'x' is the curve control points 
         /// and 'y' is <paramref name="vector"/></param>
         /// <returns>A new modified Bezier curve</returns>
-        public BezierProperties GetModifiedCurveCopy(Vector2 vector, Func<Vector2, Vector2, Vector2> mod)
+        public WaypointPathBezier GetModifiedCurveCopy(Vector2 vector, Func<Vector2, Vector2, Vector2> mod)
         {
             Vector2 startPosition = mod(StartPosition, vector);
             Vector2 endPosition = mod(EndPosition, vector);
             Vector2 startControl = mod(StartControl, vector);
             Vector2 endControl = mod(EndControl, vector);
-            return new BezierProperties(startPosition, endPosition, startControl, endControl);
+            var value = (WaypointPathBezier)ScriptableObject.CreateInstance(typeof(WaypointPathBezier));
+            value.Init(startPosition, endPosition, startControl, endControl);
+            return value;
         }
 
         /// <summary>
@@ -52,61 +52,46 @@ namespace WaypointPath
             EndControl = mod(EndControl, vector);
         }
 
-        public override PathProperties GetNewAdjoinedPath(float percent)
+        public override WaypointPathCreator GetNewAdjoinedPath(float percent)
         {
             if (percent < 0) percent = 0;
             if (percent > 1) percent = 1;
             Vector2 vector = BezierCurve.CubicCurve(StartPosition, StartControl, EndControl, EndPosition, percent);
             return GetModifiedCurveCopy(vector, (x, y) => x + y);
         }
-    }
-
-    public class WaypointPathBezier : WaypointPathCreator
-    {
-        new public BezierProperties Properties = new(Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero);
-        public override List<Vector2> GeneratePath(PathProperties properties, float stepSize = 0.5f)
+        public override List<Vector2> GeneratePath(float stepSize = 0.5f)
         {
-            BezierProperties beProperties;
-            try { beProperties = (BezierProperties)properties; }
-            catch (InvalidCastException e)
-            {
-                Debug.LogError(e.Message);
-                return new List<Vector2>() { Vector2.zero };
-            }
-
-            if (beProperties.EndPosition == Vector2.zero)
+            if (EndPosition == Vector2.zero)
                 return new List<Vector2>() { Vector2.zero };
 
-            if (stepSize <= 0.1f) stepSize = 0.2f; //Prevent too many waypoints and Unity freezing
+            if (stepSize < 0.2f) stepSize = 0.2f; //Prevent too many waypoints and Unity freezing
 
             List<Vector2> waypoints = new();
-            if (beProperties.EndControl != Vector2.zero)
+            if (EndControl != Vector2.zero)
             {
-                if (beProperties.StartControl != Vector2.zero)
+                if (StartControl != Vector2.zero)
                 {
                     for (int t = 1; t * stepSize <= 100; t++)
                     {
-                        waypoints.Add(BezierCurve.CubicCurve(beProperties.StartPosition, beProperties.StartControl,
-                            beProperties.EndControl, beProperties.EndPosition, t * stepSize / 100));
+                        waypoints.Add(BezierCurve.CubicCurve(StartPosition, StartControl,
+                            EndControl, EndPosition, t * stepSize / 100));
                     }
                 }
                 else
                 {
                     for (int t = 1; t * stepSize <= 100; t++)
                     {
-                        waypoints.Add(BezierCurve.QuadraticCurve(beProperties.StartPosition, beProperties.StartControl,
-                            beProperties.EndPosition, t * stepSize / 100));
+                        waypoints.Add(BezierCurve.QuadraticCurve(StartPosition, StartControl,
+                            EndPosition, t * stepSize / 100));
                     }
                 }
             }
             else
             {
-                waypoints.Add(BezierCurve.Lerp(beProperties.StartPosition, beProperties.EndPosition, 1));
+                waypoints.Add(BezierCurve.Lerp(StartPosition, EndPosition, 1));
             }
 
             return waypoints;
         }
-
-        public override List<Vector2> GeneratePath(float stepSize = 0.5f) => GeneratePath(Properties, stepSize);
     }
 }

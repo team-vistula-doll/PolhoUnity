@@ -7,32 +7,58 @@ namespace WaypointPath
     public class ExpressionEditor : PathEditor
     {
         WaypointPathExpression pathExpression;
+        SerializedObject serialPath;
+        SerializedProperty startPosition, pathFormula, length, angle;
+        const string assetPath = "Assets/Editor Assets/ExpressionEditor.asset";
 
-        public void OnEnable()
+        private void OnEnable()
         {
-            pathExpression = (WaypointPathExpression)ScriptableObject.CreateInstance(typeof(WaypointPathExpression));
+            pathExpression = (WaypointPathExpression)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathExpression))
+                ?? (WaypointPathExpression)ScriptableObject.CreateInstance(typeof(WaypointPathExpression));
+            serialPath = new SerializedObject(pathExpression);
+
+            startPosition = serialPath.FindProperty("StartPosition");
+            pathFormula = serialPath.FindProperty("PathFormula");
+            length = serialPath.FindProperty("Length");
+            angle = serialPath.FindProperty("Angle");
+        }
+
+        private void OnDisable()
+        {
+            if (!AssetDatabase.Contains(pathExpression)) AssetDatabase.CreateAsset(pathExpression, assetPath);
+            AssetDatabase.SaveAssets();
         }
 
         public override void PathOptions()
         {
-            pathExpression.Properties.PathFormula = EditorGUILayout.DelayedTextField("Path formula", pathExpression.Properties.PathFormula);
-            pathExpression.Properties.Length = EditorGUILayout.FloatField("Length", pathExpression.Properties.Length);
-            pathExpression.Properties.Angle = EditorGUILayout.FloatField("Angle", pathExpression.Properties.Angle);
+            serialPath.Update();
+
+            EditorGUILayout.PropertyField(pathFormula);
+            EditorGUILayout.PropertyField(length);
+            EditorGUILayout.PropertyField(angle);
+
+            serialPath.ApplyModifiedProperties();
         }
 
         public override List<Vector2> MakePath(bool isReplace, float stepSize)
         {
-            if (isReplace) pathExpression.Properties = (ExpressionProperties)pathExpression.Properties.GetNewAdjoinedPath(1);
+            if (!isReplace)
+            {
+                var value = (WaypointPathExpression)pathExpression.GetNewAdjoinedPath(1);
+                return value.GeneratePath(stepSize);
+            }
             return pathExpression.GeneratePath(stepSize);
         }
 
-        public void DrawPath(ref List<Vector2> pathData, Event e, ref List<Vector2> tempPath, bool isReplace)
+        public new void DrawPath(in List<Vector2> pathData, Event e, in WaypointPathEditorData data)
         {
-            base.DrawPath(ref pathData, e, ref tempPath);
+            base.DrawPath(in pathData, e, in data);
 
-            if (!isReplace) pathExpression.Properties.StartPosition = WaypointPathExpression.GetPointVector(pathExpression.Properties, pathExpression.Properties.Length);
+            var start = pathExpression.StartPosition;
+            if (!data.IsReplace) pathExpression.StartPosition = pathExpression.GetPointVector(pathExpression.Length);
 
-            tempPath = pathExpression.GeneratePath(pathExpression.Properties);
+            data.TempPath = pathExpression.GeneratePath(data.StepSize);
+            pathExpression.StartPosition = start;
         }
     }
 }

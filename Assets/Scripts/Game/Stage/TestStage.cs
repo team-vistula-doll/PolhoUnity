@@ -10,30 +10,26 @@ using WaypointPath;
 public class TestStage : Stage
 {
     List<int> _enemyIDs = new();
-    WaypointPathCreator _pathCreator;
 
-    public void OnEnable()
-    {
-        _pathCreator = (WaypointPathExpression)ScriptableObject.CreateInstance(typeof(WaypointPathExpression));
-    }
     public override IEnumerator StageScript(StageArgs args)
     {
         yield return new WaitForSeconds(1f);
 
         //Spawn positions for the first enemies
 
-        BezierProperties enemy1aPath = new(new(-6, 5), new(7, -2), new(-6, -1), new(2, -3));
+        WaypointPathBezier enemy1aPath = CreateInstance<WaypointPathBezier>();
+        enemy1aPath.Init(new(-6, 5), new(7, -2), new(-6, -1), new(2, -3));
 
-        BezierProperties enemy1bPath = enemy1aPath.GetModifiedCurveCopy(new(0.5f, 0.5f), (x, y) => x - y);
-        BezierProperties enemy1cPath = enemy1aPath.GetModifiedCurveCopy(new(-1f, 1f), (x, y) => x * y);
-        BezierProperties enemy1dPath = enemy1cPath.GetModifiedCurveCopy(new(0.5f, -0.5f), (x, y) => x + y);
+        var enemy1bPath = enemy1aPath.GetModifiedCurveCopy(new(0.5f, 0.5f), (x, y) => x - y);
+        var enemy1cPath = enemy1aPath.GetModifiedCurveCopy(new(-1f, 1f), (x, y) => x * y);
+        var enemy1dPath = enemy1cPath.GetModifiedCurveCopy(new(0.5f, -0.5f), (x, y) => x + y);
 
         int enemy1a = args.EnemyManager.CreateNewEnemy(new Enemy
         {
             Name = "enemy1",
             SpawnTime = -1,
             SpawnPosition = enemy1aPath.StartPosition,
-            Path = _pathCreator.GeneratePath(enemy1aPath),
+            Path = enemy1aPath.GeneratePath(),
             Fireable = new Arc(3, 90, 0)
         });
         int enemy1b = args.EnemyManager.CreateNewEnemy(new Enemy
@@ -41,7 +37,7 @@ public class TestStage : Stage
             Name = "enemy1",
             SpawnTime = -1,
             SpawnPosition = enemy1bPath.StartPosition,
-            Path = _pathCreator.GeneratePath(enemy1bPath),
+            Path = enemy1bPath.GeneratePath(),
             Fireable = new Arc(3, 90, 0)
         });
         int enemy1c = args.EnemyManager.CreateNewEnemy(new Enemy
@@ -49,7 +45,7 @@ public class TestStage : Stage
             Name = "enemy1",
             SpawnTime = -1,
             SpawnPosition = enemy1cPath.StartPosition,
-            Path = _pathCreator.GeneratePath(enemy1cPath),
+            Path = enemy1cPath.GeneratePath(),
             Fireable = new Arc(3, 90, 0)
         });
         int enemy1d = args.EnemyManager.CreateNewEnemy(new Enemy
@@ -57,7 +53,7 @@ public class TestStage : Stage
             Name = "enemy1",
             SpawnTime = -1,
             SpawnPosition = enemy1dPath.StartPosition,
-            Path = _pathCreator.GeneratePath(enemy1dPath),
+            Path = enemy1dPath.GeneratePath(),
             Fireable = new Arc(3, 3, 45)
         });
         
@@ -78,27 +74,27 @@ public class TestStage : Stage
         }
         yield return new WaitForSeconds(5f);
 
-        _pathCreator = new WaypointPathExpression();
-
         int enemy2a, enemy2b;
 
         for (int i = 4; i >= 0; i -= 2)
         {
-            ExpressionProperties enemy2aPath = new(new Vector2(-6, i + 0.5f), "-x", 20, 45);
+            WaypointPathExpression enemy2aPath = CreateInstance<WaypointPathExpression>();
+            enemy2aPath.Init(new Vector2(-6, i + 0.5f), "-x", 20, 45);
             enemy2a = args.EnemyManager.CreateNewEnemy(new Enemy
             {
                 Name = "enemy2",
                 SpawnTime = -1,
                 SpawnPosition = enemy2aPath.StartPosition,
-                Path = _pathCreator.GeneratePath(enemy2aPath)
+                Path = enemy2aPath.GeneratePath()
             });
-            ExpressionProperties enemy2bPath = new(new Vector2(6, i), "-x", 20, 225);
+            WaypointPathExpression enemy2bPath = CreateInstance<WaypointPathExpression>();
+            enemy2bPath.Init(new Vector2(6, i), "-x", 20, 225);
             enemy2b = args.EnemyManager.CreateNewEnemy(new Enemy
             {
                 Name = "enemy2",
                 SpawnTime = -1,
                 SpawnPosition = enemy2bPath.StartPosition,
-                Path = _pathCreator.GeneratePath(enemy2bPath)
+                Path = enemy2bPath.GeneratePath()
             });
 
             _enemyIDs.Add(args.EnemyManager.SpawnNewEnemy(enemy2a));
@@ -111,37 +107,40 @@ public class TestStage : Stage
         int enemy3a;
         for(int i = -2; i <= 2; i += 4)
         {
-            ExpressionProperties enemy3aPath = new(new Vector2(i, 7), "sin(3*x)*0.5", 20, -90);
+            WaypointPathExpression enemy3aPath = CreateInstance<WaypointPathExpression>();
+            enemy3aPath.Init(new Vector2(i, 7), "sin(3*x)*0.5", 20, -90);
             enemy3a = args.EnemyManager.CreateNewEnemy(new Enemy
             {
                 Name = "enemy3",
                 SpawnTime = -1,
                 SpawnPosition = enemy3aPath.StartPosition,
-                Path = _pathCreator.GeneratePath(enemy3aPath)
+                Path = enemy3aPath.GeneratePath()
             });
 
             _enemyIDs.Add(args.EnemyManager.SpawnNewEnemy(enemy3a));
             yield return new WaitForSeconds(0.5f);
         }
-        ExpressionProperties enemy3bPath = new(new Vector2(0, 7), "sin(3*x)*0.5", 20, -90);
+        WaypointPathExpression enemy3bPath = CreateInstance<WaypointPathExpression>();
+        enemy3bPath.Init(new Vector2(0, 7), "sin(3*x)*0.5", 20, -90);
         int enemy3b = args.EnemyManager.CreateNewEnemy(new Enemy
         {
             Name = "enemy3",
             SpawnTime = -1,
             SpawnPosition = enemy3bPath.StartPosition,
-            Path = _pathCreator.GeneratePath(enemy3bPath)
+            Path = enemy3bPath.GeneratePath()
         });
 
         _enemyIDs.Add(args.EnemyManager.SpawnNewEnemy(enemy3b));
         yield return new WaitForSeconds(6f);
 
-        ExpressionProperties bossPath = new(new Vector2(0, 7), "-x", 3.5f, -45);
+        WaypointPathExpression bossPath = CreateInstance<WaypointPathExpression>();
+        bossPath.Init(new Vector2(0, 7), "-x", 3.5f, -45);
         int boss = args.EnemyManager.CreateNewEnemy(new Enemy
         {
             Name = "boss",
             SpawnTime = -1,
             SpawnPosition = bossPath.StartPosition,
-            Path = _pathCreator.GeneratePath(bossPath)
+            Path = bossPath.GeneratePath()
         });
 
         _enemyIDs.Add(args.EnemyManager.SpawnNewEnemy(boss));

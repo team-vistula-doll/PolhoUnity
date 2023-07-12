@@ -1,36 +1,35 @@
 using B83.ExpressionParser;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace WaypointPath
 {
-    public class ExpressionProperties : PathProperties
+    public class WaypointPathExpression : WaypointPathCreator
     {
-        public string PathFormula;
-        public float Length;
-        public float Angle;
+        [Delayed]
+        public string PathFormula = "x";
+        public float Length = 20;
+        public float Angle = 0;
 
-        public ExpressionProperties(Vector2 startPos, string pathFormula, float length, float angle)
+        public void Init(Vector2 startPosition, string pathFormula, float length, float angle)
         {
-            StartPosition = startPos;
+            StartPosition = startPosition;
             PathFormula = pathFormula;
             Length = length;
             Angle = angle;
         }
 
-        public override PathProperties GetNewAdjoinedPath(float percent)
+        public override WaypointPathCreator GetNewAdjoinedPath(float percent)
         {
-            Vector2 start = WaypointPathExpression.GetPointVector(this, percent * Length);
-            return new ExpressionProperties(start, PathFormula, Length, Angle);
+            Vector2 start = GetPointVector(percent * Length);
+            var value = (WaypointPathExpression)ScriptableObject.CreateInstance(typeof(WaypointPathExpression));
+            value.Init(start, PathFormula, Length, Angle);
+            return value;
         }
-    }
-    public class WaypointPathExpression : WaypointPathCreator
-    {
-        new public ExpressionProperties Properties = new(Vector2.zero, "x", 20, 0);
+
         static ExpressionParser parser = new();
 
-        public static Vector2 GetPointVector(Expression exp, float x, float angle)
+        public Vector2 GetPointVector(Expression exp, float x, float angle)
         {
             exp.Parameters["x"].Value = x; //Put x-val to x in expression
 
@@ -42,37 +41,29 @@ namespace WaypointPath
             return p;
         }
 
-        public static Vector2 GetPointVector(ExpressionProperties properties, float x)
+        public Vector2 GetPointVector(float x)
         {
-            Expression exp = parser.EvaluateExpression(properties.PathFormula);
-            return GetPointVector(exp, x, properties.Angle);
+            Expression exp = parser.EvaluateExpression(PathFormula);
+            return GetPointVector(exp, x, Angle);
         }
 
-        public override List<Vector2> GeneratePath(PathProperties properties, float stepSize = 0.5f)
+        public override List<Vector2> GeneratePath(float stepSize = 0.5f)
         {
-            ExpressionProperties exProperties;
-            try { exProperties = (ExpressionProperties)properties; }
-            catch (InvalidCastException e)
-            {
-                Debug.LogError(e.Message);
-                return new List<Vector2>() { Vector2.zero };
-            }
+            if (stepSize < 0.2f) stepSize = 0.2f; //Prevent too many waypoints and Unity freezing
 
             //Create expression parser and envaluate expression
-            Expression exp = parser.EvaluateExpression(exProperties.PathFormula);
+            Expression exp = parser.EvaluateExpression(PathFormula);
 
             List<Vector2> waypoints = new();
 
-            exProperties.Angle *= Mathf.Deg2Rad;
-            for (int i = 1; i * stepSize <= exProperties.Length; i++)
+            var angle = Angle * Mathf.Deg2Rad;
+            for (int i = 1; i * stepSize <= Length; i++)
             {
-                Vector2 point = GetPointVector(exp, i * stepSize, exProperties.Angle);
-                waypoints.Add(point + properties.StartPosition); //Translate point to originate from the startPos
+                Vector2 point = GetPointVector(exp, i * stepSize, angle);
+                waypoints.Add(point + StartPosition); //Translate point to originate from the startPos
             }
 
             return waypoints;
         }
-
-        public override List<Vector2> GeneratePath(float stepSize = 0.5f) => GeneratePath(Properties, stepSize);
     }
 }
