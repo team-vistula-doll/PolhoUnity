@@ -3,6 +3,7 @@ using UnityEditor;
 using WaypointPath;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.XPath;
 
 [CustomEditor(typeof(WaypointPathData))]
 public class WaypointPathDataEditor : Editor
@@ -11,6 +12,7 @@ public class WaypointPathDataEditor : Editor
 
     SerializedObject serialData;
     SerializedProperty stepSize, isReplace, pathTypeSelection;
+    const string assetPath = "Assets/Editor Assets/WaypointPathEditorData.asset";
     PathEditor PathEditor { get => data.Options.ElementAt(data.PathTypeSelection).Value; }
 
     WaypointPathData pathData;
@@ -20,12 +22,19 @@ public class WaypointPathDataEditor : Editor
     {
         pathData = target as WaypointPathData;
         serialPathData = serializedObject.FindProperty("Path");
-        data = (WaypointPathEditorData)ScriptableObject.CreateInstance(typeof(WaypointPathEditorData));
+        data = (WaypointPathEditorData)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathEditorData));
+        if (data == null) data = (WaypointPathEditorData)ScriptableObject.CreateInstance(typeof(WaypointPathEditorData));
         serialData = new SerializedObject(data);
 
         stepSize = serialData.FindProperty("StepSize");
         isReplace = serialData.FindProperty("IsReplace");
         pathTypeSelection = serialData.FindProperty("PathTypeSelection");
+    }
+
+    private void OnDisable()
+    {
+        if (!AssetDatabase.Contains(data)) AssetDatabase.CreateAsset(data, assetPath);
+        AssetDatabase.SaveAssets();
     }
 
     public override void OnInspectorGUI()

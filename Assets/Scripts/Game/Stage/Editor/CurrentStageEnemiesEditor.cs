@@ -8,41 +8,64 @@ using WaypointPath;
 [CanEditMultipleObjects]
 public class CurrentStageEnemiesEditor : Editor
 {
+    CurrentStageEnemies stageEnemies;
     SerializedProperty enemies;
 
     WaypointPathEditorData data;
+
+    SerializedObject serialData;
+    SerializedProperty stepSize, isReplace, pathTypeSelection;
+    const string assetPath = "Assets/Editor Assets/CurrentStageEnemiesEditorData.asset";
     PathEditor PathEditor { get { return data.Options.ElementAt(data.PathTypeSelection).Value; } }
 
-    List<Vector2> pathData = new();
+    List<Vector2> pathData = new() { Vector2.zero };
     Vector2 startPosition = Vector2.zero;
 
     private void OnEnable()
     {
+        stageEnemies = target as CurrentStageEnemies;
         enemies = serializedObject.FindProperty("enemies");
-        data = (WaypointPathEditorData)ScriptableObject.CreateInstance(typeof(WaypointPathEditorData));
+
+        data = (WaypointPathEditorData)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathEditorData));
+        if (data == null) data = (WaypointPathEditorData)ScriptableObject.CreateInstance(typeof(WaypointPathEditorData));
+        serialData = new SerializedObject(data);
+
+        stepSize = serialData.FindProperty("StepSize");
+        isReplace = serialData.FindProperty("IsReplace");
+        pathTypeSelection = serialData.FindProperty("PathTypeSelection");
+    }
+
+    private void OnDisable()
+    {
+        if (!AssetDatabase.Contains(data)) AssetDatabase.CreateAsset(data, assetPath);
+        AssetDatabase.SaveAssets();
     }
 
     public override void OnInspectorGUI()
     {
         serializedObject.Update();
+        serialData.Update();
 
         startPosition = EditorGUILayout.Vector2Field("Start Position", startPosition);
         EditorGUILayout.BeginHorizontal();
         {
             GUILayout.Label("Path type: ");
-            string[] pathOptions = new string[] { "Function", "Bezier" };
 
-            data.PathTypeSelection = GUILayout.Toolbar(data.PathTypeSelection, data.Options.Keys.ToArray(), EditorStyles.radioButton);
+            pathTypeSelection.intValue = GUILayout.Toolbar(
+                pathTypeSelection.intValue, data.Options.Keys.ToArray(), EditorStyles.radioButton);
+            //data.PathTypeSelection = GUILayout.Toolbar(data.PathTypeSelection, data.Options.Keys.ToArray(), EditorStyles.radioButton);
         }
         EditorGUILayout.EndHorizontal();
 
         PathEditor.PathOptions();
 
-        data.StepSize = EditorGUILayout.Slider("Step size", data.StepSize, 0.2f, 50f);
+        EditorGUILayout.PropertyField(stepSize);
+        //data.StepSize = EditorGUILayout.Slider("Step size", data.StepSize, 0.2f, 50f);
 
         EditorGUILayout.BeginHorizontal();
         {
-            data.IsReplace = EditorGUILayout.ToggleLeft("Replace", data.IsReplace);
+            isReplace.boolValue = EditorGUILayout.ToggleLeft("Replace", isReplace.boolValue);
+            //data.IsReplace = EditorGUILayout.ToggleLeft("Replace", data.IsReplace);
 
             if (GUILayout.Button("Set path"))
             {
@@ -55,9 +78,10 @@ public class CurrentStageEnemiesEditor : Editor
         }
         EditorGUILayout.EndHorizontal();
 
-        serializedObject.ApplyModifiedProperties();
-
         data.TempPath = PathEditor.MakePath(data.IsReplace || pathData.Count() == 1, data.StepSize);
+
+        serializedObject.ApplyModifiedProperties();
+        serialData.ApplyModifiedProperties();
         SceneView.RepaintAll();
 
         //base.OnInspectorGUI();

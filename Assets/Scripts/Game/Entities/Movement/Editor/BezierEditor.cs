@@ -13,8 +13,8 @@ namespace WaypointPath
 
         private void OnEnable()
         {
-            pathBezier = (WaypointPathBezier)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathBezier))
-                ?? (WaypointPathBezier)ScriptableObject.CreateInstance(typeof(WaypointPathBezier));
+            pathBezier = (WaypointPathBezier)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathBezier));
+            if (pathBezier == null) pathBezier = (WaypointPathBezier)ScriptableObject.CreateInstance(typeof(WaypointPathBezier));
             serialPath = new SerializedObject(pathBezier);
 
             startPosition = serialPath.FindProperty("StartPosition");

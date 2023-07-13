@@ -8,16 +8,16 @@ namespace WaypointPath
     {
         WaypointPathExpression pathExpression;
         SerializedObject serialPath;
-        SerializedProperty startPosition, pathFormula, length, angle;
+        SerializedProperty pathFormula, length, angle;
         const string assetPath = "Assets/Editor Assets/ExpressionEditor.asset";
 
         private void OnEnable()
         {
-            pathExpression = (WaypointPathExpression)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathExpression))
-                ?? (WaypointPathExpression)ScriptableObject.CreateInstance(typeof(WaypointPathExpression));
+            pathExpression = (WaypointPathExpression)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathExpression));
+            if (pathExpression == null) pathExpression = (WaypointPathExpression)ScriptableObject.
+                    CreateInstance(typeof(WaypointPathExpression));
             serialPath = new SerializedObject(pathExpression);
 
-            startPosition = serialPath.FindProperty("StartPosition");
             pathFormula = serialPath.FindProperty("PathFormula");
             length = serialPath.FindProperty("Length");
             angle = serialPath.FindProperty("Angle");
