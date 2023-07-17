@@ -9,10 +9,11 @@ using WaypointPath;
 [CreateAssetMenu(fileName = "TestStage", menuName = "Stage/TestStage", order=1)]
 public class TestStage : Stage
 {
-    List<int> _enemyIDs = new();
+    List<int> _enemyIDs;
 
     public override IEnumerator StageScript(StageArgs args)
     {
+        _enemyIDs = new();
         yield return new WaitForSeconds(1f);
 
         //Spawn positions for the first enemies
@@ -29,7 +30,7 @@ public class TestStage : Stage
             Name = "enemy1",
             SpawnTime = -1,
             SpawnPosition = enemy1aPath.StartPosition,
-            Path = enemy1aPath.GeneratePath(),
+            Path = new() { enemy1aPath },
             Fireable = new Arc(3, 90, 0)
         });
         int enemy1b = args.EnemyManager.CreateNewEnemy(new Enemy
@@ -37,7 +38,7 @@ public class TestStage : Stage
             Name = "enemy1",
             SpawnTime = -1,
             SpawnPosition = enemy1bPath.StartPosition,
-            Path = enemy1bPath.GeneratePath(),
+            Path = new() { enemy1bPath },
             Fireable = new Arc(3, 90, 0)
         });
         int enemy1c = args.EnemyManager.CreateNewEnemy(new Enemy
@@ -45,7 +46,7 @@ public class TestStage : Stage
             Name = "enemy1",
             SpawnTime = -1,
             SpawnPosition = enemy1cPath.StartPosition,
-            Path = enemy1cPath.GeneratePath(),
+            Path = new() { enemy1cPath },
             Fireable = new Arc(3, 90, 0)
         });
         int enemy1d = args.EnemyManager.CreateNewEnemy(new Enemy
@@ -53,7 +54,7 @@ public class TestStage : Stage
             Name = "enemy1",
             SpawnTime = -1,
             SpawnPosition = enemy1dPath.StartPosition,
-            Path = enemy1dPath.GeneratePath(),
+            Path = new() { enemy1dPath },
             Fireable = new Arc(3, 3, 45)
         });
         
@@ -85,7 +86,7 @@ public class TestStage : Stage
                 Name = "enemy2",
                 SpawnTime = -1,
                 SpawnPosition = enemy2aPath.StartPosition,
-                Path = enemy2aPath.GeneratePath()
+                Path = new() { enemy2aPath }
             });
             WaypointPathExpression enemy2bPath = CreateInstance<WaypointPathExpression>();
             enemy2bPath.Init(new Vector2(6, i), "-x", 20, 225);
@@ -94,7 +95,7 @@ public class TestStage : Stage
                 Name = "enemy2",
                 SpawnTime = -1,
                 SpawnPosition = enemy2bPath.StartPosition,
-                Path = enemy2bPath.GeneratePath()
+                Path = new() { enemy2bPath }
             });
 
             _enemyIDs.Add(args.EnemyManager.SpawnNewEnemy(enemy2a));
@@ -114,7 +115,7 @@ public class TestStage : Stage
                 Name = "enemy3",
                 SpawnTime = -1,
                 SpawnPosition = enemy3aPath.StartPosition,
-                Path = enemy3aPath.GeneratePath()
+                Path = new() { enemy3aPath }
             });
 
             _enemyIDs.Add(args.EnemyManager.SpawnNewEnemy(enemy3a));
@@ -127,7 +128,7 @@ public class TestStage : Stage
             Name = "enemy3",
             SpawnTime = -1,
             SpawnPosition = enemy3bPath.StartPosition,
-            Path = enemy3bPath.GeneratePath()
+            Path = new() { enemy3bPath }
         });
 
         _enemyIDs.Add(args.EnemyManager.SpawnNewEnemy(enemy3b));
@@ -140,7 +141,7 @@ public class TestStage : Stage
             Name = "boss",
             SpawnTime = -1,
             SpawnPosition = bossPath.StartPosition,
-            Path = bossPath.GeneratePath()
+            Path = new() { bossPath }
         });
 
         _enemyIDs.Add(args.EnemyManager.SpawnNewEnemy(boss));

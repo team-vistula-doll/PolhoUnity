@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 using WaypointPath;
 
@@ -7,22 +9,30 @@ public class WaypointWalker : MonoBehaviour
 {
     public event EventHandler<int> WaypointEvent;
 
-    private WaypointPathData pathData;
+    private WaypointPathData _pathData;
+    private List<Vector2> _vector2Path;
     private IMoveable _moveableEntity;
     private Vector2 _nextWaypoint;
-    private int _waypoints;
-    private int _currentWaypoint;
+    private int _currentWaypointIndex;
+    private int _currentPathIndex;
 
-    private bool _isMoving = true;
+    private bool _isMoving = false;
     private Action move;
 
 
-    public void Start()
+    void Start()
     {
         _moveableEntity = GetComponent<IMoveable>();
-        pathData = GetComponent<WaypointPathData>();
-        transform.position = pathData.Path[0];
-        _waypoints = pathData.Path.Count;
+        _pathData = GetComponent<WaypointPathData>();
+        //transform.position = pathData.Path[0];
+        _currentPathIndex = 0;
+        if (_pathData.Path.Count > 0)
+        {
+            _vector2Path = _pathData.Path[_currentPathIndex++].GeneratePath();
+            _nextWaypoint = _vector2Path[0];
+            move += Move;
+            _isMoving = true;
+        }
     }
 
     /// <summary>
@@ -31,12 +41,12 @@ public class WaypointWalker : MonoBehaviour
     /// <param name="isAdd">If true the path is added to the existing path, if false the path replaces the existing path</param>
     /// <param name="isTemp">If true sets the temp path, if false sets the real path</param>
 
-    public void FixedUpdate()
+    void FixedUpdate()
     {
         move?.Invoke();
     }
 
-    public void Move()
+    private void Move()
     {
         if (_moveableEntity != null && _moveableEntity.Rigidbody2D != null)
         {
@@ -51,21 +61,38 @@ public class WaypointWalker : MonoBehaviour
         }
     }
 
+    public void AddPath(List<WaypointPathCreator> vectors)
+    {
+        _pathData.Path.AddRange(vectors);
+        if (!_isMoving)
+        {
+            _vector2Path.AddRange(_pathData.Path[_currentPathIndex++].GeneratePath());
+            ChangeNextWaypoint();
+        }
+        _isMoving = true;
+        move += Move;
+    }
+
     /// <summary>
     /// Changes _nextWaypoint if you are close enough to the next waypoint
     /// </summary>
-    public void ChangeNextWaypoint()
+    private void ChangeNextWaypoint()
     {
-        if (Vector2.Distance(transform.position, _nextWaypoint) < 0.1f && _currentWaypoint < _waypoints - 1)
+        if (Vector2.Distance(transform.position, _nextWaypoint) < 0.1f && _currentWaypointIndex < _vector2Path.Count - 1)
         {
-            while (pathData.Path.Count > _currentWaypoint && Vector2.Distance(_nextWaypoint, pathData.Path[_currentWaypoint]) < 0.01f)
-                pathData.Path.RemoveAt(_currentWaypoint);
-            _nextWaypoint = pathData.Path[_currentWaypoint];
-            WaypointEvent?.Invoke(this, _currentWaypoint);
-            _currentWaypoint++;
+            while (_pathData.Path.Count > _currentWaypointIndex && Vector2.Distance(_nextWaypoint, _vector2Path[_currentWaypointIndex]) < 0.01f)
+                _pathData.Path.RemoveAt(_currentWaypointIndex);
+            _nextWaypoint = _vector2Path[_currentWaypointIndex];
+            WaypointEvent?.Invoke(this, _currentWaypointIndex);
+            _currentWaypointIndex++;
         }
-        else if (_currentWaypoint >= _waypoints - 1)
-            _isMoving = false;
+        else if (_currentWaypointIndex >= _vector2Path.Count - 1)
+        {
+            if (_currentPathIndex < _pathData.Path.Count - 1)
+                _vector2Path.AddRange(_pathData.Path[_currentPathIndex++].GeneratePath());
+            else
+                _isMoving = false;
+        }
     }
 
     public Vector2 GetCurrentAxis()

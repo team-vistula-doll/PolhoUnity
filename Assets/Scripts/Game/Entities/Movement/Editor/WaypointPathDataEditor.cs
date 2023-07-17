@@ -85,6 +85,8 @@ public class WaypointPathDataEditor : Editor
     {
         Event e = Event.current;
 
-        PathEditor.DrawPath(in pathData.Path, e, in data);
+        List<Vector2> vector2s = new();
+        foreach (var path in pathData.Path) vector2s.AddRange(path.GeneratePath(stepSize.floatValue));
+        PathEditor.DrawPath(in vector2s, e, in data);
     }
 }

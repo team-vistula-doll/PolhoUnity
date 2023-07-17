@@ -45,12 +45,11 @@ public class EnemyManager : MonoBehaviour
     /// <param name="id">Enemy struct ID</param>
     /// <param name="waypoints">List of waypoints to add</param>
     /// <param name="insertAt">Optional; inserts the waypoints at the given index (at the end by default)</param>
-    public void AddWaypointsToEnemy(int id, List<Vector2> waypoints, int insertAt = -1)
+    public void AddWaypointsToEnemy(int id, List<WaypointPathCreator> waypoints, int insertAt = -1)
     {
         id--;
-        if(insertAt == -1)
+        if(insertAt <= -1)
         {
-            if (insertAt < 0) Debug.LogWarning("AddWaypointsToEnemy: insertAt value less than -1; adding to the end");
             _enemies[id].Path.AddRange(waypoints);
         }
         else _enemies[id].Path.InsertRange(insertAt, waypoints);

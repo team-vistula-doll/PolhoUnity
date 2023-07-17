@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using WaypointPath;
 using DanmakU;
 
 namespace EnemyStruct
@@ -13,7 +14,7 @@ namespace EnemyStruct
         public float SpawnTime;
         public Vector2 SpawnPosition;
         [HideInInspector]
-        public List<Vector2> Path;
+        public List<WaypointPathCreator> Path;
         public List<(float delay, int amount)> SpawnRepeats; //delay between spawns, amount of spawns; Optional
         public IFireable Fireable;
     }
