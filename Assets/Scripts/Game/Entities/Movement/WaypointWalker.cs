@@ -80,8 +80,8 @@ public class WaypointWalker : MonoBehaviour
     {
         if (Vector2.Distance(transform.position, _nextWaypoint) < 0.1f && _currentWaypointIndex < _vector2Path.Count - 1)
         {
-            while (_pathData.Path.Count > _currentWaypointIndex && Vector2.Distance(_nextWaypoint, _vector2Path[_currentWaypointIndex]) < 0.01f)
-                _pathData.Path.RemoveAt(_currentWaypointIndex);
+            while (_vector2Path.Count > _currentWaypointIndex && Vector2.Distance(_nextWaypoint, _vector2Path[_currentWaypointIndex]) < 0.01f)
+                _vector2Path.RemoveAt(_currentWaypointIndex);
             _nextWaypoint = _vector2Path[_currentWaypointIndex];
             WaypointEvent?.Invoke(this, _currentWaypointIndex);
             _currentWaypointIndex++;
