@@ -16,6 +16,8 @@ namespace WaypointPath
         //public DrawExpression DrawExpression = new();
         //public DrawPath DrawPath; //base Editor drawer class
 
+        [Min(1)]
+        public int SelectedPathIndex = 1;
         [Range(0.2f, 50f)]
         public float StepSize = 0.5f;
         public List<Vector2> TempPath = new();
