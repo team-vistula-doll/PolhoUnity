@@ -9,6 +9,8 @@ namespace WaypointPath
     {
         [Delayed]
         public Vector2 StartPosition = Vector2.zero;
+        [Range(0.2f, 50f)]
+        public float StepSize = 0.5f;
 
         public abstract WaypointPathCreator GetNewAdjoinedPath(float percent);
 
@@ -23,6 +25,6 @@ namespace WaypointPath
             return new Vector2(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad)) * length;
         }
 
-        public abstract List<Vector2> GeneratePath(float stepSize = 0.5f);
+        public abstract List<Vector2> GeneratePath();
     }
 }

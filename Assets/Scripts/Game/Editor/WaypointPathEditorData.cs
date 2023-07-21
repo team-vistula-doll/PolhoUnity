@@ -6,7 +6,7 @@ namespace WaypointPath
 {
     public class WaypointPathEditorData : ScriptableObject
     {
-        public Dictionary<string, PathEditor> Options { get; private set; }
+        public static List<KeyValuePair<string, PathEditor>> Options { get; private set; } = null;
 
         //public WaypointPathBezier PathBezier = new();
         //public WaypointPathExpression PathExpression = new();
@@ -18,17 +18,16 @@ namespace WaypointPath
 
         [Min(1)]
         public int SelectedPathIndex = 1;
-        [Range(0.2f, 50f)]
-        public float StepSize = 0.5f;
+        //[Range(0.2f, 50f)]
         public List<Vector2> TempPath = new();
         public bool IsReplace = false;
         public int PathTypeSelection = 0;
 
         public void OnEnable()
         {
-            Options = new() {
-            { "Function", (ExpressionEditor)ScriptableObject.CreateInstance(typeof(ExpressionEditor)) },
-            { "Bezier", (BezierEditor)ScriptableObject.CreateInstance(typeof(BezierEditor)) }
+            Options ??= new() {
+            new KeyValuePair<string, PathEditor>("Function", (ExpressionEditor)ScriptableObject.CreateInstance(typeof(ExpressionEditor))),
+            new KeyValuePair<string, PathEditor>("Bezier",(BezierEditor) ScriptableObject.CreateInstance(typeof(BezierEditor)))
         };
         }
     }

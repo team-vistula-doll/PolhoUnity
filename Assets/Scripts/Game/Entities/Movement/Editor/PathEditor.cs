@@ -6,6 +6,8 @@ namespace WaypointPath
 {
     public abstract class PathEditor : ScriptableObject
     {
+        protected SerializedProperty stepSize;
+
         public abstract void PathOptions();
 
         public abstract List<Vector2> MakePath(bool isReplace, float stepSize);

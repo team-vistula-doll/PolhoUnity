@@ -52,9 +52,9 @@ namespace WaypointPath
             if (!isReplace)
             {
                 var value = (WaypointPathBezier)pathBezier.GetNewAdjoinedPath(1);
-                return value.GeneratePath(stepSize);
+                return value.GeneratePath();
             }
-            return pathBezier.GeneratePath(stepSize);
+            return pathBezier.GeneratePath();
         }
 
         public new void DrawPath(in List<Vector2> pathData, Event e, in WaypointPathEditorData data)

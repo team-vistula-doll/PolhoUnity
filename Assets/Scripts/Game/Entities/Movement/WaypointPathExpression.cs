@@ -47,9 +47,9 @@ namespace WaypointPath
             return GetPointVector(exp, x, Angle);
         }
 
-        public override List<Vector2> GeneratePath(float stepSize = 0.5f)
+        public override List<Vector2> GeneratePath()
         {
-            if (stepSize < 0.2f) stepSize = 0.2f; //Prevent too many waypoints and Unity freezing
+            if (StepSize < 0.2f) StepSize = 0.2f; //Prevent too many waypoints and Unity freezing
 
             //Create expression parser and envaluate expression
             Expression exp = parser.EvaluateExpression(PathFormula);
@@ -57,9 +57,9 @@ namespace WaypointPath
             List<Vector2> waypoints = new();
 
             var angle = Angle * Mathf.Deg2Rad;
-            for (int i = 1; i * stepSize <= Length; i++)
+            for (int i = 1; i * StepSize <= Length; i++)
             {
-                Vector2 point = GetPointVector(exp, i * stepSize, angle);
+                Vector2 point = GetPointVector(exp, i * StepSize, angle);
                 waypoints.Add(point + StartPosition); //Translate point to originate from the startPos
             }
 

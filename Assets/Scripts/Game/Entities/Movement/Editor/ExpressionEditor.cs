@@ -18,6 +18,7 @@ namespace WaypointPath
                     CreateInstance(typeof(WaypointPathExpression));
             serialPath = new SerializedObject(pathExpression);
 
+            stepSize = serialPath.FindProperty("StepSize");
             pathFormula = serialPath.FindProperty("PathFormula");
             length = serialPath.FindProperty("Length");
             angle = serialPath.FindProperty("Angle");
@@ -29,6 +30,19 @@ namespace WaypointPath
             AssetDatabase.SaveAssets();
         }
 
+        public void SelectPath(ref SerializedProperty selectedPathIndex, ref SerializedProperty pathTypeSelection,
+            ref WaypointPathData pathData)
+        {
+            base.SelectPath(ref selectedPathIndex, ref pathData);
+
+            var selectedPath = pathData.Path[selectedPathIndex.intValue];
+
+            pathTypeSelection.intValue = WaypointPathEditorData.Options.FindIndex(
+                kvp => kvp.Value.GetType() == selectedPath.GetType()
+                ); //Get index of used PathEditor child by comparing types
+            stepSize.floatValue = selectedPath.StepSize;
+        }
+
         public override void PathOptions()
         {
             serialPath.Update();
@@ -36,6 +50,8 @@ namespace WaypointPath
             EditorGUILayout.PropertyField(pathFormula);
             EditorGUILayout.PropertyField(length);
             EditorGUILayout.PropertyField(angle);
+
+            stepSize.floatValue = EditorGUILayout.Slider("Step size", stepSize.floatValue, 0.2f, 50);
 
             serialPath.ApplyModifiedProperties();
         }
@@ -45,9 +61,9 @@ namespace WaypointPath
             if (!isReplace)
             {
                 var value = (WaypointPathExpression)pathExpression.GetNewAdjoinedPath(1);
-                return value.GeneratePath(stepSize);
+                return value.GeneratePath();
             }
-            return pathExpression.GeneratePath(stepSize);
+            return pathExpression.GeneratePath();
         }
 
         public new void DrawPath(in List<Vector2> pathData, Event e, in WaypointPathEditorData data)

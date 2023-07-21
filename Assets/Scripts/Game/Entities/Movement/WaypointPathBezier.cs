@@ -59,30 +59,30 @@ namespace WaypointPath
             Vector2 vector = BezierCurve.CubicCurve(StartPosition, StartControl, EndControl, EndPosition, percent);
             return GetModifiedCurveCopy(vector, (x, y) => x + y);
         }
-        public override List<Vector2> GeneratePath(float stepSize = 0.5f)
+        public override List<Vector2> GeneratePath()
         {
             if (EndPosition == Vector2.zero)
                 return new List<Vector2>() { Vector2.zero };
 
-            if (stepSize < 0.2f) stepSize = 0.2f; //Prevent too many waypoints and Unity freezing
+            if (StepSize < 0.2f) StepSize = 0.2f; //Prevent too many waypoints and Unity freezing
 
             List<Vector2> waypoints = new();
             if (EndControl != Vector2.zero)
             {
                 if (StartControl != Vector2.zero)
                 {
-                    for (int t = 1; t * stepSize <= 100; t++)
+                    for (int t = 1; t * StepSize <= 100; t++)
                     {
                         waypoints.Add(BezierCurve.CubicCurve(StartPosition, StartControl,
-                            EndControl, EndPosition, t * stepSize / 100));
+                            EndControl, EndPosition, t * StepSize / 100));
                     }
                 }
                 else
                 {
-                    for (int t = 1; t * stepSize <= 100; t++)
+                    for (int t = 1; t * StepSize <= 100; t++)
                     {
                         waypoints.Add(BezierCurve.QuadraticCurve(StartPosition, StartControl,
-                            EndPosition, t * stepSize / 100));
+                            EndPosition, t * StepSize / 100));
                     }
                 }
             }
