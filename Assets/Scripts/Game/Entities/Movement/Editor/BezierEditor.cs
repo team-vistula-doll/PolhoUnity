@@ -11,6 +11,10 @@ namespace WaypointPath
         SerializedProperty startPosition, endPosition, startControl, endControl;
         const string assetPath = "Assets/Editor Assets/BezierEditor.asset";
 
+        bool isMousePressed = false;
+        bool isEndControlEnabled = false;
+        //bool isStartControlEnabled = false;
+
         private void OnEnable()
         {
             pathBezier = (WaypointPathBezier)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathBezier));
@@ -29,10 +33,19 @@ namespace WaypointPath
             AssetDatabase.SaveAssets();
         }
 
-        bool isMousePressed = false;
-        bool isEndControlEnabled = false;
-        //bool isStartControlEnabled = false;
-        public override void PathOptions()
+        public new void SelectPath(ref SerializedProperty selectedPathIndex, ref SerializedProperty pathTypeSelection,
+            ref WaypointPathData pathData)
+        {
+            base.SelectPath(ref selectedPathIndex, ref pathTypeSelection, ref pathData);
+
+            WaypointPathBezier selectedPath = (WaypointPathBezier)pathData.Path[selectedPathIndex.intValue];
+            startPosition.vector2Value = selectedPath.StartPosition;
+            endPosition.vector2Value = selectedPath.EndPosition;
+            startControl.vector2Value = selectedPath.StartControl;
+            endControl.vector2Value = selectedPath.EndControl;
+        }
+
+        public new void PathOptions()
         {
             serialPath.Update();
 
@@ -44,10 +57,12 @@ namespace WaypointPath
                 EditorGUILayout.PropertyField(startControl);
             EditorGUI.EndDisabledGroup();
 
+            base.PathOptions();
+
             serialPath.ApplyModifiedProperties();
         }
 
-        public override List<Vector2> MakePath(bool isReplace, float stepSize)
+        public override List<Vector2> MakePath(bool isReplace)
         {
             if (!isReplace)
             {
@@ -143,7 +158,7 @@ namespace WaypointPath
                 startControl.vector2Value = startControlHandle;
                 endControl.vector2Value = endControlHandle;
                 var path = (data.IsReplace) ? pathBezier : pathBezier.GetModifiedCurveCopy(pathBezier.EndControl, (x, y) => x + y);
-                    data.TempPath = path.GeneratePath(data.StepSize);
+                    data.TempPath = path.GeneratePath();
             }
         }
     }

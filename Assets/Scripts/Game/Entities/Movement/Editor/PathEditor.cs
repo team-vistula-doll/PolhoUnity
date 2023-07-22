@@ -8,36 +8,47 @@ namespace WaypointPath
     {
         protected SerializedProperty stepSize;
 
-        public abstract void PathOptions();
+        public void PathOptions()
+        {
+            stepSize.floatValue = EditorGUILayout.Slider("Step size", stepSize.floatValue, 0.2f, 50);
+        }
 
-        public abstract List<Vector2> MakePath(bool isReplace, float stepSize);
+        public abstract List<Vector2> MakePath(bool isReplace);
 
-        public void SelectPath(ref SerializedProperty selectedPathIndex, ref WaypointPathData pathData)
+        public virtual void SelectPath(ref SerializedProperty selectedPathIndex, ref SerializedProperty pathTypeSelection,
+            ref WaypointPathData pathData)
         {
             EditorGUILayout.LabelField("Selected Path:");
             EditorGUILayout.BeginHorizontal();
             {
-                GUIContent backIcon = (selectedPathIndex.intValue > 1) ? EditorGUIUtility.IconContent("back") :
+                GUIContent backIcon = (selectedPathIndex.intValue > 0) ? EditorGUIUtility.IconContent("back") :
                     EditorGUIUtility.IconContent("d_back");
-                GUIContent forwardIcon = (selectedPathIndex.intValue < pathData.Path.Count + 1) ? EditorGUIUtility.IconContent("forward") :
+                GUIContent forwardIcon = (selectedPathIndex.intValue < pathData.Path.Count) ? EditorGUIUtility.IconContent("forward") :
                     EditorGUIUtility.IconContent("d_forward");
 
                 if (GUILayout.Button(backIcon, GUILayout.MaxWidth(22), GUILayout.MinHeight(18)))
-                { if (selectedPathIndex.intValue > 1) selectedPathIndex.intValue--; }
+                { if (selectedPathIndex.intValue > 0) selectedPathIndex.intValue--; }
 
-                EditorGUILayout.PropertyField(selectedPathIndex, GUIContent.none);
+                selectedPathIndex.intValue = EditorGUILayout.IntField("", selectedPathIndex.intValue + 1) - 1;
 
                 if (GUILayout.Button(forwardIcon, GUILayout.MaxWidth(22), GUILayout.MinHeight(18)))
-                { if (selectedPathIndex.intValue < pathData.Path.Count + 1) selectedPathIndex.intValue++; }
+                { if (selectedPathIndex.intValue < pathData.Path.Count) selectedPathIndex.intValue++; }
 
                 string outOfCount = "/" + pathData.Path.Count;
                 EditorGUILayout.LabelField(outOfCount, GUILayout.MaxWidth(EditorStyles.label.CalcSize(new GUIContent(outOfCount)).x));
 
                 //Limit the range
-                if (1 > selectedPathIndex.intValue) selectedPathIndex.intValue = 1;
-                if (selectedPathIndex.intValue > pathData.Path.Count + 1) selectedPathIndex.intValue = pathData.Path.Count;
+                if (0 > selectedPathIndex.intValue) selectedPathIndex.intValue = 0;
+                if (selectedPathIndex.intValue > pathData.Path.Count) selectedPathIndex.intValue = pathData.Path.Count - 1;
             }
             EditorGUILayout.EndHorizontal();
+
+            WaypointPathCreator selectedPath = pathData.Path[selectedPathIndex.intValue];
+
+            //stepSize.floatValue = selectedPath.StepSize;
+            //pathTypeSelection.intValue = WaypointPathEditorData.Options.FindIndex(
+            //    kvp => kvp.GetType() == selectedPath.GetType()
+            //    ); //Get index of used PathEditor child by comparing types
         }
 
         public void DrawPath(in List<Vector2> pathData, Event e, in WaypointPathEditorData data)

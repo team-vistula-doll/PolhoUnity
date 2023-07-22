@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -30,20 +31,22 @@ namespace WaypointPath
             AssetDatabase.SaveAssets();
         }
 
-        public void SelectPath(ref SerializedProperty selectedPathIndex, ref SerializedProperty pathTypeSelection,
+        public new void SelectPath(ref SerializedProperty selectedPathIndex, ref SerializedProperty pathTypeSelection,
             ref WaypointPathData pathData)
         {
-            base.SelectPath(ref selectedPathIndex, ref pathData);
+            base.SelectPath(ref selectedPathIndex, ref pathTypeSelection, ref pathData);
 
-            var selectedPath = pathData.Path[selectedPathIndex.intValue];
-
-            pathTypeSelection.intValue = WaypointPathEditorData.Options.FindIndex(
-                kvp => kvp.Value.GetType() == selectedPath.GetType()
-                ); //Get index of used PathEditor child by comparing types
+            WaypointPathExpression selectedPath = (WaypointPathExpression)pathData.Path[selectedPathIndex.intValue];
             stepSize.floatValue = selectedPath.StepSize;
+            pathTypeSelection.intValue = WaypointPathEditorData.Options.FindIndex(
+                kvp => kvp.GetType() == selectedPath.GetType()
+                ); //Get index of used PathEditor child by comparing types
+            pathFormula.stringValue = selectedPath.PathFormula;
+            length.floatValue = selectedPath.Length;
+            angle.floatValue = selectedPath.Angle;
         }
 
-        public override void PathOptions()
+        public new void PathOptions()
         {
             serialPath.Update();
 
@@ -51,12 +54,12 @@ namespace WaypointPath
             EditorGUILayout.PropertyField(length);
             EditorGUILayout.PropertyField(angle);
 
-            stepSize.floatValue = EditorGUILayout.Slider("Step size", stepSize.floatValue, 0.2f, 50);
+            base.PathOptions();
 
             serialPath.ApplyModifiedProperties();
         }
 
-        public override List<Vector2> MakePath(bool isReplace, float stepSize)
+        public override List<Vector2> MakePath(bool isReplace)
         {
             if (!isReplace)
             {
@@ -73,7 +76,7 @@ namespace WaypointPath
             var start = pathExpression.StartPosition;
             if (!data.IsReplace) pathExpression.StartPosition = pathExpression.GetPointVector(pathExpression.Length);
 
-            data.TempPath = pathExpression.GeneratePath(data.StepSize);
+            data.TempPath = pathExpression.GeneratePath();
             pathExpression.StartPosition = start;
         }
     }

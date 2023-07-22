@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d751a49c23cbf74a8a6fa0f897a07fa, type: 3}
   m_Name: WaypointPathEditorData
   m_EditorClassIdentifier: 
-  SelectedPathIndex: 1
-  StepSize: 0.5
+  SelectedPathIndex: 0
   TempPath:
   - {x: 0.5, y: 0.5}
   - {x: 1, y: 1}
@@ -56,4 +55,4 @@ MonoBehaviour:
   - {x: 19.5, y: 19.5}
   - {x: 20, y: 20}
   IsReplace: 0
-  PathTypeSelection: 0
+  PathTypeSelection: 1

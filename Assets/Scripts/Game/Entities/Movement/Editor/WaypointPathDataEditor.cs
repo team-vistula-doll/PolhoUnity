@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using WaypointPath;
 using System.Collections.Generic;
-using System.Linq;
+using System;
 
 [CustomEditor(typeof(WaypointPathData))]
 public class WaypointPathDataEditor : Editor
@@ -12,7 +12,7 @@ public class WaypointPathDataEditor : Editor
     SerializedObject serialData;
     SerializedProperty selectedPathIndex, isReplace, pathTypeSelection;
     const string assetPath = "Assets/Editor Assets/WaypointPathEditorData.asset";
-    PathEditor PathEditor { get => WaypointPathEditorData.Options[data.PathTypeSelection].Value; }
+    PathEditor PathEditor { get => WaypointPathEditorData.Options[(int)data.PathTypeSelection]; }
 
     WaypointPathData pathData;
     SerializedProperty serialPathData;
@@ -41,14 +41,14 @@ public class WaypointPathDataEditor : Editor
         serializedObject.Update();
         serialData.Update();
 
-        PathEditor.SelectPath(ref selectedPathIndex, ref pathData);
+        PathEditor.SelectPath(ref selectedPathIndex, ref pathTypeSelection, ref pathData);
 
         EditorGUILayout.BeginHorizontal();
         {
             GUILayout.Label("Path type: ");
 
             pathTypeSelection.intValue = GUILayout.Toolbar(
-                pathTypeSelection.intValue, (from kvp in WaypointPathEditorData.Options select kvp.Key).ToArray(), EditorStyles.radioButton);
+                pathTypeSelection.intValue, Enum.GetNames(typeof(PathType)), EditorStyles.radioButton);
         }
         EditorGUILayout.EndHorizontal();
 
@@ -60,7 +60,7 @@ public class WaypointPathDataEditor : Editor
 
             if (GUILayout.Button("Set path"))
             {
-                List<Vector2> path = PathEditor.MakePath(data.IsReplace || serialPathData.arraySize == 1, data.StepSize);
+                List<Vector2> path = PathEditor.MakePath(data.IsReplace || serialPathData.arraySize == 1);
 
                 //Setting the new path in the edited object through serializedObject
                 if (data.IsReplace || serialPathData.arraySize == 1) serialPathData.ClearArray();
@@ -73,7 +73,7 @@ public class WaypointPathDataEditor : Editor
         }
         EditorGUILayout.EndHorizontal();
 
-        data.TempPath = PathEditor.MakePath(data.IsReplace || serialPathData.arraySize == 1, data.StepSize);
+        data.TempPath = PathEditor.MakePath(data.IsReplace || serialPathData.arraySize == 1);
 
         serialData.ApplyModifiedProperties();
         serializedObject.ApplyModifiedProperties();
@@ -85,7 +85,7 @@ public class WaypointPathDataEditor : Editor
         Event e = Event.current;
 
         List<Vector2> vector2s = new();
-        foreach (var path in pathData.Path) vector2s.AddRange(path.GeneratePath(stepSize.floatValue));
+        foreach (var path in pathData.Path) vector2s.AddRange(path.GeneratePath());
         PathEditor.DrawPath(in vector2s, e, in data);
     }
 }

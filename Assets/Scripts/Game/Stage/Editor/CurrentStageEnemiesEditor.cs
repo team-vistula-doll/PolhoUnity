@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
@@ -16,7 +17,7 @@ public class CurrentStageEnemiesEditor : Editor
     SerializedObject serialData;
     SerializedProperty stepSize, isReplace, pathTypeSelection;
     const string assetPath = "Assets/Editor Assets/CurrentStageEnemiesEditorData.asset";
-    PathEditor PathEditor { get { return data.Options.ElementAt(data.PathTypeSelection).Value; } }
+    PathEditor PathEditor { get { return WaypointPathEditorData.Options.ElementAt((int)data.PathTypeSelection); } }
 
     List<Vector2> pathData = new() { Vector2.zero };
     Vector2 startPosition = Vector2.zero;
@@ -52,7 +53,7 @@ public class CurrentStageEnemiesEditor : Editor
             GUILayout.Label("Path type: ");
 
             pathTypeSelection.intValue = GUILayout.Toolbar(
-                pathTypeSelection.intValue, data.Options.Keys.ToArray(), EditorStyles.radioButton);
+                pathTypeSelection.intValue, Enum.GetNames(typeof(PathType)), EditorStyles.radioButton);
             //data.PathTypeSelection = GUILayout.Toolbar(data.PathTypeSelection, data.Options.Keys.ToArray(), EditorStyles.radioButton);
         }
         EditorGUILayout.EndHorizontal();
@@ -69,7 +70,7 @@ public class CurrentStageEnemiesEditor : Editor
 
             if (GUILayout.Button("Set path"))
             {
-                List<Vector2> path = PathEditor.MakePath(data.IsReplace || pathData.Count() == 1, data.StepSize);
+                List<Vector2> path = PathEditor.MakePath(data.IsReplace || pathData.Count() == 1);
                 if (data.IsReplace || pathData.Count() == 1) pathData = path;
                 else pathData.AddRange(path);
 
@@ -78,7 +79,7 @@ public class CurrentStageEnemiesEditor : Editor
         }
         EditorGUILayout.EndHorizontal();
 
-        data.TempPath = PathEditor.MakePath(data.IsReplace || pathData.Count() == 1, data.StepSize);
+        data.TempPath = PathEditor.MakePath(data.IsReplace || pathData.Count() == 1);
 
         serializedObject.ApplyModifiedProperties();
         serialData.ApplyModifiedProperties();
