@@ -75,6 +75,8 @@ public class WaypointPathDataEditor : Editor
 
         data.TempPath = PathEditor.MakePath(data.IsReplace || serialPathData.arraySize == 1);
 
+        DrawDefaultInspector();
+
         serialData.ApplyModifiedProperties();
         serializedObject.ApplyModifiedProperties();
         SceneView.RepaintAll();

@@ -21,6 +21,7 @@ namespace WaypointPath
             if (pathBezier == null) pathBezier = (WaypointPathBezier)ScriptableObject.CreateInstance(typeof(WaypointPathBezier));
             serialPath = new SerializedObject(pathBezier);
 
+            stepSize = serialPath.FindProperty("StepSize");
             startPosition = serialPath.FindProperty("StartPosition");
             endPosition = serialPath.FindProperty("EndPosition");
             startControl = serialPath.FindProperty("StartControl");
@@ -33,19 +34,21 @@ namespace WaypointPath
             AssetDatabase.SaveAssets();
         }
 
-        public new void SelectPath(ref SerializedProperty selectedPathIndex, ref SerializedProperty pathTypeSelection,
+        public override bool SelectPath(ref SerializedProperty selectedPathIndex, ref SerializedProperty pathTypeSelection,
             ref WaypointPathData pathData)
         {
-            base.SelectPath(ref selectedPathIndex, ref pathTypeSelection, ref pathData);
+            bool pathExists = base.SelectPath(ref selectedPathIndex, ref pathTypeSelection, ref pathData);
+            if (!pathExists) return false;
 
             WaypointPathBezier selectedPath = (WaypointPathBezier)pathData.Path[selectedPathIndex.intValue];
             startPosition.vector2Value = selectedPath.StartPosition;
             endPosition.vector2Value = selectedPath.EndPosition;
             startControl.vector2Value = selectedPath.StartControl;
             endControl.vector2Value = selectedPath.EndControl;
+            return true;
         }
 
-        public new void PathOptions()
+        public override void PathOptions()
         {
             serialPath.Update();
 

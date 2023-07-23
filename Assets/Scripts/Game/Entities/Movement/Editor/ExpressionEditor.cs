@@ -31,22 +31,24 @@ namespace WaypointPath
             AssetDatabase.SaveAssets();
         }
 
-        public new void SelectPath(ref SerializedProperty selectedPathIndex, ref SerializedProperty pathTypeSelection,
+        public override bool SelectPath(ref SerializedProperty selectedPathIndex, ref SerializedProperty pathTypeSelection,
             ref WaypointPathData pathData)
         {
-            base.SelectPath(ref selectedPathIndex, ref pathTypeSelection, ref pathData);
+            bool pathExists = base.SelectPath(ref selectedPathIndex, ref pathTypeSelection, ref pathData);
+            if (!pathExists) return false;
 
             WaypointPathExpression selectedPath = (WaypointPathExpression)pathData.Path[selectedPathIndex.intValue];
-            stepSize.floatValue = selectedPath.StepSize;
-            pathTypeSelection.intValue = WaypointPathEditorData.Options.FindIndex(
-                kvp => kvp.GetType() == selectedPath.GetType()
-                ); //Get index of used PathEditor child by comparing types
+            //stepSize.floatValue = selectedPath.StepSize;
+            //pathTypeSelection.intValue = WaypointPathEditorData.Options.FindIndex(
+            //    kvp => kvp.GetType() == selectedPath.GetType()
+            //    ); //Get index of used PathEditor child by comparing types
             pathFormula.stringValue = selectedPath.PathFormula;
             length.floatValue = selectedPath.Length;
             angle.floatValue = selectedPath.Angle;
+            return true;
         }
 
-        public new void PathOptions()
+        public override void PathOptions()
         {
             serialPath.Update();
 
