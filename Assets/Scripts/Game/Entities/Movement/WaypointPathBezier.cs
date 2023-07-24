@@ -59,6 +59,9 @@ namespace WaypointPath
             Vector2 vector = BezierCurve.CubicCurve(StartPosition, StartControl, EndControl, EndPosition, percent);
             return GetModifiedCurveCopy(vector, (x, y) => x + y);
         }
+
+        public override Vector2 GetEndVector() => EndPosition;
+
         public override List<Vector2> GeneratePath()
         {
             if (EndPosition == Vector2.zero)

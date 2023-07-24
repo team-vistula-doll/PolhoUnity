@@ -47,6 +47,8 @@ namespace WaypointPath
             return GetPointVector(exp, x, Angle);
         }
 
+        public override Vector2 GetEndVector() => GetPointVector(Length);
+
         public override List<Vector2> GeneratePath()
         {
             if (StepSize < 0.2f) StepSize = 0.2f; //Prevent too many waypoints and Unity freezing

@@ -15,7 +15,7 @@ public class CurrentStageEnemiesEditor : Editor
     WaypointPathEditorData data;
 
     SerializedObject serialData;
-    SerializedProperty stepSize, isReplace, pathTypeSelection;
+    SerializedProperty stepSize, isInsert, pathTypeSelection;
     const string assetPath = "Assets/Editor Assets/CurrentStageEnemiesEditorData.asset";
     PathEditor PathEditor { get { return WaypointPathEditorData.Options.ElementAt((int)data.PathTypeSelection); } }
 
@@ -32,7 +32,7 @@ public class CurrentStageEnemiesEditor : Editor
         serialData = new SerializedObject(data);
 
         stepSize = serialData.FindProperty("StepSize");
-        isReplace = serialData.FindProperty("IsReplace");
+        isInsert = serialData.FindProperty("IsInsert");
         pathTypeSelection = serialData.FindProperty("PathTypeSelection");
     }
 
@@ -65,13 +65,13 @@ public class CurrentStageEnemiesEditor : Editor
 
         EditorGUILayout.BeginHorizontal();
         {
-            isReplace.boolValue = EditorGUILayout.ToggleLeft("Replace", isReplace.boolValue);
+            isInsert.boolValue = EditorGUILayout.ToggleLeft("Replace", isInsert.boolValue);
             //data.IsReplace = EditorGUILayout.ToggleLeft("Replace", data.IsReplace);
 
             if (GUILayout.Button("Set path"))
             {
-                List<Vector2> path = PathEditor.MakePath(data.IsReplace || pathData.Count() == 1);
-                if (data.IsReplace || pathData.Count() == 1) pathData = path;
+                List<Vector2> path = PathEditor.MakePath(data.IsInsert || pathData.Count() == 1);
+                if (data.IsInsert || pathData.Count() == 1) pathData = path;
                 else pathData.AddRange(path);
 
                 
@@ -79,7 +79,7 @@ public class CurrentStageEnemiesEditor : Editor
         }
         EditorGUILayout.EndHorizontal();
 
-        data.TempPath = PathEditor.MakePath(data.IsReplace || pathData.Count() == 1);
+        data.TempPath = PathEditor.MakePath(data.IsInsert || pathData.Count() == 1);
 
         serializedObject.ApplyModifiedProperties();
         serialData.ApplyModifiedProperties();

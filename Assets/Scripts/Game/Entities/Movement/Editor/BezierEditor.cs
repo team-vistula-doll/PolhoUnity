@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Xml.XPath;
 using UnityEditor;
 using UnityEngine;
 
@@ -34,6 +35,8 @@ namespace WaypointPath
             AssetDatabase.SaveAssets();
         }
 
+        public override WaypointPathCreator GetPathCreator() => pathBezier;
+
         public override bool SelectPath(ref SerializedProperty selectedPathIndex, ref SerializedProperty pathTypeSelection,
             ref WaypointPathData pathData)
         {
@@ -65,9 +68,9 @@ namespace WaypointPath
             serialPath.ApplyModifiedProperties();
         }
 
-        public override List<Vector2> MakePath(bool isReplace)
+        public override List<Vector2> MakePath(bool isAddedAtEnd = false)
         {
-            if (!isReplace)
+            if (isAddedAtEnd)
             {
                 var value = (WaypointPathBezier)pathBezier.GetNewAdjoinedPath(1);
                 return value.GeneratePath();
@@ -160,7 +163,7 @@ namespace WaypointPath
                 endPosition.vector2Value = endPositionHandle;
                 startControl.vector2Value = startControlHandle;
                 endControl.vector2Value = endControlHandle;
-                var path = (data.IsReplace) ? pathBezier : pathBezier.GetModifiedCurveCopy(pathBezier.EndControl, (x, y) => x + y);
+                var path = (data.IsInsert) ? pathBezier : pathBezier.GetModifiedCurveCopy(pathBezier.EndControl, (x, y) => x + y);
                     data.TempPath = path.GeneratePath();
             }
         }

@@ -31,6 +31,8 @@ namespace WaypointPath
             AssetDatabase.SaveAssets();
         }
 
+        public override WaypointPathCreator GetPathCreator() => pathExpression;
+
         public override bool SelectPath(ref SerializedProperty selectedPathIndex, ref SerializedProperty pathTypeSelection,
             ref WaypointPathData pathData)
         {
@@ -61,9 +63,9 @@ namespace WaypointPath
             serialPath.ApplyModifiedProperties();
         }
 
-        public override List<Vector2> MakePath(bool isReplace)
+        public override List<Vector2> MakePath(bool isAddedAtEnd = false)
         {
-            if (!isReplace)
+            if (isAddedAtEnd)
             {
                 var value = (WaypointPathExpression)pathExpression.GetNewAdjoinedPath(1);
                 return value.GeneratePath();
@@ -76,7 +78,7 @@ namespace WaypointPath
             base.DrawPath(in pathData, e, in data);
 
             var start = pathExpression.StartPosition;
-            if (!data.IsReplace) pathExpression.StartPosition = pathExpression.GetPointVector(pathExpression.Length);
+            if (!data.IsInsert) pathExpression.StartPosition = pathExpression.GetPointVector(pathExpression.Length);
 
             data.TempPath = pathExpression.GeneratePath();
             pathExpression.StartPosition = start;

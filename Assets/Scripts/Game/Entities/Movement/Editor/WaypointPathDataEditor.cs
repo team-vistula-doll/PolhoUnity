@@ -10,23 +10,23 @@ public class WaypointPathDataEditor : Editor
     WaypointPathEditorData data;
 
     SerializedObject serialData;
-    SerializedProperty selectedPathIndex, isReplace, pathTypeSelection;
+    SerializedProperty selectedPathIndex, isInsert, pathTypeSelection;
     const string assetPath = "Assets/Editor Assets/WaypointPathEditorData.asset";
     PathEditor PathEditor { get => WaypointPathEditorData.Options[(int)data.PathTypeSelection]; }
 
     WaypointPathData pathData;
-    SerializedProperty serialPathData;
+    SerializedProperty path;
 
     private void OnEnable()
     {
         pathData = target as WaypointPathData;
-        serialPathData = serializedObject.FindProperty("Path");
+        path = serializedObject.FindProperty("Path");
         data = (WaypointPathEditorData)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathEditorData));
         if (data == null) data = (WaypointPathEditorData)ScriptableObject.CreateInstance(typeof(WaypointPathEditorData));
         serialData = new SerializedObject(data);
 
         selectedPathIndex = serialData.FindProperty("SelectedPathIndex");
-        isReplace = serialData.FindProperty("IsReplace");
+        isInsert = serialData.FindProperty("IsInsert");
         pathTypeSelection = serialData.FindProperty("PathTypeSelection");
     }
 
@@ -40,6 +40,7 @@ public class WaypointPathDataEditor : Editor
     {
         serializedObject.Update();
         serialData.Update();
+
 
         PathEditor.SelectPath(ref selectedPathIndex, ref pathTypeSelection, ref pathData);
 
@@ -56,26 +57,46 @@ public class WaypointPathDataEditor : Editor
 
         EditorGUILayout.BeginHorizontal();
         {
-            isReplace.boolValue = EditorGUILayout.ToggleLeft("Replace", isReplace.boolValue);
+            isInsert.boolValue = EditorGUILayout.ToggleLeft("Insert after", isInsert.boolValue);
 
             if (GUILayout.Button("Set path"))
             {
-                List<Vector2> path = PathEditor.MakePath(data.IsReplace || serialPathData.arraySize == 1);
+                //List<Vector2> path = PathEditor.MakePath(data.IsReplace || serialPathData.arraySize == 1);
 
                 //Setting the new path in the edited object through serializedObject
-                if (data.IsReplace || serialPathData.arraySize == 1) serialPathData.ClearArray();
-                foreach (Vector2 v in path)
+                if (path.arraySize <= 1)
                 {
-                    serialPathData.arraySize++;
-                    serialPathData.GetArrayElementAtIndex(serialPathData.arraySize - 1).vector2Value = v;
+                    path.ClearArray();
+                    path.arraySize++;
                 }
+                if (isInsert.boolValue)
+                {
+                    path.InsertArrayElementAtIndex(selectedPathIndex.intValue);
+                }
+
+                path.GetArrayElementAtIndex(selectedPathIndex.intValue).objectReferenceValue = PathEditor.GetPathCreator();
+
+                //If isInsert true, then start from inserted element
+                for (int i = selectedPathIndex.intValue + Convert.ToInt32(!isInsert.boolValue);  i < path.arraySize; i++)
+                {
+                    WaypointPathCreator x = (WaypointPathCreator)path.GetArrayElementAtIndex(i - 1).objectReferenceValue;
+                    path.GetArrayElementAtIndex(i).FindPropertyRelative("StartPosition").vector2Value =
+                        x.GetEndVector();
+                }
+                
+                //foreach (Vector2 v in path)
+                //{
+                //    serialPathData.arraySize++;
+                //    serialPathData.GetArrayElementAtIndex(serialPathData.arraySize - 1) = v;
+                //}
             }
         }
         EditorGUILayout.EndHorizontal();
 
-        data.TempPath = PathEditor.MakePath(data.IsReplace || serialPathData.arraySize == 1);
+        data.TempPath = PathEditor.MakePath(path.arraySize <= 1);
 
-        DrawDefaultInspector();
+        //DrawDefaultInspector();
+        DrawPropertiesExcluding(serializedObject, "m_Script");
 
         serialData.ApplyModifiedProperties();
         serializedObject.ApplyModifiedProperties();

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: ExpressionEditor
   m_EditorClassIdentifier: 
   StartPosition: {x: 0, y: 0}
+  StepSize: 0.5
   PathFormula: x
   Length: 20
   Angle: 0
