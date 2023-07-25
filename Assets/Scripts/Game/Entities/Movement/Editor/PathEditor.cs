@@ -7,15 +7,19 @@ namespace WaypointPath
     public abstract class PathEditor : ScriptableObject
     {
         protected SerializedProperty stepSize;
+        private int startDeleteIndex = 0, endDeleteIndex = 0;
 
         public abstract WaypointPathCreator GetPathCreator();
 
-        public virtual void PathOptions()
+        public static void ConnectPaths(ref SerializedProperty path, int startIndex)
         {
-            stepSize.floatValue = EditorGUILayout.Slider("Step size", stepSize.floatValue, 0.2f, 50);
+            for (; startIndex < path.arraySize; startIndex++)
+            {
+                WaypointPathCreator x = (WaypointPathCreator)path.GetArrayElementAtIndex(startIndex - 1).objectReferenceValue;
+                path.GetArrayElementAtIndex(startIndex).FindPropertyRelative("StartPosition").vector2Value =
+                    x.GetEndVector();
+            }
         }
-
-        public abstract List<Vector2> MakePath(bool isAddedAtEnd = false);
 
         public virtual bool SelectPath(ref SerializedProperty selectedPathIndex, ref SerializedProperty pathTypeSelection,
             ref WaypointPathData pathData)
@@ -59,7 +63,100 @@ namespace WaypointPath
             return true;
         }
 
-        public void DrawPath(in List<Vector2> pathData, Event e, in WaypointPathEditorData data)
+        public void DeletePath(ref SerializedProperty path)
+        {
+            EditorGUILayout.LabelField("Delete Paths:");
+            EditorGUILayout.BeginHorizontal();
+            {
+                EditorGUIUtility.labelWidth = EditorStyles.label.CalcSize(new GUIContent("From ")).x;
+                startDeleteIndex = EditorGUILayout.IntField("From", startDeleteIndex + 1) - 1;
+                if (startDeleteIndex < 0) startDeleteIndex = 0;
+                if (startDeleteIndex > endDeleteIndex) startDeleteIndex = endDeleteIndex;
+
+                //EditorGUILayout.LabelField("-", GUILayout.MaxWidth(EditorStyles.label.CalcSize(
+                //    new GUIContent("-")).x));
+
+                EditorGUIUtility.labelWidth = EditorStyles.label.CalcSize(new GUIContent("To ")).x;
+                endDeleteIndex = EditorGUILayout.IntField("To", endDeleteIndex + 1) - 1;
+                if (endDeleteIndex >= path.arraySize) endDeleteIndex = path.arraySize - 1;
+                if (endDeleteIndex < startDeleteIndex) endDeleteIndex = startDeleteIndex;
+
+                EditorGUI.BeginDisabledGroup(path.arraySize == 0);
+                {
+                    if (GUILayout.Button("Delete"))
+                    {
+                        for (int i = startDeleteIndex; i <= endDeleteIndex; i++) 
+                        {
+                            path.GetArrayElementAtIndex(i).objectReferenceValue = null;
+                            path.DeleteArrayElementAtIndex(i);
+                        }
+                        ConnectPaths(ref path, startDeleteIndex);
+                    }
+                }
+                EditorGUI.EndDisabledGroup();
+                EditorGUIUtility.labelWidth = 0;
+            }
+            EditorGUILayout.EndHorizontal();
+        }
+
+        public void PathTypes(ref SerializedProperty pathTypeSelection)
+        {
+            EditorGUILayout.BeginHorizontal();
+            {
+                GUILayout.Label("Path type: ");
+
+                pathTypeSelection.intValue = GUILayout.Toolbar(
+                    pathTypeSelection.intValue, System.Enum.GetNames(typeof(PathType)), EditorStyles.radioButton);
+            }
+            EditorGUILayout.EndHorizontal();
+        }
+
+        public virtual void PathOptions()
+        {
+            stepSize.floatValue = EditorGUILayout.Slider("Step size", stepSize.floatValue, 0.2f, 50);
+        }
+
+        public void SetPath(ref SerializedProperty path, ref SerializedProperty isInsert, ref SerializedProperty selectedPathIndex)
+        {
+            EditorGUILayout.BeginHorizontal();
+            {
+                isInsert.boolValue = EditorGUILayout.ToggleLeft("Insert after", isInsert.boolValue);
+
+                if (GUILayout.Button("Set path"))
+                {
+
+                    //Setting the new path in the edited object through serializedObject
+                    if (path.arraySize <= 1)
+                    {
+                        path.ClearArray();
+                        path.arraySize++;
+                    }
+                    if (isInsert.boolValue)
+                    {
+                        path.InsertArrayElementAtIndex(selectedPathIndex.intValue);
+                    }
+
+                    path.GetArrayElementAtIndex(selectedPathIndex.intValue).objectReferenceValue = GetPathCreator();
+
+                    //If isInsert true, then start from inserted element
+                    ConnectPaths(ref path, selectedPathIndex.intValue + (isInsert.boolValue ? 0 : 1));
+                }
+            }
+            EditorGUILayout.EndHorizontal();
+        }
+
+        public abstract List<Vector2> MakePath(bool isAddedAtEnd = false);
+
+        public static List<Vector2> CreateVectorPath(in List<WaypointPathCreator> path, int startIndex)
+        {
+            List<Vector2> vector2s = new();
+            for (;  startIndex < path.Count; startIndex++)
+                vector2s.AddRange(path[startIndex].GeneratePath());
+            return vector2s;
+        }
+
+
+        public virtual void DrawPath(in List<Vector2> pathData, Event e, in WaypointPathEditorData data)
         {
             if (e.type == EventType.Repaint)
             {

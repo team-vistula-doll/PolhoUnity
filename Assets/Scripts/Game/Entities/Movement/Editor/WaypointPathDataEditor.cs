@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEditor;
 using WaypointPath;
 using System.Collections.Generic;
-using System;
 
 [CustomEditor(typeof(WaypointPathData))]
 public class WaypointPathDataEditor : Editor
@@ -41,61 +40,21 @@ public class WaypointPathDataEditor : Editor
         serializedObject.Update();
         serialData.Update();
 
-
         PathEditor.SelectPath(ref selectedPathIndex, ref pathTypeSelection, ref pathData);
 
-        EditorGUILayout.BeginHorizontal();
-        {
-            GUILayout.Label("Path type: ");
+        PathEditor.DeletePath(ref path);
 
-            pathTypeSelection.intValue = GUILayout.Toolbar(
-                pathTypeSelection.intValue, Enum.GetNames(typeof(PathType)), EditorStyles.radioButton);
-        }
-        EditorGUILayout.EndHorizontal();
+        EditorGUILayout.Space();
+        PathEditor.PathTypes(ref pathTypeSelection);
 
         PathEditor.PathOptions();
 
-        EditorGUILayout.BeginHorizontal();
-        {
-            isInsert.boolValue = EditorGUILayout.ToggleLeft("Insert after", isInsert.boolValue);
+        PathEditor.SetPath(ref path, ref isInsert, ref selectedPathIndex);
 
-            if (GUILayout.Button("Set path"))
-            {
-                //List<Vector2> path = PathEditor.MakePath(data.IsReplace || serialPathData.arraySize == 1);
+        data.TempPath = PathEditor.CreateVectorPath(in pathData.Path, selectedPathIndex.intValue);
+        foreach (var path in pathData.Path) data.TempPath.AddRange(path.GeneratePath());
 
-                //Setting the new path in the edited object through serializedObject
-                if (path.arraySize <= 1)
-                {
-                    path.ClearArray();
-                    path.arraySize++;
-                }
-                if (isInsert.boolValue)
-                {
-                    path.InsertArrayElementAtIndex(selectedPathIndex.intValue);
-                }
-
-                path.GetArrayElementAtIndex(selectedPathIndex.intValue).objectReferenceValue = PathEditor.GetPathCreator();
-
-                //If isInsert true, then start from inserted element
-                for (int i = selectedPathIndex.intValue + Convert.ToInt32(!isInsert.boolValue);  i < path.arraySize; i++)
-                {
-                    WaypointPathCreator x = (WaypointPathCreator)path.GetArrayElementAtIndex(i - 1).objectReferenceValue;
-                    path.GetArrayElementAtIndex(i).FindPropertyRelative("StartPosition").vector2Value =
-                        x.GetEndVector();
-                }
-                
-                //foreach (Vector2 v in path)
-                //{
-                //    serialPathData.arraySize++;
-                //    serialPathData.GetArrayElementAtIndex(serialPathData.arraySize - 1) = v;
-                //}
-            }
-        }
-        EditorGUILayout.EndHorizontal();
-
-        data.TempPath = PathEditor.MakePath(path.arraySize <= 1);
-
-        //DrawDefaultInspector();
+        EditorGUILayout.Space();
         DrawPropertiesExcluding(serializedObject, "m_Script");
 
         serialData.ApplyModifiedProperties();
@@ -107,8 +66,7 @@ public class WaypointPathDataEditor : Editor
     {
         Event e = Event.current;
 
-        List<Vector2> vector2s = new();
-        foreach (var path in pathData.Path) vector2s.AddRange(path.GeneratePath());
+        List<Vector2> vector2s = PathEditor.CreateVectorPath(in pathData.Path, 0);
         PathEditor.DrawPath(in vector2s, e, in data);
     }
 }

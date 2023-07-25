@@ -78,7 +78,7 @@ namespace WaypointPath
             return pathBezier.GeneratePath();
         }
 
-        public new void DrawPath(in List<Vector2> pathData, Event e, in WaypointPathEditorData data)
+        public override void DrawPath(in List<Vector2> pathData, Event e, in WaypointPathEditorData data)
         {
             EditorGUI.BeginChangeCheck();
 
@@ -164,7 +164,7 @@ namespace WaypointPath
                 startControl.vector2Value = startControlHandle;
                 endControl.vector2Value = endControlHandle;
                 var path = (data.IsInsert) ? pathBezier : pathBezier.GetModifiedCurveCopy(pathBezier.EndControl, (x, y) => x + y);
-                    data.TempPath = path.GeneratePath();
+                data.TempPath = path.GeneratePath();
             }
         }
     }

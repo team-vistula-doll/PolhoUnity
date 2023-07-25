@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: BezierEditor
   m_EditorClassIdentifier: 
   StartPosition: {x: 0, y: 0}
+  StepSize: 0.5
   EndPosition: {x: 0, y: 0}
   StartControl: {x: 0, y: 0}
   EndControl: {x: 0, y: 0}

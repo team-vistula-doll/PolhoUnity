@@ -73,7 +73,7 @@ namespace WaypointPath
             return pathExpression.GeneratePath();
         }
 
-        public new void DrawPath(in List<Vector2> pathData, Event e, in WaypointPathEditorData data)
+        public override void DrawPath(in List<Vector2> pathData, Event e, in WaypointPathEditorData data)
         {
             base.DrawPath(in pathData, e, in data);
 
