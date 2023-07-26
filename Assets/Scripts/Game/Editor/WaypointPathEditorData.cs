@@ -24,8 +24,8 @@ namespace WaypointPath
 
         [Min(1)]
         public int SelectedPathIndex = 0;
-        [System.NonSerialized]
-        public List<Vector2> TempPath = new();
+        //[System.NonSerialized]
+        //public List<Vector2> TempPath = new();
         public bool IsInsert = false;
         public PathType PathTypeSelection = 0;
 

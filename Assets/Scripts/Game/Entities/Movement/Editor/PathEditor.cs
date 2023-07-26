@@ -13,12 +13,20 @@ namespace WaypointPath
 
         public static void ConnectPaths(ref SerializedProperty path, int startIndex)
         {
+            if (startIndex == 0) startIndex++;
             for (; startIndex < path.arraySize; startIndex++)
             {
                 WaypointPathCreator x = (WaypointPathCreator)path.GetArrayElementAtIndex(startIndex - 1).objectReferenceValue;
                 path.GetArrayElementAtIndex(startIndex).FindPropertyRelative("StartPosition").vector2Value =
                     x.GetEndVector();
             }
+        }
+
+        public static void ConnectPaths(ref List<WaypointPathCreator> path, int startIndex)
+        {
+            if (startIndex == 0) startIndex++;
+            for (; startIndex < path.Count; startIndex++)
+                path[startIndex].StartPosition = path[startIndex - 1].GetEndVector();
         }
 
         public virtual bool SelectPath(ref SerializedProperty selectedPathIndex, ref SerializedProperty pathTypeSelection,
@@ -51,13 +59,14 @@ namespace WaypointPath
             if (selectedPathIndex.intValue > pathData.Path.Count) selectedPathIndex.intValue = pathData.Path.Count - 1;
             if (0 > selectedPathIndex.intValue) selectedPathIndex.intValue = 0;
 
-            var selectedPath = pathData.Path[selectedPathIndex.intValue];
+            var selectedPath = (pathData.Path.Count > selectedPathIndex.intValue) ? pathData.Path[selectedPathIndex.intValue]
+                : null;
 
             if (!EditorGUI.EndChangeCheck() || selectedPath == null) return false;
 
             stepSize.floatValue = selectedPath.StepSize;
             pathTypeSelection.intValue = WaypointPathEditorData.Options.FindIndex(
-                kvp => kvp.GetType() == selectedPath.GetType()
+                kvp => kvp.GetPathCreator().GetType() == selectedPath.GetType()
                 ); //Get index of used PathEditor child by comparing types
 
             return true;
@@ -99,7 +108,7 @@ namespace WaypointPath
             EditorGUILayout.EndHorizontal();
         }
 
-        public void PathTypes(ref SerializedProperty pathTypeSelection)
+        public static void PathTypes(ref SerializedProperty pathTypeSelection)
         {
             EditorGUILayout.BeginHorizontal();
             {
@@ -120,17 +129,14 @@ namespace WaypointPath
         {
             EditorGUILayout.BeginHorizontal();
             {
-                isInsert.boolValue = EditorGUILayout.ToggleLeft("Insert after", isInsert.boolValue);
+                isInsert.boolValue = EditorGUILayout.ToggleLeft("Insert (before)", isInsert.boolValue);
 
                 if (GUILayout.Button("Set path"))
                 {
 
                     //Setting the new path in the edited object through serializedObject
-                    if (path.arraySize <= 1)
-                    {
-                        path.ClearArray();
-                        path.arraySize++;
-                    }
+                    if (path.arraySize <= 1) path.ClearArray();
+                    if (path.arraySize <= selectedPathIndex.intValue) path.arraySize++;
                     if (isInsert.boolValue)
                     {
                         path.InsertArrayElementAtIndex(selectedPathIndex.intValue);
@@ -156,27 +162,28 @@ namespace WaypointPath
         }
 
 
-        public virtual void DrawPath(in List<Vector2> pathData, Event e, in WaypointPathEditorData data)
+        public virtual void DrawPath(ref List<WaypointPathCreator> path, int startIndex, EventType e, bool isTemp = false)
         {
-            if (e.type == EventType.Repaint)
+            //List<Vector2> path = GetPathCreator().GeneratePath();
+            if (path.Count == 0) return;
+            Handles.color = isTemp ? Color.red : Color.green;
+
+            //if (data.TempPath != null)
+            //{
+            //    foreach (Vector2 point in data.TempPath)
+            //    {
+            //        // Draws a blue line from this transform to the target
+            //        Handles.color = Color.red;
+            //        Handles.SphereHandleCap(0, point, Quaternion.identity, 0.08f, EventType.Repaint);
+            //    }
+            //}
+            for (; startIndex < path.Count; startIndex++)
             {
-                if (data.TempPath != null)
+                WaypointPathCreator x = (WaypointPathCreator)path[startIndex];
+                List<Vector2> vector2s = x.GeneratePath();
+                foreach (Vector2 point in vector2s)
                 {
-                    foreach (Vector2 point in data.TempPath)
-                    {
-                        // Draws a blue line from this transform to the target
-                        Handles.color = Color.red;
-                        Handles.SphereHandleCap(0, point, Quaternion.identity, 0.08f, EventType.Repaint);
-                    }
-                }
-                if (pathData != null)
-                {
-                    foreach (Vector2 point in pathData)
-                    {
-                        // Draws a blue line from this transform to the target
-                        Handles.color = Color.green;
-                        Handles.SphereHandleCap(0, point, Quaternion.identity, 0.1f, EventType.Repaint);
-                    }
+                    Handles.SphereHandleCap(0, point, Quaternion.identity, isTemp ? 0.08f : 0.1f, EventType.Repaint);
                 }
             }
         }

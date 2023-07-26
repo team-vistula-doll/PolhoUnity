@@ -78,18 +78,22 @@ namespace WaypointPath
             return pathBezier.GeneratePath();
         }
 
-        public override void DrawPath(in List<Vector2> pathData, Event e, in WaypointPathEditorData data)
+        public override void DrawPath(ref List<WaypointPathCreator> path, int startIndex, EventType e, bool isTemp = false)
         {
-            EditorGUI.BeginChangeCheck();
+            base.DrawPath(ref path, startIndex, e, isTemp);
+            if (!isTemp) return;
 
-            base.DrawPath(in pathData, e, in data);
+            WaypointPathBezier temp = pathBezier;
+            pathBezier = (WaypointPathBezier)path[startIndex];
+
+            EditorGUI.BeginChangeCheck();
 
             Vector2 snap = Vector2.one * 0.2f;
             float size;
             Vector2 startControlHandle = startPosition.vector2Value;
             Vector2 endControlHandle = startPosition.vector2Value;
 
-            if (e.type == EventType.MouseDown) isMousePressed = true;
+            if (e == EventType.MouseDown) isMousePressed = true;
 
             //If the End Control handle is right under the End Position handle, the EC handle has priority in selecting it,
             //however this doesn't happen with the Start Control for some reason, both can overlap it and it won't get selected
@@ -109,12 +113,12 @@ namespace WaypointPath
             ////***
 
             //***Prevent End Control handle from getting selected when End Position is zero
-            if (e.type == EventType.MouseUp && endPosition.vector2Value != Vector2.zero && isMousePressed)
+            if (e == EventType.MouseUp && endPosition.vector2Value != Vector2.zero && isMousePressed)
             {
                 isEndControlEnabled = true;
                 isMousePressed = false;
             }
-            else if (e.type == EventType.MouseUp && endPosition.vector2Value == Vector2.zero && isMousePressed)
+            else if (e == EventType.MouseUp && endPosition.vector2Value == Vector2.zero && isMousePressed)
             {
                 isEndControlEnabled = false;
                 isMousePressed = false;
@@ -163,8 +167,10 @@ namespace WaypointPath
                 endPosition.vector2Value = endPositionHandle;
                 startControl.vector2Value = startControlHandle;
                 endControl.vector2Value = endControlHandle;
-                var path = (data.IsInsert) ? pathBezier : pathBezier.GetModifiedCurveCopy(pathBezier.EndControl, (x, y) => x + y);
-                data.TempPath = path.GeneratePath();
+                serialPath.ApplyModifiedProperties();
+                pathBezier = temp;
+                //var path = (data.IsInsert) ? pathBezier : pathBezier.GetModifiedCurveCopy(pathBezier.EndControl, (x, y) => x + y);
+                //data.TempPath = path.GeneratePath();
             }
         }
     }

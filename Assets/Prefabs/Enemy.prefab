@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 2092912531510788439}
   - component: {fileID: 2092912531510788437}
   - component: {fileID: 2092912531510788436}
-  - component: {fileID: 5535603154755681302}
   - component: {fileID: 2092912531510788426}
   - component: {fileID: 6367404635937336396}
+  - component: {fileID: 5535603154755681302}
   m_Layer: 8
   m_Name: Enemy
   m_TagString: Untagged
@@ -128,20 +128,6 @@ MonoBehaviour:
   ScoreValue: 10
   HitSound: {fileID: 8300000, guid: 27401145953c3bc4090829848910d781, type: 3}
   DeathSound: {fileID: 8300000, guid: a78e7033603a6ab45af4975ccbe3c41a, type: 3}
---- !u!114 &5535603154755681302
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2092912531510788433}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a5eb7bd7283d7343b33b6af02002751, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Path:
-  - {x: 0, y: 0}
 --- !u!114 &2092912531510788426
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -250,6 +236,20 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &5535603154755681302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2092912531510788433}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a5eb7bd7283d7343b33b6af02002751, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Path:
+  - {fileID: 11400000, guid: 6cbc8db88f3b53141bc2a92a965c9ff2, type: 2}
 --- !u!1 &2092912531923440514
 GameObject:
   m_ObjectHideFlags: 0

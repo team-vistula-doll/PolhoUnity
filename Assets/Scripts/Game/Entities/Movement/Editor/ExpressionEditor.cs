@@ -73,15 +73,15 @@ namespace WaypointPath
             return pathExpression.GeneratePath();
         }
 
-        public override void DrawPath(in List<Vector2> pathData, Event e, in WaypointPathEditorData data)
-        {
-            base.DrawPath(in pathData, e, in data);
+        //public override void DrawPath(in List<Vector2> pathData, bool isTemp, in WaypointPathEditorData data)
+        //{
+        //    base.DrawPath(in pathData, isTemp);
 
-            var start = pathExpression.StartPosition;
-            if (!data.IsInsert) pathExpression.StartPosition = pathExpression.GetPointVector(pathExpression.Length);
+        //    var start = pathExpression.StartPosition;
+        //    if (!data.IsInsert) pathExpression.StartPosition = pathExpression.GetPointVector(pathExpression.Length);
 
-            data.TempPath = pathExpression.GeneratePath();
-            pathExpression.StartPosition = start;
-        }
+        //    data.TempPath = pathExpression.GeneratePath();
+        //    pathExpression.StartPosition = start;
+        //}
     }
 }

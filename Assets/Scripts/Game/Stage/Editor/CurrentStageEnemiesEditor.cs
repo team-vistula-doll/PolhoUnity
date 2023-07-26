@@ -79,7 +79,7 @@ public class CurrentStageEnemiesEditor : Editor
         }
         EditorGUILayout.EndHorizontal();
 
-        data.TempPath = PathEditor.MakePath(data.IsInsert || pathData.Count() == 1);
+        //data.TempPath = PathEditor.MakePath(data.IsInsert || pathData.Count() == 1);
 
         serializedObject.ApplyModifiedProperties();
         serialData.ApplyModifiedProperties();
@@ -90,8 +90,8 @@ public class CurrentStageEnemiesEditor : Editor
 
     public void OnSceneGUI()
     {
-        Event e = Event.current;
+        EventType e = Event.current.type;
 
-        PathEditor.DrawPath(in pathData, e, in data);
+        //PathEditor.DrawPath(false, e);
     }
 }
