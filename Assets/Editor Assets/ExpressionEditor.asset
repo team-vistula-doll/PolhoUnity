@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6c14341c80a09f499318947d1420af5, type: 3}
   m_Name: ExpressionEditor
   m_EditorClassIdentifier: 
-  StartPosition: {x: 0, y: 0}
+  StartPosition: {x: 20, y: 20}
   StepSize: 0.5
   PathFormula: x
   Length: 20

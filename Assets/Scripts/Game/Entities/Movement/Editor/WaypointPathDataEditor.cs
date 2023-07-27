@@ -25,6 +25,7 @@ public class WaypointPathDataEditor : Editor
         data = (WaypointPathEditorData)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathEditorData));
         if (data == null) data = (WaypointPathEditorData)ScriptableObject.CreateInstance(typeof(WaypointPathEditorData));
         serialData = new SerializedObject(data);
+        PathEditor.objectTransform = pathData.transform;
 
         selectedPathIndex = serialData.FindProperty("SelectedPathIndex");
         isInsert = serialData.FindProperty("IsInsert");
@@ -42,9 +43,12 @@ public class WaypointPathDataEditor : Editor
         serializedObject.Update();
         serialData.Update();
 
+        if (pathData.transform.hasChanged) PathEditor.objectTransform = pathData.transform;
+
         PathEditor.SelectPath(ref selectedPathIndex, ref pathTypeSelection, ref pathData);
 
-        PathEditor.DeletePath(ref path);
+        selectedPathIndex.intValue -= PathEditor.DeletePath(ref path);
+        if (selectedPathIndex.intValue < 0) selectedPathIndex.intValue = 0;
 
         EditorGUILayout.Space();
         PathEditor.PathTypes(ref pathTypeSelection);
@@ -52,8 +56,8 @@ public class WaypointPathDataEditor : Editor
         PathEditor.PathOptions();
 
         if (isInsert.boolValue || tempPathData.Path.Count == 0 || selectedPathIndex.intValue >= tempPathData.Path.Count)
-            tempPathData.Path.Insert(selectedPathIndex.intValue, PathEditor.GetPathCreator());
-        else tempPathData.Path[selectedPathIndex.intValue] = PathEditor.GetPathCreator();
+            tempPathData.Path.Insert(selectedPathIndex.intValue, Instantiate(PathEditor.GetPathCreator()));
+        else tempPathData.Path[selectedPathIndex.intValue] = Instantiate(PathEditor.GetPathCreator());
         PathEditor.ConnectPaths(ref tempPathData.Path, selectedPathIndex.intValue);
 
         PathEditor.SetPath(ref path, ref isInsert, ref selectedPathIndex);

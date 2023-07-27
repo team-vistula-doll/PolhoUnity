@@ -8,12 +8,17 @@ namespace WaypointPath
     {
         protected SerializedProperty stepSize;
         private int startDeleteIndex = 0, endDeleteIndex = 0;
+        public Transform objectTransform;
 
         public abstract WaypointPathCreator GetPathCreator();
 
-        public static void ConnectPaths(ref SerializedProperty path, int startIndex)
+        public void ConnectPaths(ref SerializedProperty path, int startIndex)
         {
-            if (startIndex == 0) startIndex++;
+            if (startIndex == 0)
+            {
+                path.GetArrayElementAtIndex(startIndex).FindPropertyRelative("StartPosition").vector2Value = objectTransform.position;
+                startIndex++;
+            }
             for (; startIndex < path.arraySize; startIndex++)
             {
                 WaypointPathCreator x = (WaypointPathCreator)path.GetArrayElementAtIndex(startIndex - 1).objectReferenceValue;
@@ -22,9 +27,13 @@ namespace WaypointPath
             }
         }
 
-        public static void ConnectPaths(ref List<WaypointPathCreator> path, int startIndex)
+        public void ConnectPaths(ref List<WaypointPathCreator> path, int startIndex)
         {
-            if (startIndex == 0) startIndex++;
+            if (startIndex == 0)
+            {
+                path[startIndex].StartPosition = objectTransform.position;
+                startIndex++;
+            }
             for (; startIndex < path.Count; startIndex++)
                 path[startIndex].StartPosition = path[startIndex - 1].GetEndVector();
         }
@@ -72,8 +81,9 @@ namespace WaypointPath
             return true;
         }
 
-        public void DeletePath(ref SerializedProperty path)
+        public int DeletePath(ref SerializedProperty path)
         {
+            int result = 0;
             EditorGUILayout.LabelField("Delete Paths:");
             EditorGUILayout.BeginHorizontal();
             {
@@ -94,18 +104,20 @@ namespace WaypointPath
                 {
                     if (GUILayout.Button("Delete"))
                     {
+                        result = endDeleteIndex - startDeleteIndex + 1;
                         for (int i = startDeleteIndex; i <= endDeleteIndex; i++) 
                         {
                             path.GetArrayElementAtIndex(i).objectReferenceValue = null;
                             path.DeleteArrayElementAtIndex(i);
                         }
-                        ConnectPaths(ref path, startDeleteIndex);
+                        if (path.arraySize > 0) ConnectPaths(ref path, startDeleteIndex);
                     }
                 }
                 EditorGUI.EndDisabledGroup();
                 EditorGUIUtility.labelWidth = 0;
             }
             EditorGUILayout.EndHorizontal();
+            return result;
         }
 
         public static void PathTypes(ref SerializedProperty pathTypeSelection)
