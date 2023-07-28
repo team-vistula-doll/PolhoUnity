@@ -13,14 +13,15 @@ public class WaypointPathDataEditor : Editor
     const string assetPath = "Assets/Editor Assets/WaypointPathEditorData.asset";
     PathEditor PathEditor { get => WaypointPathEditorData.Options[(int)data.PathTypeSelection]; }
 
-    WaypointPathData pathData, tempPathData;
+    WaypointPathData pathData;
+    List<WaypointPathCreator> tempPath;
 
     SerializedProperty path;
 
     private void OnEnable()
     {
         pathData = target as WaypointPathData;
-        tempPathData = Object.Instantiate(pathData);
+        tempPath = new();
         path = serializedObject.FindProperty("Path");
         data = (WaypointPathEditorData)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathEditorData));
         if (data == null) data = (WaypointPathEditorData)ScriptableObject.CreateInstance(typeof(WaypointPathEditorData));
@@ -55,10 +56,10 @@ public class WaypointPathDataEditor : Editor
 
         PathEditor.PathOptions();
 
-        if (isInsert.boolValue || tempPathData.Path.Count == 0 || selectedPathIndex.intValue >= tempPathData.Path.Count)
-            tempPathData.Path.Insert(selectedPathIndex.intValue, Instantiate(PathEditor.GetPathCreator()));
-        else tempPathData.Path[selectedPathIndex.intValue] = Instantiate(PathEditor.GetPathCreator());
-        PathEditor.ConnectPaths(ref tempPathData.Path, selectedPathIndex.intValue);
+        if (isInsert.boolValue || tempPath.Count == 0 || selectedPathIndex.intValue >= tempPath.Count)
+            tempPath.Insert(selectedPathIndex.intValue, Instantiate(PathEditor.GetPathCreator()));
+        else tempPath[selectedPathIndex.intValue] = Instantiate(PathEditor.GetPathCreator());
+        PathEditor.ConnectPaths(ref tempPath, selectedPathIndex.intValue);
 
         PathEditor.SetPath(ref path, ref isInsert, ref selectedPathIndex);
 
@@ -75,6 +76,6 @@ public class WaypointPathDataEditor : Editor
         EventType e = Event.current.type;
         List<Vector2> vector2s = PathEditor.CreateVectorPath(in pathData.Path, 0);
         PathEditor.DrawPath(ref pathData.Path, 0, e, false);
-        PathEditor.DrawPath(ref tempPathData.Path, selectedPathIndex.intValue, e, true);
+        PathEditor.DrawPath(ref tempPath, selectedPathIndex.intValue, e, true);
     }
 }
