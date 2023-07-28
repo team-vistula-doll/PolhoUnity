@@ -74,6 +74,7 @@ public class WaypointPathDataEditor : Editor
     public void OnSceneGUI()
     {
         EventType e = Event.current.type;
+        if (e != EventType.Repaint) return;
         List<Vector2> vector2s = PathEditor.CreateVectorPath(in pathData.Path, 0);
         PathEditor.DrawPath(ref pathData.Path, 0, e, false);
         PathEditor.DrawPath(ref tempPath, selectedPathIndex.intValue, e, true);
