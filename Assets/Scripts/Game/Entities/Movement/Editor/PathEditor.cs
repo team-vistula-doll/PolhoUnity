@@ -147,7 +147,6 @@ namespace WaypointPath
                 {
 
                     //Setting the new path in the edited object through serializedObject
-                    if (path.arraySize <= 1) path.ClearArray();
                     if (path.arraySize <= selectedPathIndex.intValue) path.arraySize++;
                     if (isInsert.boolValue)
                     {
@@ -158,6 +157,7 @@ namespace WaypointPath
 
                     //If isInsert true, then start from inserted element
                     ConnectPaths(ref path, selectedPathIndex.intValue + (isInsert.boolValue ? 0 : 1));
+                    selectedPathIndex.intValue++;
                 }
             }
             EditorGUILayout.EndHorizontal();

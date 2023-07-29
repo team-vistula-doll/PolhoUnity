@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using WaypointPath;
 using System.Collections.Generic;
+using System.Linq;
 
 [CustomEditor(typeof(WaypointPathData))]
 public class WaypointPathDataEditor : Editor
@@ -21,8 +22,8 @@ public class WaypointPathDataEditor : Editor
     private void OnEnable()
     {
         pathData = target as WaypointPathData;
-        tempPath = new();
         path = serializedObject.FindProperty("Path");
+        tempPath = pathData.Path.ToList();
         data = (WaypointPathEditorData)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathEditorData));
         if (data == null) data = (WaypointPathEditorData)ScriptableObject.CreateInstance(typeof(WaypointPathEditorData));
         serialData = new SerializedObject(data);
