@@ -153,7 +153,7 @@ namespace WaypointPath
                         path.InsertArrayElementAtIndex(selectedPathIndex.intValue);
                     }
 
-                    path.GetArrayElementAtIndex(selectedPathIndex.intValue).objectReferenceValue = GetPathCreator();
+                    path.GetArrayElementAtIndex(selectedPathIndex.intValue).objectReferenceValue = Instantiate(GetPathCreator());
 
                     //If isInsert true, then start from inserted element
                     ConnectPaths(ref path, selectedPathIndex.intValue + (isInsert.boolValue ? 0 : 1));
@@ -163,7 +163,7 @@ namespace WaypointPath
             EditorGUILayout.EndHorizontal();
         }
 
-        public abstract List<Vector2> MakePath(bool isAddedAtEnd = false);
+        //public abstract List<Vector2> MakePath(bool isAddedAtEnd = false);
 
         public static List<Vector2> CreateVectorPath(in List<WaypointPathCreator> path, int startIndex)
         {

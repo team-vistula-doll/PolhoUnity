@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Xml.XPath;
 using UnityEditor;
 using UnityEngine;
 
@@ -14,6 +15,12 @@ namespace WaypointPath
         bool isMousePressed = false;
         bool isEndControlEnabled = false;
         //bool isStartControlEnabled = false;
+
+        private void Awake()
+        {
+            pathBezier = (WaypointPathBezier)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathBezier));
+            if (pathBezier == null) pathBezier = (WaypointPathBezier)ScriptableObject.CreateInstance(typeof(WaypointPathBezier));
+        }
 
         private void OnEnable()
         {
@@ -42,11 +49,13 @@ namespace WaypointPath
             bool pathExists = base.SelectPath(ref selectedPathIndex, ref pathTypeSelection, ref pathData);
             if (!pathExists) return false;
 
+            serialPath.Update();
             WaypointPathBezier selectedPath = (WaypointPathBezier)pathData.Path[selectedPathIndex.intValue];
             startPosition.vector2Value = selectedPath.StartPosition;
             endPosition.vector2Value = selectedPath.EndPosition;
             startControl.vector2Value = selectedPath.StartControl;
             endControl.vector2Value = selectedPath.EndControl;
+            serialPath.ApplyModifiedProperties();
             return true;
         }
 
@@ -67,15 +76,15 @@ namespace WaypointPath
             serialPath.ApplyModifiedProperties();
         }
 
-        public override List<Vector2> MakePath(bool isAddedAtEnd = false)
-        {
-            if (isAddedAtEnd)
-            {
-                var value = (WaypointPathBezier)pathBezier.GetNewAdjoinedPath(1);
-                return value.GeneratePath();
-            }
-            return pathBezier.GeneratePath();
-        }
+        //public override List<Vector2> MakePath(bool isAddedAtEnd = false)
+        //{
+        //    if (isAddedAtEnd)
+        //    {
+        //        var value = (WaypointPathBezier)pathBezier.GetNewAdjoinedPath(1);
+        //        return value.GeneratePath();
+        //    }
+        //    return pathBezier.GeneratePath();
+        //}
 
         public override void DrawPath(ref List<WaypointPathCreator> path, int startIndex, EventType e, bool isTemp = false)
         {

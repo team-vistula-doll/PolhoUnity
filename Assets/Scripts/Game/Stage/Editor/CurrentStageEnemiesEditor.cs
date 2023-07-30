@@ -68,14 +68,14 @@ public class CurrentStageEnemiesEditor : Editor
             isInsert.boolValue = EditorGUILayout.ToggleLeft("Replace", isInsert.boolValue);
             //data.IsReplace = EditorGUILayout.ToggleLeft("Replace", data.IsReplace);
 
-            if (GUILayout.Button("Set path"))
-            {
-                List<Vector2> path = PathEditor.MakePath(data.IsInsert || pathData.Count() == 1);
-                if (data.IsInsert || pathData.Count() == 1) pathData = path;
-                else pathData.AddRange(path);
+            //if (GUILayout.Button("Set path"))
+            //{
+            //    List<Vector2> path = PathEditor.MakePath(data.IsInsert || pathData.Count() == 1);
+            //    if (data.IsInsert || pathData.Count() == 1) pathData = path;
+            //    else pathData.AddRange(path);
 
                 
-            }
+            //}
         }
         EditorGUILayout.EndHorizontal();
 

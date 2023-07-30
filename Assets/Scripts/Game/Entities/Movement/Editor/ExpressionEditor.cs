@@ -11,6 +11,13 @@ namespace WaypointPath
         SerializedProperty pathFormula, length, angle;
         const string assetPath = "Assets/Editor Assets/ExpressionEditor.asset";
 
+        private void Awake()
+        {
+            pathExpression = (WaypointPathExpression)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathExpression));
+            if (pathExpression == null) pathExpression = (WaypointPathExpression)ScriptableObject.
+                    CreateInstance(typeof(WaypointPathExpression));
+        }
+
         private void OnEnable()
         {
             pathExpression = (WaypointPathExpression)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathExpression));
@@ -38,14 +45,12 @@ namespace WaypointPath
             bool pathExists = base.SelectPath(ref selectedPathIndex, ref pathTypeSelection, ref pathData);
             if (!pathExists) return false;
 
+            serialPath.Update();
             WaypointPathExpression selectedPath = (WaypointPathExpression)pathData.Path[selectedPathIndex.intValue];
-            //stepSize.floatValue = selectedPath.StepSize;
-            //pathTypeSelection.intValue = WaypointPathEditorData.Options.FindIndex(
-            //    kvp => kvp.GetType() == selectedPath.GetType()
-            //    ); //Get index of used PathEditor child by comparing types
-            pathFormula.stringValue = selectedPath.PathFormula;
+            pathFormula.stringValue = selectedPath.PathFormula.ToString();
             length.floatValue = selectedPath.Length;
             angle.floatValue = selectedPath.Angle;
+            serialPath.ApplyModifiedProperties();
             return true;
         }
 
@@ -62,25 +67,14 @@ namespace WaypointPath
             serialPath.ApplyModifiedProperties();
         }
 
-        public override List<Vector2> MakePath(bool isAddedAtEnd = false)
-        {
-            if (isAddedAtEnd)
-            {
-                var value = (WaypointPathExpression)pathExpression.GetNewAdjoinedPath(1);
-                return value.GeneratePath();
-            }
-            return pathExpression.GeneratePath();
-        }
-
-        //public override void DrawPath(in List<Vector2> pathData, bool isTemp, in WaypointPathEditorData data)
+        //public override List<Vector2> MakePath(bool isAddedAtEnd = false)
         //{
-        //    base.DrawPath(in pathData, isTemp);
-
-        //    var start = pathExpression.StartPosition;
-        //    if (!data.IsInsert) pathExpression.StartPosition = pathExpression.GetPointVector(pathExpression.Length);
-
-        //    data.TempPath = pathExpression.GeneratePath();
-        //    pathExpression.StartPosition = start;
+        //    if (isAddedAtEnd)
+        //    {
+        //        var value = (WaypointPathExpression)pathExpression.GetNewAdjoinedPath(1);
+        //        return value.GeneratePath();
+        //    }
+        //    return pathExpression.GeneratePath();
         //}
     }
 }

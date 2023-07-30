@@ -15,5 +15,5 @@ MonoBehaviour:
   StartPosition: {x: 0, y: 0}
   StepSize: 0.5
   PathFormula: x
-  Length: 2.75
-  Angle: -24.1
+  Length: 3.03
+  Angle: 0
