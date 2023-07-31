@@ -3,11 +3,11 @@ using UnityEngine;
 
 namespace WaypointPath
 {
-    public abstract class WaypointPathCreator : ScriptableObject
+    public abstract class WaypointPathCreator : Object
     //Given starting position to a selected function,
     //generates List of waypoints (Path2) that WaypointWalkers will follow
     {
-        [Delayed]
+        //[Delayed]
         public Vector2 StartPosition = Vector2.zero;
         [Range(0.2f, 50f)]
         public float StepSize = 0.5f;

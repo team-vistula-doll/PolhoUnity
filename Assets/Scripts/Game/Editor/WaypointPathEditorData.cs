@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 namespace WaypointPath
@@ -10,17 +10,14 @@ namespace WaypointPath
         Bezier
     }
 
-    public class WaypointPathEditorData : ScriptableObject
+    [FilePath("Editor Assets/WaypointPathEditorData.so", FilePathAttribute.Location.ProjectFolder)]
+    public class WaypointPathEditorData : ScriptableSingleton<WaypointPathEditorData>
     {
-        public static List<PathEditor> Options { get; private set; } = null;
-
-        //public WaypointPathBezier PathBezier = new();
-        //public WaypointPathExpression PathExpression = new();
-        //public WaypointPathCreator Creator; //base path creator class
-
-        //public DrawBezier DrawBezier = new();
-        //public DrawExpression DrawExpression = new();
-        //public DrawPath DrawPath; //base Editor drawer class
+        public static List<PathEditor> Options { get; private set; } = new()
+        {
+            new ExpressionEditor(),
+            new BezierEditor()
+        };
 
         [Min(1)]
         public int SelectedPathIndex = 0;
@@ -29,12 +26,14 @@ namespace WaypointPath
         public bool IsInsert = false;
         public PathType PathTypeSelection = 0;
 
-        public void OnEnable()
-        {
-            Options ??= new() {
-            (ExpressionEditor)ScriptableObject.CreateInstance(typeof(ExpressionEditor)),
-            (BezierEditor)ScriptableObject.CreateInstance(typeof(BezierEditor))
-            };
-        }
+        public PathEditor SelectedOption { get { return Options[(int)PathTypeSelection]; } }
+
+        //public void OnEnable()
+        //{
+        //    Options ??= new() {
+        //    (ExpressionEditor)ScriptableObject.CreateInstance(typeof(ExpressionEditor)),
+        //    (BezierEditor)ScriptableObject.CreateInstance(typeof(BezierEditor))
+        //    };
+        //}
     }
 }

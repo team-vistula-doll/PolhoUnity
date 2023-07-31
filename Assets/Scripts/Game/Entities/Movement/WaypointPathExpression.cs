@@ -11,7 +11,8 @@ namespace WaypointPath
         public float Length = 20;
         public float Angle = 0;
 
-        public void Init(Vector2 startPosition, string pathFormula, float length, float angle)
+        public WaypointPathExpression() { }
+        public WaypointPathExpression(Vector2 startPosition, string pathFormula, float length, float angle)
         {
             StartPosition = startPosition;
             PathFormula = pathFormula;
@@ -22,8 +23,7 @@ namespace WaypointPath
         public override WaypointPathCreator GetNewAdjoinedPath(float percent)
         {
             Vector2 start = GetPointVector(percent * Length);
-            var value = (WaypointPathExpression)ScriptableObject.CreateInstance(typeof(WaypointPathExpression));
-            value.Init(start, PathFormula, Length, Angle);
+            WaypointPathExpression value = new(start, PathFormula, Length, Angle);
             return value;
         }
 

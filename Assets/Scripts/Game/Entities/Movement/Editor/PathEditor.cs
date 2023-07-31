@@ -4,11 +4,11 @@ using UnityEngine;
 
 namespace WaypointPath
 {
-    public abstract class PathEditor : ScriptableObject
+    public abstract class PathEditor
     {
-        protected SerializedProperty stepSize;
+        protected float stepSize;
         private int startDeleteIndex = 0, endDeleteIndex = 0;
-        public Transform objectTransform;
+        public static Transform objectTransform;
 
         public abstract WaypointPathCreator GetPathCreator();
 
@@ -38,25 +38,25 @@ namespace WaypointPath
                 path[startIndex].StartPosition = path[startIndex - 1].GetEndVector();
         }
 
-        public virtual bool SelectPath(ref SerializedProperty selectedPathIndex, ref SerializedProperty pathTypeSelection,
+        public virtual bool SelectPath(ref int selectedPathIndex, ref PathType pathTypeSelection,
             ref WaypointPathData pathData)
         {
             EditorGUILayout.LabelField("Selected Path:");
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.BeginHorizontal();
             {
-                GUIContent backIcon = (selectedPathIndex.intValue > 0) ? EditorGUIUtility.IconContent("back") :
+                GUIContent backIcon = (selectedPathIndex > 0) ? EditorGUIUtility.IconContent("back") :
                     EditorGUIUtility.IconContent("d_back");
-                GUIContent forwardIcon = (selectedPathIndex.intValue < pathData.Path.Count) ? EditorGUIUtility.IconContent("forward") :
+                GUIContent forwardIcon = (selectedPathIndex < pathData.Path.Count) ? EditorGUIUtility.IconContent("forward") :
                     EditorGUIUtility.IconContent("d_forward");
 
                 if (GUILayout.Button(backIcon, GUILayout.MaxWidth(22), GUILayout.MinHeight(18)))
-                { if (selectedPathIndex.intValue > 0) selectedPathIndex.intValue--; }
+                { if (selectedPathIndex > 0) selectedPathIndex--; }
 
-                selectedPathIndex.intValue = EditorGUILayout.IntField("", selectedPathIndex.intValue + 1) - 1;
+                selectedPathIndex = EditorGUILayout.IntField("", selectedPathIndex + 1) - 1;
 
                 if (GUILayout.Button(forwardIcon, GUILayout.MaxWidth(22), GUILayout.MinHeight(18)))
-                { if (selectedPathIndex.intValue < pathData.Path.Count) selectedPathIndex.intValue++; }
+                { if (selectedPathIndex < pathData.Path.Count) selectedPathIndex++; }
 
                 string outOfCount = "/" + pathData.Path.Count;
                 EditorGUILayout.LabelField(outOfCount, GUILayout.MaxWidth(EditorStyles.label.CalcSize(new GUIContent(outOfCount)).x));
@@ -65,16 +65,16 @@ namespace WaypointPath
 
             if (pathData.Path.Count <= 0) return false;
             //Limit the range
-            if (selectedPathIndex.intValue > pathData.Path.Count) selectedPathIndex.intValue = pathData.Path.Count - 1;
-            if (0 > selectedPathIndex.intValue) selectedPathIndex.intValue = 0;
+            if (selectedPathIndex > pathData.Path.Count) selectedPathIndex = pathData.Path.Count - 1;
+            if (0 > selectedPathIndex) selectedPathIndex = 0;
 
-            var selectedPath = (pathData.Path.Count > selectedPathIndex.intValue) ? pathData.Path[selectedPathIndex.intValue]
+            var selectedPath = (pathData.Path.Count > selectedPathIndex) ? pathData.Path[selectedPathIndex]
                 : null;
 
             if (!EditorGUI.EndChangeCheck() || selectedPath == null) return false;
 
-            stepSize.floatValue = selectedPath.StepSize;
-            pathTypeSelection.intValue = WaypointPathEditorData.Options.FindIndex(
+            stepSize = selectedPath.StepSize;
+            pathTypeSelection = (PathType)WaypointPathEditorData.Options.FindIndex(
                 kvp => kvp.GetPathCreator().GetType() == selectedPath.GetType()
                 ); //Get index of used PathEditor child by comparing types
 
@@ -120,44 +120,44 @@ namespace WaypointPath
             return result;
         }
 
-        public static void PathTypes(ref SerializedProperty pathTypeSelection)
+        public static void PathTypes(ref PathType pathTypeSelection)
         {
             EditorGUILayout.BeginHorizontal();
             {
                 GUILayout.Label("Path type: ");
 
-                pathTypeSelection.intValue = GUILayout.Toolbar(
-                    pathTypeSelection.intValue, System.Enum.GetNames(typeof(PathType)), EditorStyles.radioButton);
+                pathTypeSelection = (PathType)GUILayout.Toolbar(
+                    (int)pathTypeSelection, System.Enum.GetNames(typeof(PathType)), EditorStyles.radioButton);
             }
             EditorGUILayout.EndHorizontal();
         }
 
         public virtual void PathOptions()
         {
-            stepSize.floatValue = EditorGUILayout.Slider("Step size", stepSize.floatValue, 0.2f, 50);
+            stepSize = EditorGUILayout.Slider("Step size", stepSize, 0.2f, 50);
         }
 
-        public void SetPath(ref SerializedProperty path, ref SerializedProperty isInsert, ref SerializedProperty selectedPathIndex)
+        public void SetPath(ref SerializedProperty path, ref bool isInsert, ref int selectedPathIndex)
         {
             EditorGUILayout.BeginHorizontal();
             {
-                isInsert.boolValue = EditorGUILayout.ToggleLeft("Insert (before)", isInsert.boolValue);
+                isInsert = EditorGUILayout.ToggleLeft("Insert (before)", isInsert);
 
                 if (GUILayout.Button("Set path"))
                 {
 
                     //Setting the new path in the edited object through serializedObject
-                    if (path.arraySize <= selectedPathIndex.intValue) path.arraySize++;
-                    if (isInsert.boolValue)
+                    if (path.arraySize <= selectedPathIndex) path.arraySize++;
+                    if (isInsert)
                     {
-                        path.InsertArrayElementAtIndex(selectedPathIndex.intValue);
+                        path.InsertArrayElementAtIndex(selectedPathIndex);
                     }
 
-                    path.GetArrayElementAtIndex(selectedPathIndex.intValue).objectReferenceValue = Instantiate(GetPathCreator());
+                    path.GetArrayElementAtIndex(selectedPathIndex).objectReferenceValue = Object.Instantiate(GetPathCreator());
 
                     //If isInsert true, then start from inserted element
-                    ConnectPaths(ref path, selectedPathIndex.intValue + (isInsert.boolValue ? 0 : 1));
-                    selectedPathIndex.intValue++;
+                    ConnectPaths(ref path, selectedPathIndex + (isInsert ? 0 : 1));
+                    selectedPathIndex++;
                 }
             }
             EditorGUILayout.EndHorizontal();
