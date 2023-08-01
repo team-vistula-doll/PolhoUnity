@@ -12,8 +12,7 @@ namespace WaypointPath
         public Vector2 StartControl = Vector2.zero;
         public Vector2 EndControl = Vector2.zero;
 
-        public WaypointPathBezier() { }
-        public WaypointPathBezier(Vector2 startPosition, Vector2 endPosition, Vector2 startControl, Vector2 endControl)
+        public void Init(Vector2 startPosition, Vector2 endPosition, Vector2 startControl, Vector2 endControl)
         {
             StartPosition = startPosition;
             EndPosition = endPosition;
@@ -34,7 +33,8 @@ namespace WaypointPath
             Vector2 endPosition = mod(EndPosition, vector);
             Vector2 startControl = mod(StartControl, vector);
             Vector2 endControl = mod(EndControl, vector);
-            WaypointPathBezier value = new(startPosition, endPosition, startControl, endControl);
+            WaypointPathBezier value = (WaypointPathBezier)ScriptableObject.CreateInstance(typeof(WaypointPathBezier));
+            value.Init(startPosition, endPosition, startControl, endControl);
             return value;
         }
 

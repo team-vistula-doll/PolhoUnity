@@ -6,7 +6,7 @@ namespace WaypointPath
 {
     public class BezierEditor : PathEditor
     {
-        WaypointPathBezier pathBezier = new();
+        WaypointPathBezier pathBezier;
         //SerializedObject serialPath;
         //SerializedProperty startPosition, endPosition, startControl, endControl;
         //const string assetPath = "Assets/Editor Assets/BezierEditor.asset";
@@ -27,19 +27,19 @@ namespace WaypointPath
         //    //endControl = serialPath.FindProperty("EndControl");
         //}
 
-        //private void OnEnable()
-        //{
-        //    pathBezier = (WaypointPathBezier)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathBezier));
-        //    if (pathBezier == null)
-        //        pathBezier = (WaypointPathBezier)ScriptableObject.CreateInstance(typeof(WaypointPathBezier));
-        //    serialPath = new SerializedObject(pathBezier);
+        private void OnEnable()
+        {
+            //pathBezier = (WaypointPathBezier)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathBezier));
+            //if (pathBezier == null)
+                pathBezier = (WaypointPathBezier)ScriptableObject.CreateInstance(typeof(WaypointPathBezier));
+            //serialPath = new SerializedObject(pathBezier);
 
-        //    stepSize = serialPath.FindProperty("StepSize");
-        //    startPosition = serialPath.FindProperty("StartPosition");
-        //    endPosition = serialPath.FindProperty("EndPosition");
-        //    startControl = serialPath.FindProperty("StartControl");
-        //    endControl = serialPath.FindProperty("EndControl");
-        //}
+            //stepSize = serialPath.FindProperty("StepSize");
+            //startPosition = serialPath.FindProperty("StartPosition");
+            //endPosition = serialPath.FindProperty("EndPosition");
+            //startControl = serialPath.FindProperty("StartControl");
+            //endControl = serialPath.FindProperty("EndControl");
+        }
 
         //private void OnDisable()
         //{

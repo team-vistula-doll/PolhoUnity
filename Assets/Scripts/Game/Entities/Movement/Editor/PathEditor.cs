@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace WaypointPath
 {
-    public abstract class PathEditor
+    public abstract class PathEditor : ScriptableObject
     {
         protected float stepSize;
         private int startDeleteIndex = 0, endDeleteIndex = 0;
@@ -14,16 +14,21 @@ namespace WaypointPath
 
         public void ConnectPaths(ref SerializedProperty path, int startIndex)
         {
+            //for (int i = startIndex; i < path.arraySize; i++)
+            //{
+            //    Debug.Log(path.GetArrayElementAtIndex(i).FindPropertyRelative("StartPosition"));
+            //}
             if (startIndex == 0)
             {
-                path.GetArrayElementAtIndex(startIndex).FindPropertyRelative("StartPosition").vector2Value = objectTransform.position;
+                SerializedObject serializedObject = new(path.GetArrayElementAtIndex(startIndex).objectReferenceValue);
+                serializedObject.FindProperty("StartPosition").vector2Value = objectTransform.position;
                 startIndex++;
             }
             for (; startIndex < path.arraySize; startIndex++)
             {
                 WaypointPathCreator x = (WaypointPathCreator)path.GetArrayElementAtIndex(startIndex - 1).objectReferenceValue;
-                path.GetArrayElementAtIndex(startIndex).FindPropertyRelative("StartPosition").vector2Value =
-                    x.GetEndVector();
+                SerializedObject serializedObject = new(path.GetArrayElementAtIndex(startIndex).objectReferenceValue);
+                serializedObject.FindProperty("StartPosition").vector2Value = x.GetEndVector();
             }
         }
 
@@ -107,8 +112,8 @@ namespace WaypointPath
                         result = endDeleteIndex - startDeleteIndex + 1;
                         for (int i = startDeleteIndex; i <= endDeleteIndex; i++) 
                         {
-                            path.GetArrayElementAtIndex(i).objectReferenceValue = null;
-                            path.DeleteArrayElementAtIndex(i);
+                            path.GetArrayElementAtIndex(startDeleteIndex).objectReferenceValue = null;
+                            path.DeleteArrayElementAtIndex(startDeleteIndex);
                         }
                         if (path.arraySize > 0) ConnectPaths(ref path, startDeleteIndex);
                     }
@@ -148,12 +153,12 @@ namespace WaypointPath
 
                     //Setting the new path in the edited object through serializedObject
                     if (path.arraySize <= selectedPathIndex) path.arraySize++;
-                    if (isInsert)
+                    else if (isInsert)
                     {
                         path.InsertArrayElementAtIndex(selectedPathIndex);
                     }
-
-                    path.GetArrayElementAtIndex(selectedPathIndex).objectReferenceValue = Object.Instantiate(GetPathCreator());
+                    path.GetArrayElementAtIndex(selectedPathIndex).objectReferenceValue = Instantiate(GetPathCreator());
+                    //Debug.Log(path.GetArrayElementAtIndex(selectedPathIndex).objectReferenceValue);
 
                     //If isInsert true, then start from inserted element
                     ConnectPaths(ref path, selectedPathIndex + (isInsert ? 0 : 1));

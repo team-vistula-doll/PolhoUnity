@@ -3,7 +3,6 @@ using UnityEditor;
 using WaypointPath;
 using System.Collections.Generic;
 using System.Linq;
-using Antlr4.Runtime.Atn;
 
 [CustomEditor(typeof(WaypointPathData))]
 public class WaypointPathDataEditor : Editor
@@ -47,6 +46,9 @@ public class WaypointPathDataEditor : Editor
         serializedObject.Update();
         //serialData.Update();
 
+        Undo.RegisterCompleteObjectUndo(data, "Change enemy path data");
+        //EditorGUI.BeginChangeCheck();
+
         if (pathData.transform.hasChanged) PathEditor.objectTransform = pathData.transform;
 
         data.SelectedOption.SelectPath(ref data.SelectedPathIndex, ref data.PathTypeSelection, ref pathData);
@@ -68,6 +70,7 @@ public class WaypointPathDataEditor : Editor
 
         EditorGUILayout.Space();
         DrawPropertiesExcluding(serializedObject, "m_Script");
+        //if (EditorGUI.EndChangeCheck()) EditorUtility.SetDirty(data);
 
         //serialData.ApplyModifiedProperties();
         serializedObject.ApplyModifiedProperties();

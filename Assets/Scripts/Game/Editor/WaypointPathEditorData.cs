@@ -13,11 +13,7 @@ namespace WaypointPath
     [FilePath("Editor Assets/WaypointPathEditorData.so", FilePathAttribute.Location.ProjectFolder)]
     public class WaypointPathEditorData : ScriptableSingleton<WaypointPathEditorData>
     {
-        public static List<PathEditor> Options { get; private set; } = new()
-        {
-            new ExpressionEditor(),
-            new BezierEditor()
-        };
+        public static List<PathEditor> Options { get; private set; }
 
         [Min(1)]
         public int SelectedPathIndex = 0;
@@ -28,12 +24,12 @@ namespace WaypointPath
 
         public PathEditor SelectedOption { get { return Options[(int)PathTypeSelection]; } }
 
-        //public void OnEnable()
-        //{
-        //    Options ??= new() {
-        //    (ExpressionEditor)ScriptableObject.CreateInstance(typeof(ExpressionEditor)),
-        //    (BezierEditor)ScriptableObject.CreateInstance(typeof(BezierEditor))
-        //    };
-        //}
+        public void OnEnable()
+        {
+            Options ??= new() {
+            (ExpressionEditor)ScriptableObject.CreateInstance(typeof(ExpressionEditor)),
+            (BezierEditor)ScriptableObject.CreateInstance(typeof(BezierEditor))
+            };
+        }
     }
 }

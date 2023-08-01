@@ -6,7 +6,7 @@ namespace WaypointPath
 {
     public class ExpressionEditor : PathEditor
     {
-        WaypointPathExpression pathExpression = new();
+        WaypointPathExpression pathExpression;
         //SerializedObject serialPath;
         //SerializedProperty pathFormula, length, angle;
         //const string assetPath = "Assets/Editor Assets/ExpressionEditor.asset";
@@ -22,18 +22,18 @@ namespace WaypointPath
         //    //angle = serialPath.FindProperty("Angle");
         //}
 
-        //private void OnEnable()
-        //{
-        //    pathExpression = (WaypointPathExpression)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathExpression));
-        //    if (pathExpression == null)
-        //        pathExpression = (WaypointPathExpression)ScriptableObject.CreateInstance(typeof(WaypointPathExpression));
-        //    serialPath = new SerializedObject(pathExpression);
+        private void OnEnable()
+        {
+            //pathExpression = (WaypointPathExpression)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathExpression));
+            //if (pathExpression == null)
+                pathExpression = (WaypointPathExpression)ScriptableObject.CreateInstance(typeof(WaypointPathExpression));
+            //serialPath = new SerializedObject(pathExpression);
 
-        //    stepSize = serialPath.FindProperty("StepSize");
-        //    pathFormula = serialPath.FindProperty("PathFormula");
-        //    length = serialPath.FindProperty("Length");
-        //    angle = serialPath.FindProperty("Angle");
-        //}
+            //stepSize = serialPath.FindProperty("StepSize");
+            //pathFormula = serialPath.FindProperty("PathFormula");
+            //length = serialPath.FindProperty("Length");
+            //angle = serialPath.FindProperty("Angle");
+        }
 
         //private void OnDisable()
         //{
