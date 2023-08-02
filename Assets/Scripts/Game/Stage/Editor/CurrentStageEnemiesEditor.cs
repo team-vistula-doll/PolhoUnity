@@ -17,7 +17,7 @@ public class CurrentStageEnemiesEditor : Editor
     SerializedObject serialData;
     SerializedProperty stepSize, isInsert, pathTypeSelection;
     const string assetPath = "Assets/Editor Assets/CurrentStageEnemiesEditorData.asset";
-    //PathEditor PathEditor { get { return WaypointPathEditorData.Options.ElementAt((int)data.PathTypeSelection); } }
+    PathEditor PathEditor { get { return WaypointPathEditorData.Options.ElementAt((int)data.PathTypeSelection); } }
 
     List<Vector2> pathData = new() { Vector2.zero };
     Vector2 startPosition = Vector2.zero;
@@ -58,7 +58,7 @@ public class CurrentStageEnemiesEditor : Editor
         }
         EditorGUILayout.EndHorizontal();
 
-        //PathEditor.PathOptions();
+        PathEditor.PathOptions();
 
         EditorGUILayout.PropertyField(stepSize);
         //data.StepSize = EditorGUILayout.Slider("Step size", data.StepSize, 0.2f, 50f);
