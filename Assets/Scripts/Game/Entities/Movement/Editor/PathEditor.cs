@@ -153,7 +153,7 @@ namespace WaypointPath
 
                     //Setting the new path in the edited object through serializedObject
                     if (path.arraySize <= selectedPathIndex.intValue) path.arraySize++;
-                    if (isInsert.boolValue)
+                    else if (isInsert.boolValue)
                     {
                         path.InsertArrayElementAtIndex(selectedPathIndex.intValue);
                     }

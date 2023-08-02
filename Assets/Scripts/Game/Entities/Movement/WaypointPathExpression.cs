@@ -8,6 +8,7 @@ namespace WaypointPath
     {
         [Delayed]
         public string PathFormula = "x";
+        [Min(0f)]
         public float Length = 20;
         public float Angle = 0;
 

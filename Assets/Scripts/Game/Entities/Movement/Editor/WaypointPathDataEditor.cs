@@ -8,10 +8,11 @@ using System.Linq;
 public class WaypointPathDataEditor : Editor
 {
     WaypointPathEditorData data;
+    const string assetPath = "Assets/Editor Assets/WaypointPathEditorData.asset";
 
     SerializedObject serialData;
     SerializedProperty selectedPathIndex, isInsert, pathTypeSelection;
-    const string assetPath = "Assets/Editor Assets/WaypointPathEditorData.asset";
+    bool tempIsInsert = false;
     PathEditor PathEditor { get => WaypointPathEditorData.Options[(int)data.PathTypeSelection]; }
 
     WaypointPathData pathData;
@@ -57,12 +58,16 @@ public class WaypointPathDataEditor : Editor
 
         PathEditor.PathOptions();
 
-        if (isInsert.boolValue || tempPath.Count == 0 || selectedPathIndex.intValue >= tempPath.Count)
+        PathEditor.SetPath(ref path, ref isInsert, ref selectedPathIndex);
+        
+        if (!isInsert.boolValue && tempIsInsert) tempIsInsert = false;
+        if ((isInsert.boolValue && !tempIsInsert) || tempPath.Count == 0 || selectedPathIndex.intValue >= tempPath.Count)
+        {
             tempPath.Insert(selectedPathIndex.intValue, Instantiate(PathEditor.GetPathCreator()));
+            tempIsInsert = true;
+        }
         else tempPath[selectedPathIndex.intValue] = Instantiate(PathEditor.GetPathCreator());
         PathEditor.ConnectPaths(ref tempPath, selectedPathIndex.intValue);
-
-        PathEditor.SetPath(ref path, ref isInsert, ref selectedPathIndex);
 
         EditorGUILayout.Space();
 
