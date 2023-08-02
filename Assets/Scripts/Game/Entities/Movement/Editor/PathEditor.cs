@@ -16,14 +16,15 @@ namespace WaypointPath
         {
             if (startIndex == 0)
             {
-                path.GetArrayElementAtIndex(startIndex).FindPropertyRelative("StartPosition").vector2Value = objectTransform.position;
+                SerializedObject serializedObject = new(path.GetArrayElementAtIndex(startIndex).objectReferenceValue);
+                serializedObject.FindProperty("StartPosition").vector2Value = objectTransform.position;
                 startIndex++;
             }
             for (; startIndex < path.arraySize; startIndex++)
             {
                 WaypointPathCreator x = (WaypointPathCreator)path.GetArrayElementAtIndex(startIndex - 1).objectReferenceValue;
-                path.GetArrayElementAtIndex(startIndex).FindPropertyRelative("StartPosition").vector2Value =
-                    x.GetEndVector();
+                SerializedObject serializedObject = new(path.GetArrayElementAtIndex(startIndex).objectReferenceValue);
+                serializedObject.FindProperty("StartPosition").vector2Value = x.GetEndVector();
             }
         }
 
