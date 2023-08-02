@@ -33,7 +33,7 @@ namespace WaypointPath
             Vector2 endPosition = mod(EndPosition, vector);
             Vector2 startControl = mod(StartControl, vector);
             Vector2 endControl = mod(EndControl, vector);
-            WaypointPathBezier value = (WaypointPathBezier)ScriptableObject.CreateInstance(typeof(WaypointPathBezier));
+            var value = (WaypointPathBezier)ScriptableObject.CreateInstance(typeof(WaypointPathBezier));
             value.Init(startPosition, endPosition, startControl, endControl);
             return value;
         }

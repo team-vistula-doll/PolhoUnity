@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using UnityEditor;
+using System.Linq;
 using UnityEngine;
 
 namespace WaypointPath
@@ -10,10 +10,17 @@ namespace WaypointPath
         Bezier
     }
 
-    [FilePath("Editor Assets/WaypointPathEditorData.so", FilePathAttribute.Location.ProjectFolder)]
-    public class WaypointPathEditorData : ScriptableSingleton<WaypointPathEditorData>
+    public class WaypointPathEditorData : ScriptableObject
     {
-        public static List<PathEditor> Options { get; private set; }
+        public static List<PathEditor> Options { get; private set; } = null;
+
+        //public WaypointPathBezier PathBezier = new();
+        //public WaypointPathExpression PathExpression = new();
+        //public WaypointPathCreator Creator; //base path creator class
+
+        //public DrawBezier DrawBezier = new();
+        //public DrawExpression DrawExpression = new();
+        //public DrawPath DrawPath; //base Editor drawer class
 
         [Min(1)]
         public int SelectedPathIndex = 0;
@@ -21,8 +28,6 @@ namespace WaypointPath
         //public List<Vector2> TempPath = new();
         public bool IsInsert = false;
         public PathType PathTypeSelection = 0;
-
-        public PathEditor SelectedOption { get { return Options[(int)PathTypeSelection]; } }
 
         public void OnEnable()
         {

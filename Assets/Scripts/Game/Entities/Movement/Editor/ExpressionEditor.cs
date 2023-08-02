@@ -7,68 +7,64 @@ namespace WaypointPath
     public class ExpressionEditor : PathEditor
     {
         WaypointPathExpression pathExpression;
-        //SerializedObject serialPath;
-        //SerializedProperty pathFormula, length, angle;
-        //const string assetPath = "Assets/Editor Assets/ExpressionEditor.asset";
+        SerializedObject serialPath;
+        SerializedProperty pathFormula, length, angle;
+        const string assetPath = "Assets/Editor Assets/ExpressionEditor.asset";
 
-        //private void Awake()
-        //{
-        //    if (pathExpression == null) pathExpression = new();
-        //    //serialPath = new SerializedObject(pathExpression);
-
-        //    //stepSize = serialPath.FindProperty("StepSize");
-        //    //pathFormula = serialPath.FindProperty("PathFormula");
-        //    //length = serialPath.FindProperty("Length");
-        //    //angle = serialPath.FindProperty("Angle");
-        //}
+        private void Awake()
+        {
+            pathExpression = (WaypointPathExpression)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathExpression));
+            if (pathExpression == null) pathExpression = (WaypointPathExpression)ScriptableObject.
+                    CreateInstance(typeof(WaypointPathExpression));
+        }
 
         private void OnEnable()
         {
-            //pathExpression = (WaypointPathExpression)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathExpression));
-            //if (pathExpression == null)
-                pathExpression = (WaypointPathExpression)ScriptableObject.CreateInstance(typeof(WaypointPathExpression));
-            //serialPath = new SerializedObject(pathExpression);
+            pathExpression = (WaypointPathExpression)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathExpression));
+            if (pathExpression == null) pathExpression = (WaypointPathExpression)ScriptableObject.
+                    CreateInstance(typeof(WaypointPathExpression));
+            serialPath = new SerializedObject(pathExpression);
 
-            //stepSize = serialPath.FindProperty("StepSize");
-            //pathFormula = serialPath.FindProperty("PathFormula");
-            //length = serialPath.FindProperty("Length");
-            //angle = serialPath.FindProperty("Angle");
+            stepSize = serialPath.FindProperty("StepSize");
+            pathFormula = serialPath.FindProperty("PathFormula");
+            length = serialPath.FindProperty("Length");
+            angle = serialPath.FindProperty("Angle");
         }
 
-        //private void OnDisable()
-        //{
-        //    if (!AssetDatabase.Contains(pathExpression)) AssetDatabase.CreateAsset(pathExpression, assetPath);
-        //    AssetDatabase.SaveAssets();
-        //}
+        private void OnDisable()
+        {
+            if (!AssetDatabase.Contains(pathExpression)) AssetDatabase.CreateAsset(pathExpression, assetPath);
+            AssetDatabase.SaveAssets();
+        }
 
         public override WaypointPathCreator GetPathCreator() => pathExpression;
 
-        public override bool SelectPath(ref int selectedPathIndex, ref PathType pathTypeSelection,
+        public override bool SelectPath(ref SerializedProperty selectedPathIndex, ref SerializedProperty pathTypeSelection,
             ref WaypointPathData pathData)
         {
             bool pathExists = base.SelectPath(ref selectedPathIndex, ref pathTypeSelection, ref pathData);
             if (!pathExists) return false;
 
-            //serialPath.Update();
-            WaypointPathExpression selectedPath = (WaypointPathExpression)pathData.Path[selectedPathIndex];
-            pathExpression.PathFormula = selectedPath.PathFormula.ToString();
-            pathExpression.Length = selectedPath.Length;
-            pathExpression.Angle = selectedPath.Angle;
-            //serialPath.ApplyModifiedProperties();
+            serialPath.Update();
+            WaypointPathExpression selectedPath = (WaypointPathExpression)pathData.Path[selectedPathIndex.intValue];
+            pathFormula.stringValue = selectedPath.PathFormula.ToString();
+            length.floatValue = selectedPath.Length;
+            angle.floatValue = selectedPath.Angle;
+            serialPath.ApplyModifiedProperties();
             return true;
         }
 
         public override void PathOptions()
         {
-            //serialPath.Update();
+            serialPath.Update();
 
-            pathExpression.PathFormula = EditorGUILayout.TextField("Path Formula", pathExpression.PathFormula);
-            pathExpression.Length = EditorGUILayout.FloatField("Length", pathExpression.Length);
-            pathExpression.Angle = EditorGUILayout.FloatField("Angle", pathExpression.Angle);
+            EditorGUILayout.PropertyField(pathFormula);
+            EditorGUILayout.PropertyField(length);
+            EditorGUILayout.PropertyField(angle);
 
             base.PathOptions();
 
-            //serialPath.ApplyModifiedProperties();
+            serialPath.ApplyModifiedProperties();
         }
 
         //public override List<Vector2> MakePath(bool isAddedAtEnd = false)
