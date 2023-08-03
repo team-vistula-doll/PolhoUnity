@@ -13,6 +13,7 @@ namespace WaypointPath
     public class WaypointPathEditorData : ScriptableObject
     {
         public static List<PathEditor> Options { get; private set; } = null;
+        public PathEditor SelectedOption { get => Options[(int)PathTypeSelection]; }
 
         //public WaypointPathBezier PathBezier = new();
         //public WaypointPathExpression PathExpression = new();
