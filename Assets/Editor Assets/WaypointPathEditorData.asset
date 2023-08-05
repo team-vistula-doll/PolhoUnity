@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d751a49c23cbf74a8a6fa0f897a07fa, type: 3}
   m_Name: WaypointPathEditorData
   m_EditorClassIdentifier: 
-  SelectedPathIndex: 1
+  SelectedPathIndex: 0
   IsInsert: 0
   PathTypeSelection: 0

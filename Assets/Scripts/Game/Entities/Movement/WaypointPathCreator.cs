@@ -3,7 +3,8 @@ using UnityEngine;
 
 namespace WaypointPath
 {
-    public abstract class WaypointPathCreator : ScriptableObject
+    [System.Serializable]
+    public abstract class WaypointPathCreator
     //Given starting position to a selected function,
     //generates List of waypoints (Path2) that WaypointWalkers will follow
     {

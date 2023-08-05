@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace WaypointPath
 {
     public abstract class PathEditor : ScriptableObject
     {
-        protected SerializedProperty stepSize;
+        protected float stepSize;
         public int startDeleteIndex = 0, endDeleteIndex = 0;
+        protected Vector2 startPosition;
         public Transform objectTransform;
 
         public abstract WaypointPathCreator GetPathCreator();
@@ -23,7 +23,7 @@ namespace WaypointPath
         //    }
         //}
 
-        public void ConnectPaths(ref SerializedProperty path, int startIndex)
+        public void ConnectPaths(ref SerializedProperty path, in List<WaypointPathCreator> pathList, int startIndex)
         {
             //for (int i = startIndex; i < path.arraySize; i++)
             //{
@@ -38,8 +38,8 @@ namespace WaypointPath
             }
             for (; startIndex < path.arraySize; startIndex++)
             {
-                WaypointPathCreator x = (WaypointPathCreator)path.GetArrayElementAtIndex(startIndex - 1).objectReferenceValue;
                 SerializedObject serializedObject = new(path.GetArrayElementAtIndex(startIndex).objectReferenceValue);
+                WaypointPathCreator x = pathList[startIndex];
                 serializedObject.FindProperty("StartPosition").vector2Value = x.GetEndVector();
                 serializedObject.ApplyModifiedProperties();
             }
@@ -98,7 +98,7 @@ namespace WaypointPath
 
             if (!EditorGUI.EndChangeCheck() || selectedPath == null) return false;
 
-            stepSize.floatValue = selectedPath.StepSize;
+            stepSize = selectedPath.StepSize;
             pathTypeSelection.intValue = WaypointPathEditorData.Options.FindIndex(
                 kvp => kvp.GetPathCreator().GetType() == selectedPath.GetType()
                 ); //Get index of used PathEditor child by comparing types
@@ -106,7 +106,7 @@ namespace WaypointPath
             return true;
         }
 
-        public int DeletePath(ref SerializedProperty path)
+        public int DeletePath(ref SerializedProperty path, in List<WaypointPathCreator> pathList)
         {
             int result = 0;
             EditorGUILayout.LabelField("Delete Paths:");
@@ -136,7 +136,7 @@ namespace WaypointPath
                             path.GetArrayElementAtIndex(startDeleteIndex).objectReferenceValue = null;
                             path.DeleteArrayElementAtIndex(startDeleteIndex);
                         }
-                        if (path.arraySize > 0) ConnectPaths(ref path, startDeleteIndex);
+                        if (path.arraySize > 0) ConnectPaths(ref path, in pathList, startDeleteIndex);
                     }
                 }
                 EditorGUI.EndDisabledGroup();
@@ -160,10 +160,11 @@ namespace WaypointPath
 
         public virtual void PathOptions()
         {
-            stepSize.floatValue = EditorGUILayout.Slider("Step size", stepSize.floatValue, 0.2f, 50);
+            stepSize = EditorGUILayout.Slider("Step size", stepSize, 0.2f, 50);
         }
 
-        public bool SetPath(ref SerializedProperty path, ref SerializedProperty isInsert, ref SerializedProperty selectedPathIndex)
+        public bool SetPath(ref SerializedProperty path, in List<WaypointPathCreator> pathList, ref SerializedProperty isInsert,
+            ref SerializedProperty selectedPathIndex)
         {
             bool result = false;
             EditorGUILayout.BeginHorizontal();
@@ -179,12 +180,13 @@ namespace WaypointPath
                         path.InsertArrayElementAtIndex(selectedPathIndex.intValue);
                     }
 
-                    path.GetArrayElementAtIndex(selectedPathIndex.intValue).objectReferenceValue = Instantiate(GetPathCreator());
+                    SerializedObject so = new(path.GetArrayElementAtIndex(selectedPathIndex.intValue).objectReferenceValue);
+                    SetPathProperties(ref so);
 
                     //If isInsert true, then start from inserted element
                     int startIndex = selectedPathIndex.intValue + (isInsert.boolValue ? 0 : 1)
                         - (selectedPathIndex.intValue >= path.arraySize - 1 ? 1 : 0);
-                    ConnectPaths(ref path, startIndex);
+                    ConnectPaths(ref path, in pathList, startIndex);
                     startDeleteIndex = endDeleteIndex = selectedPathIndex.intValue++;
                     result = true;
                 }
@@ -192,6 +194,8 @@ namespace WaypointPath
             EditorGUILayout.EndHorizontal();
             return result;
         }
+
+        public abstract void SetPathProperties(ref SerializedObject so);
 
         //public abstract List<Vector2> MakePath(bool isAddedAtEnd = false);
 

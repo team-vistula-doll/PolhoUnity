@@ -39,15 +39,18 @@ public class WaypointPathDataEditor : Editor
     {
         if (!AssetDatabase.Contains(data)) AssetDatabase.CreateAsset(data, assetPath);
         AssetDatabase.SaveAssets();
-        if (PrefabStageUtility.GetPrefabStage(pathData.gameObject) == null) return;
-        //    PathEditor.SavePrefab(ref pathData);
-        if (pathData != null && pathData.Path != null)
-        {
-            foreach (WaypointPathCreator wpc in pathData.Path)
-                EditorUtility.SetDirty(wpc);
-        }
-        if (PrefabUtility.HasPrefabInstanceAnyOverrides(pathData.gameObject, false))
-            PrefabUtility.ApplyPrefabInstance(pathData.gameObject, InteractionMode.AutomatedAction);
+        //if (PrefabStageUtility.GetPrefabStage(pathData.gameObject) == null) return;
+        ////    PathEditor.SavePrefab(ref pathData);
+        //if (pathData != null && pathData.Path != null)
+        //{
+        //    foreach (WaypointPathCreator wpc in pathData.Path)
+        //        EditorUtility.SetDirty(wpc);
+        //}
+        //if (PrefabUtility.HasPrefabInstanceAnyOverrides(pathData.gameObject, false))
+        //{
+        //    PrefabUtility.ApplyPrefabInstance(pathData.gameObject, InteractionMode.AutomatedAction);
+        //    EditorSceneManager.MarkSceneDirty(pathData.gameObject.scene);
+        //}
     }
 
     public override void OnInspectorGUI()
@@ -60,7 +63,7 @@ public class WaypointPathDataEditor : Editor
         if (data.SelectedOption.SelectPath(ref selectedPathIndex, ref pathTypeSelection, ref pathData))
             data.SelectedOption.startDeleteIndex = data.SelectedOption.endDeleteIndex = selectedPathIndex.intValue;
 
-        selectedPathIndex.intValue -= data.SelectedOption.DeletePath(ref path);
+        selectedPathIndex.intValue -= data.SelectedOption.DeletePath(ref path, in pathData.Path);
         if (selectedPathIndex.intValue < 0) selectedPathIndex.intValue = 0;
 
         EditorGUILayout.Space();
@@ -68,7 +71,7 @@ public class WaypointPathDataEditor : Editor
 
         data.SelectedOption.PathOptions();
 
-        data.SelectedOption.SetPath(ref path, ref isInsert, ref selectedPathIndex);
+        data.SelectedOption.SetPath(ref path, in pathData.Path, ref isInsert, ref selectedPathIndex);
         
         if (!isInsert.boolValue && tempIsInsert && tempPath.Count > 0 && selectedPathIndex.intValue < tempPath.Count)
         {
@@ -77,10 +80,10 @@ public class WaypointPathDataEditor : Editor
         }
         if ((isInsert.boolValue && !tempIsInsert) || tempPath.Count == 0 || selectedPathIndex.intValue >= tempPath.Count)
         {
-            tempPath.Insert(selectedPathIndex.intValue, Instantiate(data.SelectedOption.GetPathCreator()));
+            tempPath.Insert(selectedPathIndex.intValue, data.SelectedOption.GetPathCreator().GetNewAdjoinedPath(0));
             tempIsInsert = true;
         }
-        else tempPath[selectedPathIndex.intValue] = Instantiate(data.SelectedOption.GetPathCreator());
+        else tempPath[selectedPathIndex.intValue] = data.SelectedOption.GetPathCreator().GetNewAdjoinedPath(0);
         data.SelectedOption.ConnectPaths(ref tempPath, selectedPathIndex.intValue);
 
         EditorGUILayout.Space();
