@@ -31,17 +31,17 @@ namespace WaypointPath
             //}
             if (startIndex == 0)
             {
-                SerializedObject serializedObject = new(path.GetArrayElementAtIndex(startIndex).objectReferenceValue);
-                serializedObject.FindProperty("StartPosition").vector2Value = objectTransform.position;
-                serializedObject.ApplyModifiedProperties();
+                SerializedProperty sp = path.GetArrayElementAtIndex(startIndex);
+                sp.FindPropertyRelative(nameof(WaypointPathCreator.StartPosition)).vector2Value = objectTransform.position;
+                //sp.ApplyModifiedProperties();
                 startIndex++;
             }
             for (; startIndex < path.arraySize; startIndex++)
             {
-                SerializedObject serializedObject = new(path.GetArrayElementAtIndex(startIndex).objectReferenceValue);
-                WaypointPathCreator x = pathList[startIndex];
-                serializedObject.FindProperty("StartPosition").vector2Value = x.GetEndVector();
-                serializedObject.ApplyModifiedProperties();
+                SerializedProperty sp = path.GetArrayElementAtIndex(startIndex);
+                WaypointPathCreator x = pathList[startIndex - 1];
+                sp.FindPropertyRelative(nameof(WaypointPathCreator.StartPosition)).vector2Value = x.GetEndVector();
+                //serializedObject.ApplyModifiedProperties();
             }
         }
 
@@ -133,7 +133,7 @@ namespace WaypointPath
                         result = endDeleteIndex - startDeleteIndex + 1;
                         for (int i = startDeleteIndex; i <= endDeleteIndex; i++) 
                         {
-                            path.GetArrayElementAtIndex(startDeleteIndex).objectReferenceValue = null;
+                            //path.GetArrayElementAtIndex(startDeleteIndex).exposedReferenceValue = null;
                             path.DeleteArrayElementAtIndex(startDeleteIndex);
                         }
                         if (path.arraySize > 0) ConnectPaths(ref path, in pathList, startDeleteIndex);
@@ -163,6 +163,11 @@ namespace WaypointPath
             stepSize = EditorGUILayout.Slider("Step size", stepSize, 0.2f, 50);
         }
 
+        protected virtual void ApplyPathOptions()
+        {
+            GetPathCreator().StartPosition = startPosition;
+        }
+
         public bool SetPath(ref SerializedProperty path, in List<WaypointPathCreator> pathList, ref SerializedProperty isInsert,
             ref SerializedProperty selectedPathIndex)
         {
@@ -180,8 +185,9 @@ namespace WaypointPath
                         path.InsertArrayElementAtIndex(selectedPathIndex.intValue);
                     }
 
-                    SerializedObject so = new(path.GetArrayElementAtIndex(selectedPathIndex.intValue).objectReferenceValue);
-                    SetPathProperties(ref so);
+                    path.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue = GetPathCreator();
+                    //SerializedProperty sp = path.GetArrayElementAtIndex(selectedPathIndex.intValue);
+                    //SetPathProperties(ref sp);
 
                     //If isInsert true, then start from inserted element
                     int startIndex = selectedPathIndex.intValue + (isInsert.boolValue ? 0 : 1)
@@ -195,7 +201,7 @@ namespace WaypointPath
             return result;
         }
 
-        public abstract void SetPathProperties(ref SerializedObject so);
+        protected abstract void SetPathProperties(ref SerializedProperty sp);
 
         //public abstract List<Vector2> MakePath(bool isAddedAtEnd = false);
 

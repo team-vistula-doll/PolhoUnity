@@ -5,7 +5,6 @@ using UnityEngine;
 
 namespace WaypointPath
 {
-
     public class WaypointPathBezier : WaypointPathCreator
     {
         public Vector2 EndPosition = Vector2.zero;

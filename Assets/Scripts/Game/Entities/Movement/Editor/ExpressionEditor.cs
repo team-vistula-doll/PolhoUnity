@@ -12,7 +12,7 @@ namespace WaypointPath
         string pathFormula;
         [SerializeField]
         float length, angle;
-        const string assetPath = "Assets/Editor Assets/ExpressionEditor.asset";
+        //const string assetPath = "Assets/Editor Assets/ExpressionEditor.asset";
 
         //private void Awake()
         //{
@@ -27,6 +27,7 @@ namespace WaypointPath
             //if (pathExpression == null) pathExpression = (WaypointPathExpression)ScriptableObject.
             //        CreateInstance(typeof(WaypointPathExpression));
             //serialPath = new SerializedObject(pathExpression);
+            Undo.undoRedoPerformed += ApplyPathOptions;
 
             stepSize = pathExpression.StepSize;
             pathFormula = pathExpression.PathFormula;
@@ -61,23 +62,34 @@ namespace WaypointPath
         public override void PathOptions()
         {
             //serialPath.Update();
+            Undo.RecordObject(this, "Edit path options");
 
+            EditorGUI.BeginChangeCheck();
             pathFormula = EditorGUILayout.TextField("Path Formula", pathFormula);
             length = EditorGUILayout.FloatField("Length", length);
             angle = EditorGUILayout.FloatField("Angle", angle);
+
+            if (EditorGUI.EndChangeCheck()) ApplyPathOptions();
 
             base.PathOptions();
 
             //serialPath.ApplyModifiedProperties();
         }
 
-        public override void SetPathProperties(ref SerializedObject so)
+        protected override void ApplyPathOptions()
         {
-            so.FindProperty("StartPosition").vector2Value = startPosition;
-            so.FindProperty("PathFormula").stringValue = pathFormula;
-            so.FindProperty("Length").floatValue = length;
-            so.FindProperty("Angle").floatValue = angle;
-            so.ApplyModifiedProperties();
+            base.ApplyPathOptions();
+            pathExpression.PathFormula = pathFormula;
+            pathExpression.Length = length;
+            pathExpression.Angle = angle;
+        }
+
+        protected override void SetPathProperties(ref SerializedProperty sp)
+        {
+            sp.FindPropertyRelative(nameof(WaypointPathExpression.StartPosition)).vector2Value = startPosition;
+            sp.FindPropertyRelative(nameof(WaypointPathExpression.PathFormula)).stringValue = pathFormula;
+            sp.FindPropertyRelative(nameof(WaypointPathExpression.Length)).floatValue = length;
+            sp.FindPropertyRelative(nameof(WaypointPathExpression.Angle)).floatValue = angle;
         }
 
         //public override List<Vector2> MakePath(bool isAddedAtEnd = false)

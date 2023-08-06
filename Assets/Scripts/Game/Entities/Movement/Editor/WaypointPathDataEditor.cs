@@ -98,7 +98,7 @@ public class WaypointPathDataEditor : Editor
     {
         EventType e = Event.current.type;
         if (e != EventType.Repaint) return;
-        List<Vector2> vector2s = PathEditor.CreateVectorPath(in pathData.Path, 0);
+        //List<Vector2> vector2s = PathEditor.CreateVectorPath(in pathData.Path, 0);
         data.SelectedOption.DrawPath(ref pathData.Path, 0, e, false);
         data.SelectedOption.DrawPath(ref tempPath, selectedPathIndex.intValue, e, true);
     }
