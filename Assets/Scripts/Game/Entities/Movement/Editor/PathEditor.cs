@@ -133,7 +133,7 @@ namespace WaypointPath
                         result = endDeleteIndex - startDeleteIndex + 1;
                         for (int i = startDeleteIndex; i <= endDeleteIndex; i++) 
                         {
-                            //path.GetArrayElementAtIndex(startDeleteIndex).exposedReferenceValue = null;
+                            //path.GetArrayElementAtIndex(startDeleteIndex).objectReferenceValue = null;
                             path.DeleteArrayElementAtIndex(startDeleteIndex);
                         }
                         if (path.arraySize > 0) ConnectPaths(ref path, in pathList, startDeleteIndex);
@@ -185,9 +185,7 @@ namespace WaypointPath
                         path.InsertArrayElementAtIndex(selectedPathIndex.intValue);
                     }
 
-                    path.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue = GetPathCreator();
-                    //SerializedProperty sp = path.GetArrayElementAtIndex(selectedPathIndex.intValue);
-                    //SetPathProperties(ref sp);
+                    path.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue = GetPathCreator().GetNewAdjoinedPath(0);
 
                     //If isInsert true, then start from inserted element
                     int startIndex = selectedPathIndex.intValue + (isInsert.boolValue ? 0 : 1)

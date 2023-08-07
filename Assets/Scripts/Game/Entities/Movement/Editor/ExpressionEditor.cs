@@ -10,8 +10,10 @@ namespace WaypointPath
         //SerializedObject serialPath;
         [SerializeField]
         string pathFormula;
+        [SerializeField, Min(0f)]
+        float length;
         [SerializeField]
-        float length, angle;
+        float angle;
         //const string assetPath = "Assets/Editor Assets/ExpressionEditor.asset";
 
         //private void Awake()
@@ -65,7 +67,7 @@ namespace WaypointPath
             Undo.RecordObject(this, "Edit path options");
 
             EditorGUI.BeginChangeCheck();
-            pathFormula = EditorGUILayout.TextField("Path Formula", pathFormula);
+            pathFormula = EditorGUILayout.DelayedTextField("Path Formula", pathFormula);
             length = EditorGUILayout.FloatField("Length", length);
             angle = EditorGUILayout.FloatField("Angle", angle);
 

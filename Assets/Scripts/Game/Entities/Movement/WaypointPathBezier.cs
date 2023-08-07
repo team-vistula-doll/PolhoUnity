@@ -65,7 +65,7 @@ namespace WaypointPath
             if (EndPosition == Vector2.zero)
                 return new List<Vector2>() { Vector2.zero };
 
-            if (StepSize < 0.2f) StepSize = 0.2f; //Prevent too many waypoints and Unity freezing
+            //if (StepSize < 0.2f) StepSize = 0.2f; //Prevent too many waypoints and Unity freezing
 
             List<Vector2> waypoints = new();
             if (EndControl != Vector2.zero)

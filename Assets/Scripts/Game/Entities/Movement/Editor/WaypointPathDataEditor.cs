@@ -29,6 +29,7 @@ public class WaypointPathDataEditor : Editor
         if (data == null) data = (WaypointPathEditorData)ScriptableObject.CreateInstance(typeof(WaypointPathEditorData));
         serialData = new SerializedObject(data);
         data.SelectedOption.objectTransform = pathData.transform;
+        pathData.transform.hasChanged = false;
 
         selectedPathIndex = serialData.FindProperty("SelectedPathIndex");
         isInsert = serialData.FindProperty("IsInsert");
@@ -58,7 +59,13 @@ public class WaypointPathDataEditor : Editor
         serializedObject.Update();
         serialData.Update();
 
-        if (pathData.transform.hasChanged) data.SelectedOption.objectTransform = pathData.transform;
+        if (pathData.transform.hasChanged)
+        {
+            data.SelectedOption.objectTransform = pathData.transform;
+            data.SelectedOption.ConnectPaths(ref path, in pathData.Path, 0);
+            data.SelectedOption.ConnectPaths(ref tempPath, 0);
+            pathData.transform.hasChanged = false;
+        }
 
         if (data.SelectedOption.SelectPath(ref selectedPathIndex, ref pathTypeSelection, ref pathData))
             data.SelectedOption.startDeleteIndex = data.SelectedOption.endDeleteIndex = selectedPathIndex.intValue;

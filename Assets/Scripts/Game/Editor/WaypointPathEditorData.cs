@@ -15,14 +15,6 @@ namespace WaypointPath
         public static List<PathEditor> Options { get; private set; } = null;
         public PathEditor SelectedOption { get => Options[(int)PathTypeSelection]; }
 
-        //public WaypointPathBezier PathBezier = new();
-        //public WaypointPathExpression PathExpression = new();
-        //public WaypointPathCreator Creator; //base path creator class
-
-        //public DrawBezier DrawBezier = new();
-        //public DrawExpression DrawExpression = new();
-        //public DrawPath DrawPath; //base Editor drawer class
-
         [Min(1)]
         public int SelectedPathIndex = 0;
         //[System.NonSerialized]
