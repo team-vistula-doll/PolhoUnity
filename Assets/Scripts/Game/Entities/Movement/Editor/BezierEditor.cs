@@ -61,9 +61,9 @@ namespace WaypointPath
             return true;
         }
 
-        public override void PathOptions()
+        public override bool PathOptions()
         {
-            //serialPath.Update();
+            bool changed = false;
             Undo.RecordObject(this, "Edit path options");
 
             EditorGUI.BeginChangeCheck();
@@ -75,11 +75,15 @@ namespace WaypointPath
                 startControl = EditorGUILayout.Vector2Field("Start Control", startControl);
             EditorGUI.EndDisabledGroup();
 
-            if (EditorGUI.EndChangeCheck()) ApplyPathOptions();
+            if (EditorGUI.EndChangeCheck())
+            {
+                changed = true;
+                ApplyPathOptions();
+            }
 
             base.PathOptions();
 
-            //serialPath.ApplyModifiedProperties();
+            return changed;
         }
 
         protected override void ApplyPathOptions()

@@ -14,7 +14,7 @@ namespace WaypointPath
 
         public abstract WaypointPathCreator GetNewAdjoinedPath(float percent);
 
-        public abstract Vector2 GetEndVector();
+        public abstract Vector2 GetVectorAt(float percent);
 
         /// <summary>
         /// Creates a Vector2 from its length and angle

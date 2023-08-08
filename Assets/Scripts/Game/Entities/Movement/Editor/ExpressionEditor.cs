@@ -52,30 +52,33 @@ namespace WaypointPath
             if (!pathExists) return false;
 
             //serialPath.Update();
-            WaypointPathExpression selectedPath = (WaypointPathExpression)pathData.Path[selectedPathIndex.intValue];
-            startPosition = selectedPath.StartPosition;
-            pathFormula = selectedPath.PathFormula.ToString();
-            length = selectedPath.Length;
-            angle = selectedPath.Angle;
+            pathExpression = (WaypointPathExpression)pathData.Path[selectedPathIndex.intValue].GetNewAdjoinedPath(0);
+            startPosition = pathExpression.StartPosition;
+            pathFormula = pathExpression.PathFormula.ToString();
+            length = pathExpression.Length;
+            angle = pathExpression.Angle;
             //serialPath.ApplyModifiedProperties();
             return true;
         }
 
-        public override void PathOptions()
+        public override bool PathOptions()
         {
-            //serialPath.Update();
+            bool changed = false;
             Undo.RecordObject(this, "Edit path options");
 
             EditorGUI.BeginChangeCheck();
             pathFormula = EditorGUILayout.DelayedTextField("Path Formula", pathFormula);
-            length = EditorGUILayout.FloatField("Length", length);
+            length = EditorGUILayout.FloatField("Length", length); if (length < 0f) length = 0f;
             angle = EditorGUILayout.FloatField("Angle", angle);
 
-            if (EditorGUI.EndChangeCheck()) ApplyPathOptions();
-
             base.PathOptions();
+            if (EditorGUI.EndChangeCheck())
+            {
+                changed = true;
+                ApplyPathOptions();
+            }
 
-            //serialPath.ApplyModifiedProperties();
+            return changed;
         }
 
         protected override void ApplyPathOptions()

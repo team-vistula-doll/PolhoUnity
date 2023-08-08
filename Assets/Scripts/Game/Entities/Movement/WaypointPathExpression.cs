@@ -36,7 +36,8 @@ namespace WaypointPath
         /// <param name="exp">Evaluated expression</param>
         /// <param name="x">The expression x input</param>
         /// <param name="angle">The rotation angle of the expression in degrees</param>
-        /// <returns>Vector2 point = (<paramref name="x"/>, f(<paramref name="x"/>)) rotated by <paramref name="angle"/></returns>
+        /// <returns>Vector2 point = (<paramref name="x"/>, f(<paramref name="x"/>)) rotated by <paramref name="angle"/>
+        /// and moved by the Start position</returns>
         public Vector2 GetPointVector(Expression exp, float x, float angle)
         {
             angle *= Mathf.Deg2Rad;
@@ -47,7 +48,8 @@ namespace WaypointPath
                 p = new(p.x * Mathf.Cos(angle) - p.y * Mathf.Sin(angle),
                                             p.x * Mathf.Sin(angle) + p.y * Mathf.Cos(angle));
             //Rotate point using rotation matrix
-            return p;
+
+            return p + StartPosition;
         }
 
         public Vector2 GetPointVector(float x, float? angle = null)
@@ -56,7 +58,7 @@ namespace WaypointPath
             return GetPointVector(exp, x, (angle != null) ? angle.Value : Angle);
         }
 
-        public override Vector2 GetEndVector() => GetPointVector(Length);
+        public override Vector2 GetVectorAt(float percent) => GetPointVector(percent * Length);
 
         public override List<Vector2> GeneratePath()
         {
