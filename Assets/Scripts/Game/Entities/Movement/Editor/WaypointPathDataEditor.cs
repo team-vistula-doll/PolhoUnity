@@ -3,7 +3,6 @@ using UnityEditor;
 using WaypointPath;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.SceneManagement;
 
 [CustomEditor(typeof(WaypointPathData))]
 public class WaypointPathDataEditor : Editor
@@ -19,15 +18,22 @@ public class WaypointPathDataEditor : Editor
     SerializedObject serialPath;
     List<WaypointPathCreator> tempPath;
 
-    private void OnEnable()
+    private void Awake()
     {
         pathData = target as WaypointPathData;
-        serialPath = serializedObject;
         tempPath = new();
         foreach (var creator in pathData.Path)
             tempPath.Add(creator.GetNewAdjoinedPath(0));
+        if (pathData.Path.Count > 0) tempPath.Add(pathData.Path.Last().GetNewAdjoinedPath(0));
+        else tempPath.Add(new WaypointPathExpression());
+    }
+
+    private void OnEnable()
+    {
+        serialPath = serializedObject;
         data = (WaypointPathEditorData)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathEditorData));
         if (data == null) data = (WaypointPathEditorData)ScriptableObject.CreateInstance(typeof(WaypointPathEditorData));
+        if (data.SelectedPathIndex < tempPath.Count) data.SelectedOption.SetPathCreator(tempPath[data.SelectedPathIndex]);
         serialData = new SerializedObject(data);
         data.SelectedOption.objectTransform = pathData.transform;
         pathData.transform.hasChanged = false;
@@ -69,21 +75,20 @@ public class WaypointPathDataEditor : Editor
             pathData.transform.hasChanged = false;
         }
 
-        if (data.SelectedOption.SelectPath(ref selectedPathIndex, ref pathTypeSelection, ref pathData))
+        if (data.SelectedOption.SelectPath(ref selectedPathIndex, ref pathTypeSelection, ref tempPath, pathData.Path.Count))
         {
-            if (selectedPathIndex.intValue < pathData.Path.Count) tempPath[selectedPathIndex.intValue] = pathCreator.GetNewAdjoinedPath(0);
+            if (selectedPathIndex.intValue < pathData.Path.Count)
+                tempPath[selectedPathIndex.intValue] = pathCreator.GetNewAdjoinedPath(0);
             data.SelectedOption.startDeleteIndex = data.SelectedOption.endDeleteIndex = selectedPathIndex.intValue;
         }
 
-        selectedPathIndex.intValue -= data.SelectedOption.DeletePath(ref serialPath, in pathData.Path);
+        selectedPathIndex.intValue -= data.SelectedOption.DeletePath(ref serialPath, in pathData.Path, ref tempPath);
         if (selectedPathIndex.intValue < 0) selectedPathIndex.intValue = 0;
 
         EditorGUILayout.Space();
         PathEditor.PathTypes(ref pathTypeSelection);
 
         bool pathOptionsChanged = data.SelectedOption.PathOptions();
-
-        data.SelectedOption.SetPath(ref serialPath, in pathData.Path, ref isInsert, ref selectedPathIndex);
 
         if (!isInsert.boolValue && tempIsInsert && tempPath.Count > 0 && selectedPathIndex.intValue < tempPath.Count)
         {
@@ -95,8 +100,10 @@ public class WaypointPathDataEditor : Editor
             tempPath.Insert(selectedPathIndex.intValue, pathCreator.GetNewAdjoinedPath(0));
             if ((isInsert.boolValue && !tempIsInsert)) tempIsInsert = true;
         }
-        else if (pathOptionsChanged) tempPath[selectedPathIndex.intValue] = pathCreator.GetNewAdjoinedPath(0);
+        //else if (pathOptionsChanged) tempPath[selectedPathIndex.intValue] = pathCreator;
         if (pathOptionsChanged) data.SelectedOption.ConnectPaths(ref tempPath, selectedPathIndex.intValue);
+
+        data.SelectedOption.SetPath(ref serialPath, in pathData.Path, ref isInsert, ref selectedPathIndex, ref tempPath);
 
         EditorGUILayout.Space();
         DrawPropertiesExcluding(serializedObject, "m_Script");

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Xml.XPath;
 using UnityEditor;
 using UnityEngine;
 
@@ -44,19 +45,27 @@ namespace WaypointPath
         //}
 
         public override WaypointPathCreator GetPathCreator() => pathBezier;
+        public override void SetPathCreator(WaypointPathCreator pathCreator)
+        {
+            pathBezier = (WaypointPathBezier)pathCreator;
+            startPosition = pathBezier.StartPosition;
+            endPosition = pathBezier.EndPosition;
+            startControl = pathBezier.StartControl;
+            endControl = pathBezier.EndControl;
+        }
 
         public override bool SelectPath(ref SerializedProperty selectedPathIndex, ref SerializedProperty pathTypeSelection,
-            ref WaypointPathData pathData)
+            ref List<WaypointPathCreator> tempPath, int pathCount)
         {
-            bool pathExists = base.SelectPath(ref selectedPathIndex, ref pathTypeSelection, ref pathData);
+            bool pathExists = base.SelectPath(ref selectedPathIndex, ref pathTypeSelection, ref tempPath, pathCount);
             if (!pathExists) return false;
 
             //serialPath.Update();
-            WaypointPathBezier selectedPath = (WaypointPathBezier)pathData.Path[selectedPathIndex.intValue];
-            startPosition = selectedPath.StartPosition;
-            endPosition = selectedPath.EndPosition;
-            startControl = selectedPath.StartControl;
-            endControl = selectedPath.EndControl;
+            pathBezier = (WaypointPathBezier)tempPath[selectedPathIndex.intValue];
+            startPosition = pathBezier.StartPosition;
+            endPosition = pathBezier.EndPosition;
+            startControl = pathBezier.StartControl;
+            endControl = pathBezier.EndControl;
             //serialPath.ApplyModifiedProperties();
             return true;
         }

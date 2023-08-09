@@ -13,6 +13,7 @@ namespace WaypointPath
         public float Length = 20;
         public float Angle = 0; //in degrees
 
+        public WaypointPathExpression() { }
         public WaypointPathExpression(Vector2 startPosition, string pathFormula, float length, float angle)
         {
             StartPosition = startPosition;
@@ -40,16 +41,16 @@ namespace WaypointPath
         /// and moved by the Start position</returns>
         public Vector2 GetPointVector(Expression exp, float x, float angle)
         {
-            angle *= Mathf.Deg2Rad;
             exp.Parameters["x"].Value = x; //Put x-val to x in expression
 
             Vector2 p = new(x, (float)exp.Value); //point on a graph with origin (0,0)
+            angle *= Mathf.Deg2Rad;
             if (angle != 0)
                 p = new(p.x * Mathf.Cos(angle) - p.y * Mathf.Sin(angle),
                                             p.x * Mathf.Sin(angle) + p.y * Mathf.Cos(angle));
             //Rotate point using rotation matrix
 
-            return p + StartPosition;
+            return p + StartPosition; //Translate point to originate from the startPos
         }
 
         public Vector2 GetPointVector(float x, float? angle = null)
@@ -72,13 +73,13 @@ namespace WaypointPath
             for (int i = 1; i * StepSize <= Length; i++)
             {
                 Vector2 point = GetPointVector(exp, i * StepSize, Angle);
-                waypoints.Add(point + StartPosition); //Translate point to originate from the startPos
+                waypoints.Add(point);
             }
 
             Vector2 end = GetPointVector(exp, Length, Angle);
             if (waypoints.Any() && Vector2.Distance(waypoints.Last(), end) <= 0.1f)
                 waypoints.RemoveAt(waypoints.Count - 1);
-            waypoints.Add(end + StartPosition);
+            waypoints.Add(end);
 
             return waypoints;
         }

@@ -12,6 +12,7 @@ namespace WaypointPath
         public Transform objectTransform;
 
         public abstract WaypointPathCreator GetPathCreator();
+        public abstract void SetPathCreator(WaypointPathCreator pathCreator);
 
         //public static void SavePrefab(ref WaypointPathData pathData)
         //{
@@ -56,16 +57,16 @@ namespace WaypointPath
         }
 
         public virtual bool SelectPath(ref SerializedProperty selectedPathIndex, ref SerializedProperty pathTypeSelection,
-            ref WaypointPathData pathData)
+            ref List<WaypointPathCreator> tempPath, int pathCount)
         {
-            if (selectedPathIndex.intValue > pathData.Path.Count) selectedPathIndex.intValue = pathData.Path.Count;
-            EditorGUILayout.LabelField("Selected Path:");
+            if (selectedPathIndex.intValue > pathCount) selectedPathIndex.intValue = pathCount;
+            EditorGUILayout.LabelField("Select Path: End = " + GetPathCreator().GetVectorAt(1));
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.BeginHorizontal();
             {
                 GUIContent backIcon = (selectedPathIndex.intValue > 0) ? EditorGUIUtility.IconContent("back") :
                     EditorGUIUtility.IconContent("d_back");
-                GUIContent forwardIcon = (selectedPathIndex.intValue < pathData.Path.Count) ? EditorGUIUtility.IconContent("forward") :
+                GUIContent forwardIcon = (selectedPathIndex.intValue < pathCount) ? EditorGUIUtility.IconContent("forward") :
                     EditorGUIUtility.IconContent("d_forward");
 
                 if (GUILayout.Button(backIcon, GUILayout.MaxWidth(22), GUILayout.MinHeight(18)))
@@ -78,22 +79,21 @@ namespace WaypointPath
 
                 if (GUILayout.Button(forwardIcon, GUILayout.MaxWidth(22), GUILayout.MinHeight(18)))
                 {
-                    if (selectedPathIndex.intValue < pathData.Path.Count) selectedPathIndex.intValue++;
+                    if (selectedPathIndex.intValue < pathCount) selectedPathIndex.intValue++;
                     GUI.FocusControl(null);
                 }
 
-                string outOfCount = "/" + pathData.Path.Count;
+                string outOfCount = "/" + pathCount;
                 EditorGUILayout.LabelField(outOfCount, GUILayout.MaxWidth(EditorStyles.label.CalcSize(new GUIContent(outOfCount)).x));
             }
             EditorGUILayout.EndHorizontal();
 
-            if (pathData.Path.Count <= 0) return false;
+            if (pathCount <= 0) return false;
             //Limit the range
-            if (selectedPathIndex.intValue > pathData.Path.Count) selectedPathIndex.intValue = pathData.Path.Count - 1;
+            if (selectedPathIndex.intValue > pathCount) selectedPathIndex.intValue = pathCount - 1;
             if (0 > selectedPathIndex.intValue) selectedPathIndex.intValue = 0;
 
-            var selectedPath = (pathData.Path.Count > selectedPathIndex.intValue) ? pathData.Path[selectedPathIndex.intValue]
-                : null;
+            var selectedPath = (tempPath.Count > selectedPathIndex.intValue) ? tempPath[selectedPathIndex.intValue] : null;
 
             if (!EditorGUI.EndChangeCheck() || selectedPath == null) return false;
 
@@ -105,7 +105,8 @@ namespace WaypointPath
             return true;
         }
 
-        public int DeletePath(ref SerializedObject pathData, in List<WaypointPathCreator> pathList)
+        public int DeletePath(ref SerializedObject pathData, in List<WaypointPathCreator> pathList,
+            ref List<WaypointPathCreator> tempPath)
         {
             pathData.Update();
             SerializedProperty path = pathData.FindProperty("Path");
@@ -136,6 +137,7 @@ namespace WaypointPath
                         {
                             //path.GetArrayElementAtIndex(startDeleteIndex).objectReferenceValue = null;
                             path.DeleteArrayElementAtIndex(startDeleteIndex);
+                            tempPath.RemoveAt(startDeleteIndex);
                         }
                         pathData.ApplyModifiedProperties();
                         if (path.arraySize > 0) ConnectPaths(ref pathData, in pathList, startDeleteIndex);
@@ -173,7 +175,7 @@ namespace WaypointPath
         }
 
         public bool SetPath(ref SerializedObject pathData, in List<WaypointPathCreator> pathList, ref SerializedProperty isInsert,
-            ref SerializedProperty selectedPathIndex)
+            ref SerializedProperty selectedPathIndex, ref List<WaypointPathCreator> tempPath)
         {
             pathData.Update();
             SerializedProperty path = pathData.FindProperty("Path");
@@ -181,6 +183,11 @@ namespace WaypointPath
             EditorGUILayout.BeginHorizontal();
             {
                 isInsert.boolValue = EditorGUILayout.ToggleLeft("Insert (before)", isInsert.boolValue);
+                //if (isInsert.boolValue )
+                //{
+                //    tempPath.Insert(selectedPathIndex.intValue, GetPathCreator().GetNewAdjoinedPath(0));
+                //    ConnectPaths(ref tempPath, selectedPathIndex.intValue);
+                //}
 
                 if (GUILayout.Button("Set path"))
                 {

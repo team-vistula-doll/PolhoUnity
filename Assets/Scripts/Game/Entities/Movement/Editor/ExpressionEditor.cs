@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -44,15 +45,23 @@ namespace WaypointPath
         //}
 
         public override WaypointPathCreator GetPathCreator() => pathExpression;
+        public override void SetPathCreator(WaypointPathCreator pathCreator)
+        {
+            pathExpression = (WaypointPathExpression)pathCreator;
+            startPosition = pathExpression.StartPosition;
+            pathFormula = pathExpression.PathFormula.ToString();
+            length = pathExpression.Length;
+            angle = pathExpression.Angle;
+        }
 
         public override bool SelectPath(ref SerializedProperty selectedPathIndex, ref SerializedProperty pathTypeSelection,
-            ref WaypointPathData pathData)
+            ref List<WaypointPathCreator> tempPath, int pathCount)
         {
-            bool pathExists = base.SelectPath(ref selectedPathIndex, ref pathTypeSelection, ref pathData);
+            bool pathExists = base.SelectPath(ref selectedPathIndex, ref pathTypeSelection, ref tempPath, pathCount);
             if (!pathExists) return false;
 
             //serialPath.Update();
-            pathExpression = (WaypointPathExpression)pathData.Path[selectedPathIndex.intValue].GetNewAdjoinedPath(0);
+            pathExpression = (WaypointPathExpression)tempPath[selectedPathIndex.intValue];
             startPosition = pathExpression.StartPosition;
             pathFormula = pathExpression.PathFormula.ToString();
             length = pathExpression.Length;
@@ -70,8 +79,8 @@ namespace WaypointPath
             pathFormula = EditorGUILayout.DelayedTextField("Path Formula", pathFormula);
             length = EditorGUILayout.FloatField("Length", length); if (length < 0f) length = 0f;
             angle = EditorGUILayout.FloatField("Angle", angle);
-
             base.PathOptions();
+
             if (EditorGUI.EndChangeCheck())
             {
                 changed = true;

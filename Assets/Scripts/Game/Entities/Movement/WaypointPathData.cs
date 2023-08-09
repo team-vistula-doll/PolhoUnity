@@ -5,7 +5,7 @@ namespace WaypointPath
 {
     public class WaypointPathData : MonoBehaviour
     {
-        [SerializeReference]
+        [SerializeReference, NonReorderable]
         public List<WaypointPathCreator> Path = new();
     }
 }

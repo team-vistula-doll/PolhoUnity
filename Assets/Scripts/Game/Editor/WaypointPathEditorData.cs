@@ -12,7 +12,7 @@ namespace WaypointPath
 
     public class WaypointPathEditorData : ScriptableObject
     {
-        public static List<PathEditor> Options { get; private set; } = null;
+        public static List<PathEditor> Options { get; private set; }
         public PathEditor SelectedOption { get => Options[(int)PathTypeSelection]; }
 
         [Min(1)]

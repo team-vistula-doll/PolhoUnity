@@ -11,6 +11,7 @@ namespace WaypointPath
         public Vector2 StartControl = Vector2.zero;
         public Vector2 EndControl = Vector2.zero;
 
+        public WaypointPathBezier() { }
         public WaypointPathBezier(Vector2 startPosition, Vector2 endPosition, Vector2 startControl, Vector2 endControl)
         {
             StartPosition = startPosition;
