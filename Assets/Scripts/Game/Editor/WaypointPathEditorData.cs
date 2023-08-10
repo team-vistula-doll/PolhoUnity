@@ -15,7 +15,7 @@ namespace WaypointPath
         public static List<PathEditor> Options { get; private set; }
         public PathEditor SelectedOption { get => Options[(int)PathTypeSelection]; }
 
-        [Min(1)]
+        [Min(0)]
         public int SelectedPathIndex = 0;
         //[System.NonSerialized]
         //public List<Vector2> TempPath = new();

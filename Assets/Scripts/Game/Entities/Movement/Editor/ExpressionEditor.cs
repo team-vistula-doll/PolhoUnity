@@ -48,27 +48,28 @@ namespace WaypointPath
         public override void SetPathCreator(WaypointPathCreator pathCreator)
         {
             pathExpression = (WaypointPathExpression)pathCreator;
+            base.SetPathCreator(pathExpression);
             startPosition = pathExpression.StartPosition;
             pathFormula = pathExpression.PathFormula.ToString();
             length = pathExpression.Length;
             angle = pathExpression.Angle;
         }
 
-        public override bool SelectPath(ref SerializedProperty selectedPathIndex, ref SerializedProperty pathTypeSelection,
-            ref List<WaypointPathCreator> tempPath, int pathCount)
-        {
-            bool pathExists = base.SelectPath(ref selectedPathIndex, ref pathTypeSelection, ref tempPath, pathCount);
-            if (!pathExists) return false;
+        //public override bool SelectPath(ref SerializedProperty selectedPathIndex, ref SerializedProperty pathTypeSelection,
+        //    ref List<WaypointPathCreator> tempPath, int pathCount)
+        //{
+        //    bool pathExists = base.SelectPath(ref selectedPathIndex, ref pathTypeSelection, ref tempPath, pathCount);
+        //    if (!pathExists) return false;
 
-            //serialPath.Update();
-            pathExpression = (WaypointPathExpression)tempPath[selectedPathIndex.intValue];
-            startPosition = pathExpression.StartPosition;
-            pathFormula = pathExpression.PathFormula.ToString();
-            length = pathExpression.Length;
-            angle = pathExpression.Angle;
-            //serialPath.ApplyModifiedProperties();
-            return true;
-        }
+        //    //serialPath.Update();
+        //    pathExpression = (WaypointPathExpression)tempPath[selectedPathIndex.intValue];
+        //    startPosition = pathExpression.StartPosition;
+        //    pathFormula = pathExpression.PathFormula.ToString();
+        //    length = pathExpression.Length;
+        //    angle = pathExpression.Angle;
+        //    //serialPath.ApplyModifiedProperties();
+        //    return true;
+        //}
 
         public override bool PathOptions()
         {
@@ -98,7 +99,7 @@ namespace WaypointPath
             pathExpression.Angle = angle;
         }
 
-        protected override void SetPathProperties(ref SerializedProperty sp)
+        protected override void SetPathProperties(SerializedProperty sp)
         {
             sp.FindPropertyRelative(nameof(WaypointPathExpression.StartPosition)).vector2Value = startPosition;
             sp.FindPropertyRelative(nameof(WaypointPathExpression.PathFormula)).stringValue = pathFormula;

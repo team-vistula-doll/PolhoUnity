@@ -54,21 +54,21 @@ namespace WaypointPath
             endControl = pathBezier.EndControl;
         }
 
-        public override bool SelectPath(ref SerializedProperty selectedPathIndex, ref SerializedProperty pathTypeSelection,
-            ref List<WaypointPathCreator> tempPath, int pathCount)
-        {
-            bool pathExists = base.SelectPath(ref selectedPathIndex, ref pathTypeSelection, ref tempPath, pathCount);
-            if (!pathExists) return false;
+        //public override bool SelectPath(ref SerializedProperty selectedPathIndex, ref SerializedProperty pathTypeSelection,
+        //    ref List<WaypointPathCreator> tempPath, int pathCount)
+        //{
+        //    bool pathExists = base.SelectPath(ref selectedPathIndex, ref pathTypeSelection, ref tempPath, pathCount);
+        //    if (!pathExists) return false;
 
-            //serialPath.Update();
-            pathBezier = (WaypointPathBezier)tempPath[selectedPathIndex.intValue];
-            startPosition = pathBezier.StartPosition;
-            endPosition = pathBezier.EndPosition;
-            startControl = pathBezier.StartControl;
-            endControl = pathBezier.EndControl;
-            //serialPath.ApplyModifiedProperties();
-            return true;
-        }
+        //    //serialPath.Update();
+        //    pathBezier = (WaypointPathBezier)tempPath[selectedPathIndex.intValue];
+        //    startPosition = pathBezier.StartPosition;
+        //    endPosition = pathBezier.EndPosition;
+        //    startControl = pathBezier.StartControl;
+        //    endControl = pathBezier.EndControl;
+        //    //serialPath.ApplyModifiedProperties();
+        //    return true;
+        //}
 
         public override bool PathOptions()
         {
@@ -103,7 +103,7 @@ namespace WaypointPath
             pathBezier.EndControl = endControl;
         }
 
-        protected override void SetPathProperties(ref SerializedProperty sp)
+        protected override void SetPathProperties(SerializedProperty sp)
         {
             sp.FindPropertyRelative(nameof(WaypointPathBezier.StartPosition)).vector2Value = startPosition;
             sp.FindPropertyRelative(nameof(WaypointPathBezier.EndPosition)).vector2Value = endPosition;
@@ -121,9 +121,9 @@ namespace WaypointPath
         //    return pathBezier.GeneratePath();
         //}
 
-        public override void DrawPath(ref List<WaypointPathCreator> path, int startIndex, EventType e, bool isTemp = false)
+        public override void DrawPath(List<WaypointPathCreator> path, int startIndex, EventType e, bool isTemp = false)
         {
-            base.DrawPath(ref path, startIndex, e, isTemp);
+            base.DrawPath(path, startIndex, e, isTemp);
             if (!isTemp) return;
 
             WaypointPathBezier temp = pathBezier;
