@@ -29,6 +29,7 @@ namespace WaypointPath
             //pathBezier = (WaypointPathBezier)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathBezier));
             //if (pathBezier == null) pathBezier = (WaypointPathBezier)ScriptableObject.CreateInstance(typeof(WaypointPathBezier));
             //serialPath = new SerializedObject(pathBezier);
+            Undo.undoRedoPerformed -= ApplyPathOptions;
             Undo.undoRedoPerformed += ApplyPathOptions;
 
             stepSize = pathBezier.StepSize;

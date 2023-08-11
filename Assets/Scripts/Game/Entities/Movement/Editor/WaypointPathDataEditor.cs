@@ -12,24 +12,23 @@ public class WaypointPathDataEditor : Editor
 
     SerializedObject serialData;
     SerializedProperty selectedPathIndex, isInsert, pathTypeSelection;
-    bool tempIsInsert = false;
+    //bool tempIsInsert = false;
 
     WaypointPathData pathData;
     SerializedObject serialPath;
     List<WaypointPathCreator> tempPath;
 
-    private void Awake()
-    {
-        pathData = target as WaypointPathData;
-        tempPath = new();
-        foreach (var creator in pathData.Path)
-            tempPath.Add(creator.GetNewAdjoinedPath(0));
-        if (pathData.Path.Count > 0) tempPath.Add(pathData.Path.Last().GetNewAdjoinedPath(0));
-        else tempPath.Add(new WaypointPathExpression());
-    }
-
     private void OnEnable()
     {
+        pathData ??= target as WaypointPathData;
+        if (tempPath == null || tempPath.Count == 0)
+        {
+            tempPath = new();
+            foreach (var creator in pathData.Path)
+                tempPath.Add(creator.GetNewAdjoinedPath(0));
+            if (pathData.Path.Count > 0) tempPath.Add(pathData.Path.Last().GetNewAdjoinedPath(0));
+            else tempPath.Add(new WaypointPathExpression());
+        }
         serialPath = serializedObject;
         data = (WaypointPathEditorData)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathEditorData));
         if (data == null) data = (WaypointPathEditorData)ScriptableObject.CreateInstance(typeof(WaypointPathEditorData));
@@ -47,18 +46,6 @@ public class WaypointPathDataEditor : Editor
     {
         if (!AssetDatabase.Contains(data)) AssetDatabase.CreateAsset(data, assetPath);
         AssetDatabase.SaveAssets();
-        //if (PrefabStageUtility.GetPrefabStage(pathData.gameObject) == null) return;
-        ////    PathEditor.SavePrefab(ref pathData);
-        //if (pathData != null && pathData.Path != null)
-        //{
-        //    foreach (WaypointPathCreator wpc in pathData.Path)
-        //        EditorUtility.SetDirty(wpc);
-        //}
-        //if (PrefabUtility.HasPrefabInstanceAnyOverrides(pathData.gameObject, false))
-        //{
-        //    PrefabUtility.ApplyPrefabInstance(pathData.gameObject, InteractionMode.AutomatedAction);
-        //    EditorSceneManager.MarkSceneDirty(pathData.gameObject.scene);
-        //}
     }
 
     public override void OnInspectorGUI()
@@ -76,12 +63,12 @@ public class WaypointPathDataEditor : Editor
             pathData.transform.hasChanged = false;
         }
 
-        if (data.SelectedOption.SelectPath(selectedPathIndex, pathTypeSelection, tempPath, pathData.Path.Count))
-        {
-            if (selectedPathIndex.intValue < pathData.Path.Count)
-                tempPath[selectedPathIndex.intValue] = pathCreator.GetNewAdjoinedPath(0);
-            data.SelectedOption.startDeleteIndex = data.SelectedOption.endDeleteIndex = selectedPathIndex.intValue;
-        }
+        data.SelectedOption.SelectPath(selectedPathIndex, pathTypeSelection, tempPath, pathData.Path);
+        //{
+        //    if (selectedPathIndex.intValue < pathData.Path.Count)
+        //        tempPath[selectedPathIndex.intValue] = pathCreator.GetNewAdjoinedPath(0);
+        //    data.SelectedOption.startDeleteIndex = data.SelectedOption.endDeleteIndex = selectedPathIndex.intValue;
+        //}
 
         selectedPathIndex.intValue -= data.SelectedOption.DeletePath(serialPath, pathData.Path, tempPath);
         if (selectedPathIndex.intValue < 0) selectedPathIndex.intValue = 0;
@@ -89,20 +76,19 @@ public class WaypointPathDataEditor : Editor
         EditorGUILayout.Space();
         PathEditor.PathTypes(pathTypeSelection);
 
-        bool pathOptionsChanged = data.SelectedOption.PathOptions();
+        if (data.SelectedOption.PathOptions()) data.SelectedOption.ConnectPaths(tempPath, selectedPathIndex.intValue);
 
-        if (!isInsert.boolValue && tempIsInsert && tempPath.Count > 0 && selectedPathIndex.intValue < tempPath.Count)
-        {
-            tempPath.RemoveAt(selectedPathIndex.intValue);
-            tempIsInsert = false;
-        }
-        if ((isInsert.boolValue && !tempIsInsert) || tempPath.Count == 0 || selectedPathIndex.intValue >= tempPath.Count)
-        {
-            tempPath.Insert(selectedPathIndex.intValue, pathCreator.GetNewAdjoinedPath(0));
-            if ((isInsert.boolValue && !tempIsInsert)) tempIsInsert = true;
-        }
-        //else if (pathOptionsChanged) tempPath[selectedPathIndex.intValue] = pathCreator;
-        if (pathOptionsChanged) data.SelectedOption.ConnectPaths(tempPath, selectedPathIndex.intValue);
+        //if (!isInsert.boolValue && tempIsInsert && tempPath.Count > 0 && selectedPathIndex.intValue < tempPath.Count)
+        //{
+        //    tempPath.RemoveAt(selectedPathIndex.intValue);
+        //    tempIsInsert = false;
+        //}
+        //if ((isInsert.boolValue && !tempIsInsert) || tempPath.Count == 0 || selectedPathIndex.intValue >= tempPath.Count)
+        //{
+        //    tempPath.Insert(selectedPathIndex.intValue, pathCreator.GetNewAdjoinedPath(0));
+        //    if ((isInsert.boolValue && !tempIsInsert)) tempIsInsert = true;
+        //}
+        //if (pathOptionsChanged) data.SelectedOption.ConnectPaths(tempPath, selectedPathIndex.intValue);
 
         data.SelectedOption.SetPath(serialPath, pathData.Path, isInsert, selectedPathIndex, tempPath);
 

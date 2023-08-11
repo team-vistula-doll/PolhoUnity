@@ -30,6 +30,7 @@ namespace WaypointPath
             //if (pathExpression == null) pathExpression = (WaypointPathExpression)ScriptableObject.
             //        CreateInstance(typeof(WaypointPathExpression));
             //serialPath = new SerializedObject(pathExpression);
+            Undo.undoRedoPerformed -= ApplyPathOptions;
             Undo.undoRedoPerformed += ApplyPathOptions;
 
             stepSize = pathExpression.StepSize;
@@ -54,22 +55,6 @@ namespace WaypointPath
             length = pathExpression.Length;
             angle = pathExpression.Angle;
         }
-
-        //public override bool SelectPath(ref SerializedProperty selectedPathIndex, ref SerializedProperty pathTypeSelection,
-        //    ref List<WaypointPathCreator> tempPath, int pathCount)
-        //{
-        //    bool pathExists = base.SelectPath(ref selectedPathIndex, ref pathTypeSelection, ref tempPath, pathCount);
-        //    if (!pathExists) return false;
-
-        //    //serialPath.Update();
-        //    pathExpression = (WaypointPathExpression)tempPath[selectedPathIndex.intValue];
-        //    startPosition = pathExpression.StartPosition;
-        //    pathFormula = pathExpression.PathFormula.ToString();
-        //    length = pathExpression.Length;
-        //    angle = pathExpression.Angle;
-        //    //serialPath.ApplyModifiedProperties();
-        //    return true;
-        //}
 
         public override bool PathOptions()
         {

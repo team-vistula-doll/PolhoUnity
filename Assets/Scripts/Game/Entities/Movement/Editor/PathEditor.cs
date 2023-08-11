@@ -19,16 +19,6 @@ namespace WaypointPath
             startPosition = pathCreator.StartPosition;
         }
 
-        //public static void SavePrefab(ref WaypointPathData pathData)
-        //{
-
-        //    if (pathData != null && pathData.Path != null)
-        //    {
-        //        foreach (WaypointPathCreator wpc in pathData.Path)
-        //            EditorUtility.SetDirty(wpc);
-        //    }
-        //}
-
         //public void ConnectPaths(SerializedObject pathData, List<WaypointPathCreator> pathList, int startIndex)
         //{
         //    pathData.UpdateIfRequiredOrScript();
@@ -61,17 +51,18 @@ namespace WaypointPath
                 path[startIndex].StartPosition = path[startIndex - 1].GetVectorAt(1);
         }
 
-        public bool SelectPath(SerializedProperty selectedPathIndex,SerializedProperty pathTypeSelection,
-            List<WaypointPathCreator> tempPath, int pathCount)
+        public bool SelectPath(SerializedProperty selectedPathIndex, SerializedProperty pathTypeSelection,
+            List<WaypointPathCreator> tempPath, List<WaypointPathCreator> path)
         {
-            if (selectedPathIndex.intValue > pathCount) selectedPathIndex.intValue = pathCount;
+            if (selectedPathIndex.intValue > path.Count) selectedPathIndex.intValue = path.Count;
+            int wasSelectedIndex = selectedPathIndex.intValue;
             EditorGUILayout.LabelField("Select Path: End = " + GetPathCreator().GetVectorAt(1));
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.BeginHorizontal();
             {
                 GUIContent backIcon = (selectedPathIndex.intValue > 0) ? EditorGUIUtility.IconContent("back") :
                     EditorGUIUtility.IconContent("d_back");
-                GUIContent forwardIcon = (selectedPathIndex.intValue < pathCount) ? EditorGUIUtility.IconContent("forward") :
+                GUIContent forwardIcon = (selectedPathIndex.intValue < path.Count) ? EditorGUIUtility.IconContent("forward") :
                     EditorGUIUtility.IconContent("d_forward");
 
                 if (GUILayout.Button(backIcon, GUILayout.MaxWidth(22), GUILayout.MinHeight(18)))
@@ -84,27 +75,28 @@ namespace WaypointPath
 
                 if (GUILayout.Button(forwardIcon, GUILayout.MaxWidth(22), GUILayout.MinHeight(18)))
                 {
-                    if (selectedPathIndex.intValue < pathCount) selectedPathIndex.intValue++;
+                    if (selectedPathIndex.intValue < path.Count) selectedPathIndex.intValue++;
                     GUI.FocusControl(null);
                 }
 
-                string outOfCount = "/" + pathCount;
+                string outOfCount = "/" + path.Count;
                 EditorGUILayout.LabelField(outOfCount, GUILayout.MaxWidth(EditorStyles.label.CalcSize(new GUIContent(outOfCount)).x));
             }
             EditorGUILayout.EndHorizontal();
 
-            if (pathCount <= 0) return false;
+            if (path.Count <= 0) return false;
             //Limit the range
-            if (selectedPathIndex.intValue > pathCount) selectedPathIndex.intValue = pathCount - 1;
+            if (selectedPathIndex.intValue > path.Count) selectedPathIndex.intValue = path.Count - 1;
             if (0 > selectedPathIndex.intValue) selectedPathIndex.intValue = 0;
 
             WaypointPathCreator selectedPath = (tempPath.Count > selectedPathIndex.intValue) ? tempPath[selectedPathIndex.intValue] : null;
 
             if (!EditorGUI.EndChangeCheck() || selectedPath == null) return false;
 
-            //stepSize = selectedPath.StepSize;
+            if (wasSelectedIndex < path.Count) tempPath[wasSelectedIndex] = path[wasSelectedIndex];
+            ConnectPaths(tempPath, wasSelectedIndex);
             pathTypeSelection.intValue = WaypointPathEditorData.Options.FindIndex(
-                kvp => kvp.GetPathCreator().GetType() == selectedPath.GetType()
+                option => option.GetPathCreator().GetType() == selectedPath.GetType()
                 ); //Get index of used PathEditor child by comparing types
 
             WaypointPathEditorData.Options[pathTypeSelection.intValue].SetPathCreator(selectedPath);
