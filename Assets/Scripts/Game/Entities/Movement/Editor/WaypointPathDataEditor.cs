@@ -16,23 +16,25 @@ public class WaypointPathDataEditor : Editor
 
     WaypointPathData pathData;
     SerializedObject serialPath;
-    List<WaypointPathCreator> tempPath;
 
     private void OnEnable()
     {
-        pathData ??= target as WaypointPathData;
-        if (tempPath == null || tempPath.Count == 0)
-        {
-            tempPath = new();
-            foreach (var creator in pathData.Path)
-                tempPath.Add(creator.GetNewAdjoinedPath(0));
-            if (pathData.Path.Count > 0) tempPath.Add(pathData.Path.Last().GetNewAdjoinedPath(0));
-            else tempPath.Add(new WaypointPathExpression());
-        }
+        if (pathData == null) pathData = target as WaypointPathData;
         serialPath = serializedObject;
         data = (WaypointPathEditorData)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathEditorData));
         if (data == null) data = (WaypointPathEditorData)ScriptableObject.CreateInstance(typeof(WaypointPathEditorData));
-        if (data.SelectedPathIndex < tempPath.Count) data.SelectedOption.SetPathCreator(tempPath[data.SelectedPathIndex]);
+        if (data.TempPath == null || data.TempPath.Count == 0)
+        {
+            data.TempPath = new();
+            if (pathData.Path == null || pathData.Path.Count == 0) data.TempPath.Add(new WaypointPathExpression());
+            else
+            {
+                foreach (var creator in pathData.Path) data.TempPath.Add(creator.GetNewAdjoinedPath(0));
+                data.TempPath.Add(pathData.Path.Last().GetNewAdjoinedPath(0));
+            }
+        }
+        if (data.SelectedPathIndex < data.TempPath.Count)
+            data.SelectedOption.SetPathCreator(data.TempPath[data.SelectedPathIndex]);
         serialData = new SerializedObject(data);
         data.SelectedOption.objectTransform = pathData.transform;
         pathData.transform.hasChanged = false;
@@ -52,31 +54,44 @@ public class WaypointPathDataEditor : Editor
     {
         serializedObject.Update();
         serialData.Update();
-        var pathCreator = data.SelectedOption.GetPathCreator();
+        //var pathCreator = data.SelectedOption.GetPathCreator();
+
+        if (data.TempPath.Count > 1 && pathData.Path.Count == 0)
+        {
+            data.TempPath.Clear();
+            if (pathData.Path == null || pathData.Path.Count == 0) data.TempPath.Add(new WaypointPathExpression());
+            else
+            {
+                foreach (var path in pathData.Path) data.TempPath.Add(path.GetNewAdjoinedPath(0));
+                data.TempPath.Add(pathData.Path.Last().GetNewAdjoinedPath(0));
+                data.SelectedOption.ConnectPaths(data.TempPath, 0);
+            }
+            data.SelectedOption.SetPathCreator(data.TempPath[^1]);
+        }
 
         if (pathData.transform.hasChanged)
         {
             data.SelectedOption.objectTransform = pathData.transform;
             data.SelectedOption.ConnectPaths(pathData.Path, 0);
             serializedObject.UpdateIfRequiredOrScript();
-            data.SelectedOption.ConnectPaths(tempPath, 0);
+            data.SelectedOption.ConnectPaths(data.TempPath, 0);
             pathData.transform.hasChanged = false;
         }
 
-        data.SelectedOption.SelectPath(selectedPathIndex, pathTypeSelection, tempPath, pathData.Path);
+        data.SelectedOption.SelectPath(selectedPathIndex, pathTypeSelection, data.TempPath, pathData.Path);
         //{
         //    if (selectedPathIndex.intValue < pathData.Path.Count)
         //        tempPath[selectedPathIndex.intValue] = pathCreator.GetNewAdjoinedPath(0);
         //    data.SelectedOption.startDeleteIndex = data.SelectedOption.endDeleteIndex = selectedPathIndex.intValue;
         //}
 
-        selectedPathIndex.intValue -= data.SelectedOption.DeletePath(serialPath, pathData.Path, tempPath);
+        selectedPathIndex.intValue -= data.SelectedOption.DeletePath(serialPath, pathData.Path, data.TempPath);
         if (selectedPathIndex.intValue < 0) selectedPathIndex.intValue = 0;
 
         EditorGUILayout.Space();
         PathEditor.PathTypes(pathTypeSelection);
 
-        if (data.SelectedOption.PathOptions()) data.SelectedOption.ConnectPaths(tempPath, selectedPathIndex.intValue);
+        if (data.SelectedOption.PathOptions()) data.SelectedOption.ConnectPaths(data.TempPath, selectedPathIndex.intValue);
 
         //if (!isInsert.boolValue && tempIsInsert && tempPath.Count > 0 && selectedPathIndex.intValue < tempPath.Count)
         //{
@@ -90,7 +105,7 @@ public class WaypointPathDataEditor : Editor
         //}
         //if (pathOptionsChanged) data.SelectedOption.ConnectPaths(tempPath, selectedPathIndex.intValue);
 
-        data.SelectedOption.SetPath(serialPath, pathData.Path, isInsert, selectedPathIndex, tempPath);
+        data.SelectedOption.SetPath(serialPath, pathData.Path, isInsert, selectedPathIndex, data.TempPath);
 
         EditorGUILayout.Space();
         DrawPropertiesExcluding(serializedObject, "m_Script");
@@ -106,6 +121,6 @@ public class WaypointPathDataEditor : Editor
         if (e != EventType.Repaint) return;
         //List<Vector2> vector2s = PathEditor.CreateVectorPath(in pathData.Path, 0);
         data.SelectedOption.DrawPath(pathData.Path, 0, e, false);
-        data.SelectedOption.DrawPath(tempPath, selectedPathIndex.intValue, e, true);
+        data.SelectedOption.DrawPath(data.TempPath, selectedPathIndex.intValue, e, true);
     }
 }

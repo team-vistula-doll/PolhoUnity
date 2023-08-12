@@ -93,7 +93,8 @@ namespace WaypointPath
 
             if (!EditorGUI.EndChangeCheck() || selectedPath == null) return false;
 
-            if (wasSelectedIndex < path.Count) tempPath[wasSelectedIndex] = path[wasSelectedIndex];
+            if (wasSelectedIndex < path.Count)
+                tempPath[wasSelectedIndex] = path[wasSelectedIndex].GetNewAdjoinedPath(0);
             ConnectPaths(tempPath, wasSelectedIndex);
             pathTypeSelection.intValue = WaypointPathEditorData.Options.FindIndex(
                 option => option.GetPathCreator().GetType() == selectedPath.GetType()
@@ -204,7 +205,8 @@ namespace WaypointPath
                         path.InsertArrayElementAtIndex(selectedPathIndex.intValue);
                     }
 
-                    path.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue = GetPathCreator().GetNewAdjoinedPath(0);
+                    path.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue =
+                        tempPath[selectedPathIndex.intValue].GetNewAdjoinedPath(0);
 
                     pathData.ApplyModifiedProperties();
                     //If isInsert true, then start from inserted element; if selected index is new then start one back
@@ -212,6 +214,14 @@ namespace WaypointPath
                         - (selectedPathIndex.intValue > path.arraySize ? 1 : 0);
                     ConnectPaths(pathList, startIndex);
                     startDeleteIndex = endDeleteIndex = selectedPathIndex.intValue++;
+
+                    if (!isInsert.boolValue)
+                    {
+                        tempPath.Add(tempPath[^1].GetNewAdjoinedPath(0));
+                        ConnectPaths(tempPath, tempPath.Count - 2);
+                        SetPathCreator(tempPath[^1]);
+                    }
+
                     result = true;
                 }
             }

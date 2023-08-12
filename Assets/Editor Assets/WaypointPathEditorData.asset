@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: WaypointPathEditorData
   m_EditorClassIdentifier: 
   SelectedPathIndex: 0
-  IsInsert: 0
+  IsInsert: 1
   PathTypeSelection: 0

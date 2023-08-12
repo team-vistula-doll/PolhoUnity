@@ -20,7 +20,7 @@ namespace WaypointPath
 
         [Min(0)]
         public int SelectedPathIndex = 0;
-        //public List<PathEditor> TempPath = new();
+        public List<WaypointPathCreator> TempPath = new();
         public bool IsInsert = false;
         public PathType PathTypeSelection = 0;
 
