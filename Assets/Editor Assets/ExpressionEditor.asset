@@ -12,9 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 355194b5b59a0da44a38bc3e15654db5, type: 3}
   m_Name: ExpressionEditor
   m_EditorClassIdentifier: 
-  startDeleteIndex: 1
-  endDeleteIndex: 1
+  stepSize: 0.5
+  startDeleteIndex: -1
+  endDeleteIndex: -1
+  startPosition: {x: 7.2000003, y: 7.2000003}
   objectTransform: {fileID: 0}
   pathFormula: x
-  length: 1.98
-  angle: -64.4
+  length: 0.9
+  angle: 0

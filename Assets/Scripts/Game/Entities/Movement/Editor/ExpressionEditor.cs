@@ -24,12 +24,13 @@ namespace WaypointPath
         //            CreateInstance(typeof(WaypointPathExpression));
         //}
 
-        private void OnEnable()
+        protected override void OnEnable()
         {
             //pathExpression = (WaypointPathExpression)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathExpression));
             //if (pathExpression == null) pathExpression = (WaypointPathExpression)ScriptableObject.
             //        CreateInstance(typeof(WaypointPathExpression));
             //serialPath = new SerializedObject(pathExpression);
+            base.OnEnable();
             Undo.undoRedoPerformed -= ApplyPathOptions;
             Undo.undoRedoPerformed += ApplyPathOptions;
 
@@ -62,7 +63,7 @@ namespace WaypointPath
             Undo.RecordObject(this, "Edit path options");
 
             EditorGUI.BeginChangeCheck();
-            pathFormula = EditorGUILayout.DelayedTextField("Path Formula", pathFormula);
+            pathFormula = EditorGUILayout.TextField("Path Formula", pathFormula);
             length = EditorGUILayout.FloatField("Length", length); if (length < 0f) length = 0f;
             angle = EditorGUILayout.FloatField("Angle", angle);
             base.PathOptions();
@@ -78,7 +79,8 @@ namespace WaypointPath
 
         protected override void ApplyPathOptions()
         {
-            base.ApplyPathOptions();
+            //base.ApplyPathOptions();
+            pathExpression.StepSize = stepSize;
             pathExpression.PathFormula = pathFormula;
             pathExpression.Length = length;
             pathExpression.Angle = angle;

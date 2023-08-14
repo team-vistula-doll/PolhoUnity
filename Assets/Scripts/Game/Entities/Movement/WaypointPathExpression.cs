@@ -2,6 +2,7 @@ using B83.ExpressionParser;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static B83.ExpressionParser.ExpressionParser;
 
 namespace WaypointPath
 {
@@ -24,7 +25,7 @@ namespace WaypointPath
 
         public override WaypointPathCreator GetNewAdjoinedPath(float percent)
         {
-            Vector2 start = GetPointVector(percent * Length);
+            Vector2 start = (Vector2)GetPointVector(percent * Length);
             WaypointPathExpression value = new(start, PathFormula, Length, Angle);
             return value;
         }
@@ -53,20 +54,28 @@ namespace WaypointPath
             return p + StartPosition; //Translate point to originate from the startPos
         }
 
-        public Vector2 GetPointVector(float x, float? angle = null)
+        public Vector2? GetPointVector(float x, float? angle = null)
         {
-            Expression exp = parser.EvaluateExpression(PathFormula);
+            Expression exp;
+            try
+            {
+                exp = parser.EvaluateExpression(PathFormula);
+            } catch (ParseException) { return null; }
             return GetPointVector(exp, x, (angle != null) ? angle.Value : Angle);
         }
 
-        public override Vector2 GetVectorAt(float percent) => GetPointVector(percent * Length);
+        public override Vector2? GetVectorAt(float percent) => GetPointVector(percent * Length);
 
         public override List<Vector2> GeneratePath()
         {
             if (StepSize < 0.2f) StepSize = 0.2f; //Prevent too many waypoints and Unity freezing
+            Expression exp;
 
-            //Create expression parser and envaluate expression
-            Expression exp = parser.EvaluateExpression(PathFormula);
+            //Create expression parser and evaluate expression
+            try
+            {
+                exp = parser.EvaluateExpression(PathFormula);
+            } catch (ParseException) { return new(); }
 
             List<Vector2> waypoints = new();
 

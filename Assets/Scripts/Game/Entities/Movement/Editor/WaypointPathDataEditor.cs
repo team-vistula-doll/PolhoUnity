@@ -42,6 +42,8 @@ public class WaypointPathDataEditor : Editor
         selectedPathIndex = serialData.FindProperty("SelectedPathIndex");
         isInsert = serialData.FindProperty("IsInsert");
         pathTypeSelection = serialData.FindProperty("PathTypeSelection");
+
+        Undo.undoRedoPerformed += () => data.SelectedOption.ConnectPaths(data.TempPath, 0);
     }
 
     private void OnDisable()
@@ -78,7 +80,7 @@ public class WaypointPathDataEditor : Editor
             pathData.transform.hasChanged = false;
         }
 
-        data.SelectedOption.SelectPath(selectedPathIndex, pathTypeSelection, data.TempPath, pathData.Path);
+        data.SelectedOption.SelectPath(selectedPathIndex, pathTypeSelection, isInsert, data.TempPath, pathData.Path);
         //{
         //    if (selectedPathIndex.intValue < pathData.Path.Count)
         //        tempPath[selectedPathIndex.intValue] = pathCreator.GetNewAdjoinedPath(0);

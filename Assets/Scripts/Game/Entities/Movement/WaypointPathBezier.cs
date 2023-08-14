@@ -59,7 +59,7 @@ namespace WaypointPath
             return GetModifiedCurveCopy(vector, (x, y) => x + y);
         }
 
-        public override Vector2 GetVectorAt(float percent) => BezierCurve.CubicCurve(StartPosition, StartControl,
+        public override Vector2? GetVectorAt(float percent) => BezierCurve.CubicCurve(StartPosition, StartControl,
                             EndControl, EndPosition, percent);
 
         public override List<Vector2> GeneratePath()

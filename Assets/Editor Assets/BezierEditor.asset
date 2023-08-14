@@ -12,8 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f46890af278e4141bd363bb6f6cad06, type: 3}
   m_Name: BezierEditor
   m_EditorClassIdentifier: 
+  stepSize: 0.5
   startDeleteIndex: 0
   endDeleteIndex: 0
+  startPosition: {x: 0, y: 0}
   objectTransform: {fileID: 0}
   endPosition: {x: 0, y: 0}
   startControl: {x: 0, y: 0}
