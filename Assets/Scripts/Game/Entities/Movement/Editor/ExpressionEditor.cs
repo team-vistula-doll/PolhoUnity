@@ -79,7 +79,7 @@ namespace WaypointPath
 
         protected override void ApplyPathOptions()
         {
-            //base.ApplyPathOptions();
+            base.ApplyPathOptions();
             pathExpression.StepSize = stepSize;
             pathExpression.PathFormula = pathFormula;
             pathExpression.Length = length;

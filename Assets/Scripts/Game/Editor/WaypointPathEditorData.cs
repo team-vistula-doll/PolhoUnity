@@ -20,6 +20,7 @@ namespace WaypointPath
 
         [Min(0)]
         public int SelectedPathIndex = 0;
+        [SerializeReference]
         public List<WaypointPathCreator> TempPath = new();
         public bool IsInsert = false;
         public PathType PathTypeSelection = 0;

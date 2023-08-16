@@ -26,10 +26,20 @@ namespace WaypointPath
             startPosition = pathCreator.StartPosition;
         }
 
-        //public void ConnectPaths(SerializedObject pathData, List<WaypointPathCreator> pathList, int startIndex)
+        public void ConnectPaths(SerializedProperty pathData, int startIndex)
+        {
+            List<WaypointPathCreator> path = new();
+            for (int i = 0; i < pathData.arraySize; i++)
+                path.Add((WaypointPathCreator)pathData.GetArrayElementAtIndex(i).managedReferenceValue);
+            ConnectPaths(path, startIndex);
+            pathData.arraySize = path.Count;
+            for (int i = 0; i < path.Count; i++)
+                pathData.GetArrayElementAtIndex(i).managedReferenceValue = path[i];
+        }
+
+        //public void ConnectPaths(SerializedObject pathData, SerializedProperty path, List<WaypointPathCreator> pathList, int startIndex)
         //{
         //    pathData.UpdateIfRequiredOrScript();
-        //    SerializedProperty path = pathData.FindProperty("Path");
         //    if (startIndex == 0)
         //    {
         //        SerializedProperty sp = path.GetArrayElementAtIndex(startIndex);
@@ -42,7 +52,9 @@ namespace WaypointPath
         //        pathData.UpdateIfRequiredOrScript();
         //        SerializedProperty sp = path.GetArrayElementAtIndex(startIndex);
         //        WaypointPathCreator x = pathList[startIndex - 1];
-        //        sp.FindPropertyRelative(nameof(WaypointPathCreator.StartPosition)).vector2Value = x.GetVectorAt(1);
+        //        Vector2? vector2 = x.GetVectorAt(1);
+        //        if (vector2 != null) sp.FindPropertyRelative(nameof(WaypointPathCreator.StartPosition)).vector2Value = (Vector2)vector2;
+        //        else return;
         //        pathData.ApplyModifiedPropertiesWithoutUndo();
         //    }
         //}
@@ -65,7 +77,7 @@ namespace WaypointPath
         public bool SelectPath(SerializedProperty selectedPathIndex, SerializedProperty pathTypeSelection, SerializedProperty isInsert,
             List<WaypointPathCreator> tempPath, List<WaypointPathCreator> path)
         {
-            if (selectedPathIndex.intValue > path.Count) selectedPathIndex.intValue = path.Count;
+            if (selectedPathIndex.intValue > tempPath.Count) selectedPathIndex.intValue = tempPath.Count - 1;
             int wasSelectedIndex = selectedPathIndex.intValue;
             EditorGUILayout.LabelField("Select Path: End = " + GetPathCreator().GetVectorAt(1));
             EditorGUI.BeginChangeCheck();
@@ -73,7 +85,7 @@ namespace WaypointPath
             {
                 GUIContent backIcon = (selectedPathIndex.intValue > 0) ? EditorGUIUtility.IconContent("back") :
                     EditorGUIUtility.IconContent("d_back");
-                GUIContent forwardIcon = (selectedPathIndex.intValue < path.Count) ? EditorGUIUtility.IconContent("forward") :
+                GUIContent forwardIcon = (selectedPathIndex.intValue < tempPath.Count - 1) ? EditorGUIUtility.IconContent("forward") :
                     EditorGUIUtility.IconContent("d_forward");
 
                 if (GUILayout.Button(backIcon, GUILayout.MaxWidth(22), GUILayout.MinHeight(18)))
@@ -86,7 +98,7 @@ namespace WaypointPath
 
                 if (GUILayout.Button(forwardIcon, GUILayout.MaxWidth(22), GUILayout.MinHeight(18)))
                 {
-                    if (selectedPathIndex.intValue < path.Count) selectedPathIndex.intValue++;
+                    if (selectedPathIndex.intValue < tempPath.Count - 1) selectedPathIndex.intValue++;
                     GUI.FocusControl(null);
                 }
 
@@ -95,9 +107,9 @@ namespace WaypointPath
             }
             EditorGUILayout.EndHorizontal();
 
-            if (path.Count <= 0) return false;
+            if (tempPath.Count <= 0) return false;
             //Limit the range
-            if (selectedPathIndex.intValue > path.Count) selectedPathIndex.intValue = path.Count - 1;
+            if (selectedPathIndex.intValue >= tempPath.Count) selectedPathIndex.intValue = tempPath.Count - 1;
             if (0 > selectedPathIndex.intValue) selectedPathIndex.intValue = 0;
 
             WaypointPathCreator selectedPath = (tempPath.Count > selectedPathIndex.intValue) ? tempPath[selectedPathIndex.intValue] : null;
@@ -106,15 +118,10 @@ namespace WaypointPath
 
             if (wasSelectedIndex < path.Count)
                 tempPath[wasSelectedIndex] = path[wasSelectedIndex].GetNewAdjoinedPath(0);
-            if (isInsert.boolValue && tempIsInsert)
+            if (isInsert.boolValue)
             {
-                tempPath.RemoveAt(wasSelectedIndex);
-                tempIsInsert = false;
-            }
-            if (isInsert.boolValue && !tempIsInsert)
-            {
-                tempPath.Insert(selectedPathIndex.intValue, GetPathCreator().GetNewAdjoinedPath(0));
-                tempIsInsert = true;
+                if (wasSelectedIndex < tempPath.Count - 1) tempPath.RemoveAt(wasSelectedIndex);
+                if (selectedPathIndex.intValue < tempPath.Count - 1) tempPath.Insert(selectedPathIndex.intValue, tempPath[selectedPathIndex.intValue].GetNewAdjoinedPath(0));
             }
             ConnectPaths(tempPath, wasSelectedIndex < selectedPathIndex.intValue ? wasSelectedIndex : selectedPathIndex.intValue);
             pathTypeSelection.intValue = WaypointPathEditorData.Options.FindIndex(
@@ -126,18 +133,18 @@ namespace WaypointPath
             return true;
         }
 
-        public int DeletePath(SerializedObject pathData, List<WaypointPathCreator> pathList,
-            List<WaypointPathCreator> tempPath)
+        public int DeletePath(SerializedProperty pathData, List<WaypointPathCreator> tempPath)
         {
-            pathData.Update();
-            SerializedProperty path = pathData.FindProperty("Path");
+            List<WaypointPathCreator> path = new();
+            for (int i = 0; i < pathData.arraySize; i++)
+                path.Add((WaypointPathCreator)pathData.GetArrayElementAtIndex(i).managedReferenceValue);
             int result = 0;
             EditorGUILayout.LabelField("Delete Paths:");
             EditorGUILayout.BeginHorizontal();
             {
                 EditorGUIUtility.labelWidth = EditorStyles.label.CalcSize(new GUIContent("From ")).x;
                 startDeleteIndex = EditorGUILayout.IntField("From", startDeleteIndex + 1) - 1;
-                if (startDeleteIndex > path.arraySize) startDeleteIndex = endDeleteIndex = path.arraySize - 1;
+                if (startDeleteIndex > path.Count) startDeleteIndex = endDeleteIndex = path.Count - 1;
                 if (startDeleteIndex < 0) startDeleteIndex = 0;
                 if (startDeleteIndex > endDeleteIndex) startDeleteIndex = endDeleteIndex;
 
@@ -147,21 +154,23 @@ namespace WaypointPath
                 EditorGUIUtility.labelWidth = EditorStyles.label.CalcSize(new GUIContent("To ")).x;
                 endDeleteIndex = EditorGUILayout.IntField("To", endDeleteIndex + 1) - 1;
                 if (endDeleteIndex < startDeleteIndex) endDeleteIndex = startDeleteIndex;
-                if (endDeleteIndex >= path.arraySize) endDeleteIndex = path.arraySize - 1;
+                if (endDeleteIndex >= path.Count) endDeleteIndex = path.Count - 1;
                 if (startDeleteIndex > endDeleteIndex) startDeleteIndex = endDeleteIndex;
 
-                EditorGUI.BeginDisabledGroup(path.arraySize == 0);
+                EditorGUI.BeginDisabledGroup(path.Count == 0);
                 {
                     if (GUILayout.Button("Delete"))
                     {
                         result = endDeleteIndex - startDeleteIndex + 1;
                         for (int i = startDeleteIndex; i <= endDeleteIndex; i++) 
                         {
-                            path.DeleteArrayElementAtIndex(startDeleteIndex);
+                            path.RemoveAt(startDeleteIndex);
                             if (tempPath.Count > 1) tempPath.RemoveAt(startDeleteIndex);
                         }
-                        pathData.ApplyModifiedProperties();
-                        if (path.arraySize > 0) ConnectPaths(pathList, startDeleteIndex);
+                        if (path.Count > 0) ConnectPaths(path, startDeleteIndex);
+                        pathData.arraySize = path.Count;
+                        for (int i = 0; i < path.Count; i++)
+                            pathData.GetArrayElementAtIndex(i).managedReferenceValue = path[i];
                         ConnectPaths(tempPath, startDeleteIndex);
                     }
                 }
@@ -199,27 +208,28 @@ namespace WaypointPath
             GetPathCreator().StepSize = stepSize;
         }
 
-        public bool SetPath(SerializedObject pathData, List<WaypointPathCreator> pathList, SerializedProperty isInsert,
+        public bool SetPath(SerializedProperty pathData, SerializedProperty isInsert,
             SerializedProperty selectedPathIndex, List<WaypointPathCreator> tempPath)
         {
             bool result = false;
-            pathData.Update();
-            SerializedProperty path = pathData.FindProperty("Path");
+            List<WaypointPathCreator> path = new();
+            for (int i = 0; i < pathData.arraySize; i++)
+                path.Add((WaypointPathCreator)pathData.GetArrayElementAtIndex(i).managedReferenceValue);
             EditorGUILayout.BeginHorizontal();
             {
                 isInsert.boolValue = EditorGUILayout.ToggleLeft("Insert (before)", isInsert.boolValue);
-                if (!isInsert.boolValue && tempIsInsert && tempPath.Count > 1 && selectedPathIndex.intValue < tempPath.Count)
+                if (!isInsert.boolValue && tempIsInsert && tempPath.Count > 1 && selectedPathIndex.intValue < tempPath.Count - 1)
                 {
                     tempPath.RemoveAt(selectedPathIndex.intValue);
                     ConnectPaths(tempPath, selectedPathIndex.intValue);
                     SetPathCreator(tempPath[selectedPathIndex.intValue]);
                     tempIsInsert = false;
                 }
-                if (selectedPathIndex.intValue < pathList.Count &&
-                    ((isInsert.boolValue && !tempIsInsert) || tempPath.Count == 0 || selectedPathIndex.intValue >= tempPath.Count)
+                if (selectedPathIndex.intValue < path.Count &&
+                    ((isInsert.boolValue && !tempIsInsert) || tempPath.Count == 0 || selectedPathIndex.intValue >= tempPath.Count - 1)
                     )
                 {
-                    tempPath[selectedPathIndex.intValue] = pathList[selectedPathIndex.intValue].GetNewAdjoinedPath(0);
+                    tempPath[selectedPathIndex.intValue] = path[selectedPathIndex.intValue].GetNewAdjoinedPath(0);
                     tempPath.Insert(selectedPathIndex.intValue, GetPathCreator().GetNewAdjoinedPath(0));
                     ConnectPaths(tempPath, selectedPathIndex.intValue);
                     SetPathCreator(tempPath[selectedPathIndex.intValue]);
@@ -229,24 +239,36 @@ namespace WaypointPath
                 if (GUILayout.Button("Set path"))
                 {
                     //Setting the new path in the edited object through serializedObject
-                    if (path.arraySize <= selectedPathIndex.intValue) path.arraySize++;
-                    else if (isInsert.boolValue)
-                    {
-                        path.InsertArrayElementAtIndex(selectedPathIndex.intValue);
-                    }
+                    if (path.Count <= selectedPathIndex.intValue)
+                        path.Insert(selectedPathIndex.intValue, tempPath[selectedPathIndex.intValue].GetNewAdjoinedPath(0));
+                    //else if (isInsert.boolValue)
+                    //{
+                    //    path.InsertArrayElementAtIndex(selectedPathIndex.intValue);
+                    //}
 
-                    path.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue =
-                        tempPath[selectedPathIndex.intValue].GetNewAdjoinedPath(0);
+                    //path.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue =
+                    //    tempPath[selectedPathIndex.intValue].GetNewAdjoinedPath(0);
 
-                    pathData.ApplyModifiedProperties();
+                    //pathData.ApplyModifiedProperties();
                     //If isInsert true, then start from inserted element; if selected index is new then start one back
                     int startIndex = selectedPathIndex.intValue + (isInsert.boolValue ? 0 : 1)
-                        - (selectedPathIndex.intValue > path.arraySize ? 1 : 0);
-                    ConnectPaths(pathList, startIndex);
+                        - (selectedPathIndex.intValue > path.Count ? 1 : 0);
+                    ConnectPaths(path, startIndex);
+                    pathData.arraySize = path.Count;
+                    for (int i = 0; i < path.Count; i++)
+                        pathData.GetArrayElementAtIndex(i).managedReferenceValue = path[i];
                     startDeleteIndex = endDeleteIndex = selectedPathIndex.intValue++;
 
-                    tempPath.Add(tempPath[isInsert.boolValue ? selectedPathIndex.intValue : ^1].GetNewAdjoinedPath(0));
-                    ConnectPaths(tempPath, isInsert.boolValue ? selectedPathIndex.intValue : tempPath.Count - 2);
+                    tempPath.Add(tempPath[
+                        isInsert.boolValue && selectedPathIndex.intValue < tempPath.Count
+                        ? selectedPathIndex.intValue
+                        : ^1
+                        ].GetNewAdjoinedPath(0));
+
+                    ConnectPaths(tempPath,
+                        isInsert.boolValue && selectedPathIndex.intValue < tempPath.Count
+                        ? selectedPathIndex.intValue
+                        : tempPath.Count - 2);
                     SetPathCreator(tempPath[selectedPathIndex.intValue]);
 
                     result = true;
