@@ -30,8 +30,6 @@ namespace WaypointPath
             //if (pathBezier == null) pathBezier = (WaypointPathBezier)ScriptableObject.CreateInstance(typeof(WaypointPathBezier));
             //serialPath = new SerializedObject(pathBezier);
             base.OnEnable();
-            Undo.undoRedoPerformed -= ApplyPathOptions;
-            Undo.undoRedoPerformed += ApplyPathOptions;
 
             stepSize = pathBezier.StepSize;
             startPosition = pathBezier.StartPosition;
@@ -97,7 +95,7 @@ namespace WaypointPath
             return changed;
         }
 
-        protected override void ApplyPathOptions()
+        public override void ApplyPathOptions()
         {
             base.ApplyPathOptions();
             pathBezier.EndPosition = endPosition;
@@ -105,13 +103,13 @@ namespace WaypointPath
             pathBezier.EndControl = endControl;
         }
 
-        protected override void SetPathProperties(SerializedProperty sp)
-        {
-            sp.FindPropertyRelative(nameof(WaypointPathBezier.StartPosition)).vector2Value = startPosition;
-            sp.FindPropertyRelative(nameof(WaypointPathBezier.EndPosition)).vector2Value = endPosition;
-            sp.FindPropertyRelative(nameof(WaypointPathBezier.StartControl)).vector2Value = startControl;
-            sp.FindPropertyRelative(nameof(WaypointPathBezier.EndControl)).vector2Value = endControl;
-        }
+        //protected override void SetPathProperties(SerializedProperty sp)
+        //{
+        //    sp.FindPropertyRelative(nameof(WaypointPathBezier.StartPosition)).vector2Value = startPosition;
+        //    sp.FindPropertyRelative(nameof(WaypointPathBezier.EndPosition)).vector2Value = endPosition;
+        //    sp.FindPropertyRelative(nameof(WaypointPathBezier.StartControl)).vector2Value = startControl;
+        //    sp.FindPropertyRelative(nameof(WaypointPathBezier.EndControl)).vector2Value = endControl;
+        //}
 
         //public override List<Vector2> MakePath(bool isAddedAtEnd = false)
         //{

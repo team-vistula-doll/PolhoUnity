@@ -249,7 +249,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Path:
-  - {fileID: 11400000, guid: 6cbc8db88f3b53141bc2a92a965c9ff2, type: 2}
+  - rid: 3803625656537055335
+  - rid: 3803625656537055337
+  references:
+    version: 2
+    RefIds:
+    - rid: 3803625656537055335
+      type: {class: WaypointPathExpression, ns: WaypointPath, asm: Game}
+      data:
+        StartPosition: {x: 0, y: 0}
+        StepSize: 0.5
+        PathFormula: x
+        Length: 1.99
+        Angle: -17.2
+    - rid: 3803625656537055337
+      type: {class: WaypointPathExpression, ns: WaypointPath, asm: Game}
+      data:
+        StartPosition: {x: 2.4894629, y: 1.3125448}
+        StepSize: 0.5
+        PathFormula: x
+        Length: 1.99
+        Angle: -42.5
 --- !u!1 &2092912531923440514
 GameObject:
   m_ObjectHideFlags: 0

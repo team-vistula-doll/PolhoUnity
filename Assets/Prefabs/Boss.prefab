@@ -248,19 +248,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a5eb7bd7283d7343b33b6af02002751, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Path:
-  - rid: 8425135770982154241
+  Path: []
   references:
     version: 2
-    RefIds:
-    - rid: 8425135770982154241
-      type: {class: WaypointPathExpression, ns: WaypointPath, asm: Game}
-      data:
-        StartPosition: {x: 0, y: 0}
-        StepSize: 0.5
-        PathFormula: x
-        Length: 3.16
-        Angle: -14.39
+    RefIds: []
 --- !u!1 &2832507255932950585
 GameObject:
   m_ObjectHideFlags: 0
