@@ -24,9 +24,12 @@ public class WaypointPathDataEditor : Editor
         data = (WaypointPathEditorData)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathEditorData));
         if (data == null) data = (WaypointPathEditorData)ScriptableObject.CreateInstance(typeof(WaypointPathEditorData));
 
-        data.TempPath = new();
-        if (pathData.Path == null || pathData.Path.Count == 0) data.TempPath.Add(new WaypointPathExpression());
-        else
+        if ((data.TempPath == null || data.TempPath.Count == 0)
+            && (pathData.Path == null || pathData.Path.Count == 0))
+        {
+            data.TempPath = new() { new WaypointPathExpression() };
+        }
+        else if (pathData.Path != null && pathData.Path.Count != 0)
         {
             foreach (var creator in pathData.Path)
                 data.TempPath.Add(creator.GetNewAdjoinedPath(0));
@@ -51,45 +54,48 @@ public class WaypointPathDataEditor : Editor
 
     private void UndoRedo()
     {
-        //Debug.Log("UndoRedo call in WaypointPathDataEditor");
-        data.SelectedOption.ConnectPaths(data.TempPath, 0);
-        if (selectedPathIndex.intValue < data.TempPath.Count
-            && data.SelectedOption.GetPathCreator() != data.TempPath[selectedPathIndex.intValue])
-            data.SelectedOption.SetPathCreator(data.TempPath[selectedPathIndex.intValue]);
+        if (data.SelectedOption.GetPathCreator() != data.TempPath[data.SelectedPathIndex])
+            data.SelectedOption.SetPathCreator(data.TempPath[data.SelectedPathIndex]);
         else data.SelectedOption.ApplyPathOptions();
+        data.SelectedOption.ConnectPaths(data.TempPath, 0);
     }
 
     private void OnDisable()
     {
         if (!AssetDatabase.Contains(data)) AssetDatabase.CreateAsset(data, assetPath);
         AssetDatabase.SaveAssets();
+        Undo.undoRedoPerformed -= UndoRedo;
     }
 
     public override void OnInspectorGUI()
     {
         serializedObject.Update();
         serialData.Update();
+        serialPath.Update();
         //var pathCreator = data.SelectedOption.GetPathCreator();
 
         if (tempPath.arraySize > 1 && pathData.Path.Count == 0)
         {
             tempPath.ClearArray();
-            if (pathData.Path == null || pathData.Path.Count == 0)
-            {
-                tempPath.arraySize++;
-                tempPath.GetArrayElementAtIndex(tempPath.arraySize - 1).managedReferenceValue = new WaypointPathExpression();
-            }
-            else
-            {
-                foreach (var path in pathData.Path)
-                {
-                    tempPath.arraySize++;
-                    tempPath.GetArrayElementAtIndex(tempPath.arraySize - 1).managedReferenceValue = path.GetNewAdjoinedPath(0);
-                }
-                data.TempPath.Add(pathData.Path.Last().GetNewAdjoinedPath(0));
-                data.SelectedOption.ConnectPaths(tempPath, 0);
-            }
-            data.SelectedOption.SetPathCreator(data.TempPath[^1]);
+            //if (pathData.Path == null || pathData.Path.Count == 0)
+            //{
+            //    tempPath.arraySize++;
+            //    tempPath.GetArrayElementAtIndex(tempPath.arraySize - 1).managedReferenceValue = new WaypointPathExpression();
+            //}
+            //else
+            //{
+            //    foreach (var path in pathData.Path)
+            //    {
+            //        tempPath.arraySize++;
+            //        tempPath.GetArrayElementAtIndex(tempPath.arraySize - 1).managedReferenceValue = path.GetNewAdjoinedPath(0);
+            //    }
+            //    data.TempPath.Add(pathData.Path.Last().GetNewAdjoinedPath(0));
+            //    data.SelectedOption.ConnectPaths(tempPath, 0);
+            //}
+            tempPath.arraySize++;
+            WaypointPathCreator newExpression = new WaypointPathExpression();
+            tempPath.GetArrayElementAtIndex(0).managedReferenceValue = newExpression;
+            data.SelectedOption.SetPathCreator(newExpression);
         }
 
         if (pathData.transform.hasChanged)
@@ -135,6 +141,7 @@ public class WaypointPathDataEditor : Editor
 
         serialData.ApplyModifiedProperties();
         serializedObject.ApplyModifiedProperties();
+        serialPath.ApplyModifiedProperties();
         SceneView.RepaintAll();
     }
 

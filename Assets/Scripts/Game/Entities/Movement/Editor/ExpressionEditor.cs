@@ -79,7 +79,7 @@ namespace WaypointPath
         {
             base.ApplyPathOptions();
             pathExpression.StepSize = stepSize;
-            pathExpression.PathFormula = pathFormula;
+            pathExpression.PathFormula = pathFormula.ToString();
             pathExpression.Length = length;
             pathExpression.Angle = angle;
         }

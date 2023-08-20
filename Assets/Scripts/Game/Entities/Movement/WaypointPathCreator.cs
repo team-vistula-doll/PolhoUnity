@@ -11,6 +11,7 @@ namespace WaypointPath
         public Vector2 StartPosition = Vector2.zero;
         [Range(0.2f, 50f)]
         public float StepSize = 0.5f;
+        public bool Test = false;
 
         public abstract WaypointPathCreator GetNewAdjoinedPath(float percent);
 

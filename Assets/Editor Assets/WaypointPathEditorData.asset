@@ -14,17 +14,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SelectedPathIndex: 0
   TempPath:
-  - rid: 3803625662627184657
+  - rid: 3803625705782902907
+  - rid: 3803625705782902908
   IsInsert: 0
   PathTypeSelection: 0
   references:
     version: 2
     RefIds:
-    - rid: 3803625662627184657
+    - rid: 3803625705782902907
       type: {class: WaypointPathExpression, ns: WaypointPath, asm: Game}
       data:
         StartPosition: {x: 0, y: 0}
         StepSize: 0.5
+        Test: 0
         PathFormula: x
-        Length: 1.92
-        Angle: -9.01
+        Length: 2.96
+        Angle: 0
+    - rid: 3803625705782902908
+      type: {class: WaypointPathExpression, ns: WaypointPath, asm: Game}
+      data:
+        StartPosition: {x: 2.96, y: 2.96}
+        StepSize: 0.5
+        Test: 0
+        PathFormula: x
+        Length: 2.96
+        Angle: 0
