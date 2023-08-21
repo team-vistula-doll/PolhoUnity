@@ -5,10 +5,10 @@ namespace WaypointPath
 {
     [System.Serializable]
     public abstract class WaypointPathCreator : object
-    //Given starting position to a selected function,
-    //generates List of waypoints (Path2) that WaypointWalkers will follow
+    //Given starting position and an implemented path creator,
+    //will generate List of waypoints
     {
-        public Vector2 StartPosition = Vector2.zero;
+        public Vector2 StartPosition = Vector2.one;
         [Range(0.2f, 50f)]
         public float StepSize = 0.5f;
         public bool Test = false;

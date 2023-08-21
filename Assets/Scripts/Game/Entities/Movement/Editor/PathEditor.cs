@@ -13,6 +13,7 @@ namespace WaypointPath
         protected Vector2 startPosition;
         public Transform objectTransform;
         private bool tempIsInsert = false;
+        private bool tempAddedOnEnd = true;
 
         protected virtual void OnEnable()
         {
@@ -120,6 +121,19 @@ namespace WaypointPath
             WaypointPathCreator selectedPath = (tempPath.Count > selectedPathIndex.intValue) ? tempPath[selectedPathIndex.intValue] : null;
 
             if (!EditorGUI.EndChangeCheck() || selectedPath == null) return false;
+
+            //TODO: delete last path in list when it's not selected
+            //if (selectedPathIndex.intValue < tempPath.Count - 1 && tempAddedOnEnd)
+            //{
+            //    tempPath.RemoveAt(tempPath.Count - 1);
+            //    tempAddedOnEnd = false;
+            //}
+            //else if (selectedPathIndex.intValue >= tempPath.Count - 1 && !tempAddedOnEnd)
+            //{
+            //    tempPath.Add(tempPath[^1].GetNewAdjoinedPath(1));
+            //    tempAddedOnEnd = true;
+
+            //}
 
             if (wasSelectedIndex < path.Count)
                 tempPath[wasSelectedIndex] = path[wasSelectedIndex].GetNewAdjoinedPath(0);
@@ -242,6 +256,7 @@ namespace WaypointPath
                 if (!isInsert.boolValue && tempIsInsert && tempPath.Count > 1 && selectedPathIndex.intValue < tempPath.Count - 1)
                 {
                     tempPath.RemoveAt(selectedPathIndex.intValue);
+                    //tempPath.Add(tempPath[^1].GetNewAdjoinedPath(1));
                     ConnectPaths(tempPath, selectedPathIndex.intValue);
                     SetPathCreator(tempPath[selectedPathIndex.intValue]);
                     tempIsInsert = false;
@@ -252,6 +267,7 @@ namespace WaypointPath
                 {
                     //tempPath[selectedPathIndex.intValue] = path[selectedPathIndex.intValue].GetNewAdjoinedPath(0);
                     tempPath.Insert(selectedPathIndex.intValue, GetPathCreator().GetNewAdjoinedPath(0));
+                    //tempPath.RemoveAt(tempPath.Count - 1);
                     tempPath[selectedPathIndex.intValue].Test = true;
                     ConnectPaths(tempPath, selectedPathIndex.intValue);
                     SetPathCreator(tempPath[selectedPathIndex.intValue]);
@@ -281,21 +297,16 @@ namespace WaypointPath
                         pathData.GetArrayElementAtIndex(i).managedReferenceValue = path[i];
                     startDeleteIndex = endDeleteIndex = selectedPathIndex.intValue++;
 
-                    tempPath.Add(tempPath[
-                        isInsert.boolValue && selectedPathIndex.intValue < tempPath.Count
+                    int index = isInsert.boolValue && selectedPathIndex.intValue < tempPath.Count
                         ? selectedPathIndex.intValue
-                        : ^1
-                        ].GetNewAdjoinedPath(1));
+                        : tempPath.Count - 1;
 
-                    ConnectPaths(tempPath,
-                        isInsert.boolValue && selectedPathIndex.intValue < tempPath.Count
-                        ? selectedPathIndex.intValue
-                        : tempPath.Count - 1);
-
-                    SetPathCreator(tempPath[
-                        isInsert.boolValue && selectedPathIndex.intValue < tempPath.Count
-                        ? selectedPathIndex.intValue
-                        : ^1]);
+                    tempPath.Insert(index, tempPath[index].GetNewAdjoinedPath(1));
+                    WaypointPathExpression expression = tempPath[index] as WaypointPathExpression;
+                    expression.testVector = Vector2.zero;
+                    tempPath[index] = expression;
+                    ConnectPaths(tempPath, index);
+                    SetPathCreator(tempPath[index]);
 
                     result = true;
                 }

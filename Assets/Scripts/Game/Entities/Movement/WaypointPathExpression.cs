@@ -13,6 +13,7 @@ namespace WaypointPath
         [Min(0f)]
         public float Length = 20;
         public float Angle = 0; //in degrees
+        public Vector2 testVector = Vector2.one;
 
         public WaypointPathExpression() { }
         public WaypointPathExpression(Vector2 startPosition, string pathFormula, float length, float angle)
