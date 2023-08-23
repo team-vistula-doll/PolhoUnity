@@ -12,32 +12,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d751a49c23cbf74a8a6fa0f897a07fa, type: 3}
   m_Name: WaypointPathEditorData
   m_EditorClassIdentifier: 
-  SelectedPathIndex: 0
+  SelectedPathIndex: 1
   TempPath:
-  - rid: 3803625728067764244
-  - rid: 3803625728067764245
+  - rid: 8425135921218977815
+  - rid: 8425135921218977813
   IsInsert: 0
   PathTypeSelection: 0
   references:
     version: 2
     RefIds:
-    - rid: 3803625728067764244
+    - rid: 8425135921218977813
+      type: {class: WaypointPathExpression, ns: WaypointPath, asm: Game}
+      data:
+        StartPosition: {x: 4.0641885, y: 1.312697}
+        StepSize: 0.5
+        Test: 0
+        PathFormula: x
+        Length: 3.02
+        Angle: -27.1
+        testVector: {x: 1, y: 1}
+    - rid: 8425135921218977815
       type: {class: WaypointPathExpression, ns: WaypointPath, asm: Game}
       data:
         StartPosition: {x: 0, y: 0}
         StepSize: 0.5
         Test: 0
         PathFormula: x
-        Length: 1.9
-        Angle: -25.2
-        testVector: {x: 1, y: 1}
-    - rid: 3803625728067764245
-      type: {class: WaypointPathExpression, ns: WaypointPath, asm: Game}
-      data:
-        StartPosition: {x: 2.528152, y: 0.91019076}
-        StepSize: 0.5
-        Test: 0
-        PathFormula: x
-        Length: 1.9
-        Angle: -25.2
-        testVector: {x: 1, y: 1}
+        Length: 3.02
+        Angle: -27.1
+        testVector: {x: 0, y: 0}

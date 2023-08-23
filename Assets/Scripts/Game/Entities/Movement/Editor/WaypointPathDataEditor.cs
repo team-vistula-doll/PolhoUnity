@@ -106,6 +106,7 @@ public class WaypointPathDataEditor : Editor
             data.SelectedOption.ConnectPaths(tempPath, 0);
             pathData.transform.hasChanged = false;
         }
+        data.SelectedOption.ConnectPaths(tempPath, 0);
 
         data.SelectedOption.SelectPath(selectedPathIndex, pathTypeSelection, isInsert, tempPath, pathData.Path);
         //{

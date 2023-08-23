@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: ExpressionEditor
   m_EditorClassIdentifier: 
   stepSize: 0.5
-  startDeleteIndex: -1
-  endDeleteIndex: -1
+  startDeleteIndex: 0
+  endDeleteIndex: 0
   startPosition: {x: 0, y: 0}
   objectTransform: {fileID: 0}
   pathFormula: x
