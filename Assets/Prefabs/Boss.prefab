@@ -249,19 +249,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Path:
-  - rid: 8425135921218977814
+  - rid: 8425135949071253584
   references:
     version: 2
     RefIds:
-    - rid: 8425135921218977814
+    - rid: 8425135949071253584
       type: {class: WaypointPathExpression, ns: WaypointPath, asm: Game}
       data:
         StartPosition: {x: 0, y: 0}
         StepSize: 0.5
         Test: 0
         PathFormula: x
-        Length: 3.02
-        Angle: -27.1
+        Length: 2.34
+        Angle: -35.1
         testVector: {x: 1, y: 1}
 --- !u!1 &2832507255932950585
 GameObject:

@@ -15,8 +15,8 @@ MonoBehaviour:
   stepSize: 0.5
   startDeleteIndex: 0
   endDeleteIndex: 0
-  startPosition: {x: 0, y: 0}
+  startPosition: {x: 3.2599826, y: 0.56895816}
   objectTransform: {fileID: 0}
   pathFormula: x
-  length: 20
-  angle: 0
+  length: 2.34
+  angle: -35.1

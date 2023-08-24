@@ -147,7 +147,7 @@ namespace WaypointPath
                 option => option.GetPathCreator().GetType() == selectedPath.GetType()
                 ); //Get index of used PathEditor child by comparing types
 
-            WaypointPathEditorData.Options[pathTypeSelection.intValue].SetPathCreator(selectedPath);
+            SetPathCreator(selectedPath);
             serialTempPath.arraySize = tempPath.Count;
             for (int i = 0; i < tempPath.Count; i++)
                 serialTempPath.GetArrayElementAtIndex(i).managedReferenceValue = tempPath[i];
@@ -306,7 +306,7 @@ namespace WaypointPath
                     expression.testVector = Vector2.zero;
                     tempPath[index] = expression;
                     ConnectPaths(tempPath, index);
-                    SetPathCreator(tempPath[index]);
+                    SetPathCreator(tempPath[index + (isInsert.boolValue && selectedPathIndex.intValue < tempPath.Count - 1 ? 0 : 1)]);
 
                     result = true;
                 }

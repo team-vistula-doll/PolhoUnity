@@ -24,16 +24,21 @@ public class WaypointPathDataEditor : Editor
         data = (WaypointPathEditorData)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathEditorData));
         if (data == null) data = (WaypointPathEditorData)ScriptableObject.CreateInstance(typeof(WaypointPathEditorData));
 
-        if ((data.TempPath == null || data.TempPath.Count == 0)
-            && (pathData.Path == null || pathData.Path.Count == 0))
+        if (data.TempPath != null && data.TempPath.Count != 0)
         {
-            data.TempPath = new() { new WaypointPathExpression() };
+            if (data.TempPath.Count > pathData.Path.Count + 1)
+                data.TempPath.RemoveRange(pathData.Path.Count, data.TempPath.Count - pathData.Path.Count);
         }
-        else if (pathData.Path != null && pathData.Path.Count != 0)
+        else
         {
-            foreach (var creator in pathData.Path)
-                data.TempPath.Add(creator.GetNewAdjoinedPath(0));
-            data.TempPath.Add(pathData.Path.Last().GetNewAdjoinedPath(1));
+            if (pathData.Path == null || pathData.Path.Count == 0)
+                data.TempPath = new() { new WaypointPathExpression() };
+            else if (pathData.Path != null && pathData.Path.Count != 0)
+            {
+                foreach (var creator in pathData.Path)
+                    data.TempPath.Add(creator.GetNewAdjoinedPath(0));
+                data.TempPath.Add(pathData.Path.Last().GetNewAdjoinedPath(1));
+            }
         }
         if (data.SelectedPathIndex < data.TempPath.Count)
             data.SelectedOption.SetPathCreator(data.TempPath[data.SelectedPathIndex]);
