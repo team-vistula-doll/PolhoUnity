@@ -12,13 +12,10 @@ namespace WaypointPath
         [SerializeField, SerializeReference]
         protected Vector2 startPosition;
         public Transform objectTransform;
-        private bool tempIsInsert = false;
-        private bool tempAddedOnEnd = true;
+        //private bool tempAddedOnEnd = true;
 
         protected virtual void OnEnable()
-        {
-            tempIsInsert = false;
-        }
+        { }
 
         public abstract WaypointPathCreator GetPathCreator();
         public virtual void SetPathCreator(WaypointPathCreator pathCreator)
@@ -94,7 +91,7 @@ namespace WaypointPath
                     EditorGUIUtility.IconContent("d_forward");
 
                 if (GUILayout.Button(backIcon, GUILayout.MaxWidth(22), GUILayout.MinHeight(18)))
-                { 
+                {
                     if (selectedPathIndex.intValue > 0) selectedPathIndex.intValue--;
                     GUI.FocusControl(null);
                 }
@@ -118,9 +115,9 @@ namespace WaypointPath
             if (selectedPathIndex.intValue >= tempPath.Count) selectedPathIndex.intValue = tempPath.Count - 1;
             if (0 > selectedPathIndex.intValue) selectedPathIndex.intValue = 0;
 
-            WaypointPathCreator selectedPath = (tempPath.Count > selectedPathIndex.intValue) ? tempPath[selectedPathIndex.intValue] : null;
+            int selectedPath = (tempPath.Count > selectedPathIndex.intValue) ? selectedPathIndex.intValue : -1;
 
-            if (!EditorGUI.EndChangeCheck() || selectedPath == null) return false;
+            if (!EditorGUI.EndChangeCheck() || selectedPath < 0) return false;
 
             //TODO: delete last path in list when it's not selected
             //if (selectedPathIndex.intValue < tempPath.Count - 1 && tempAddedOnEnd)
@@ -139,15 +136,17 @@ namespace WaypointPath
                 tempPath[wasSelectedIndex] = path[wasSelectedIndex].GetNewAdjoinedPath(0);
             if (isInsert.boolValue)
             {
-                if (wasSelectedIndex < tempPath.Count - 1) tempPath.RemoveAt(wasSelectedIndex);
-                if (selectedPathIndex.intValue < tempPath.Count - 1) tempPath.Insert(selectedPathIndex.intValue, tempPath[selectedPathIndex.intValue].GetNewAdjoinedPath(1));
+                if (wasSelectedIndex < tempPath.Count - 1)
+                    tempPath.RemoveAt(wasSelectedIndex);
+                if (selectedPathIndex.intValue < tempPath.Count - 1)
+                    tempPath.Insert(selectedPathIndex.intValue, tempPath[selectedPathIndex.intValue].GetNewAdjoinedPath(1));
             }
             ConnectPaths(tempPath, wasSelectedIndex < selectedPathIndex.intValue ? wasSelectedIndex : selectedPathIndex.intValue);
             pathTypeSelection.intValue = WaypointPathEditorData.Options.FindIndex(
-                option => option.GetPathCreator().GetType() == selectedPath.GetType()
+                option => option.GetPathCreator().GetType() == tempPath[selectedPath].GetType()
                 ); //Get index of used PathEditor child by comparing types
 
-            SetPathCreator(selectedPath);
+            SetPathCreator(tempPath[selectedPath]);
             serialTempPath.arraySize = tempPath.Count;
             for (int i = 0; i < tempPath.Count; i++)
                 serialTempPath.GetArrayElementAtIndex(i).managedReferenceValue = tempPath[i];
@@ -253,16 +252,17 @@ namespace WaypointPath
             EditorGUILayout.BeginHorizontal();
             {
                 isInsert.boolValue = EditorGUILayout.ToggleLeft("Insert (before)", isInsert.boolValue);
-                if (!isInsert.boolValue && tempIsInsert && tempPath.Count > 1 && selectedPathIndex.intValue < tempPath.Count - 1)
+                if (!isInsert.boolValue && tempPath.Count > path.Count + 1
+                    && tempPath.Count > 1 && selectedPathIndex.intValue < tempPath.Count - 1)
                 {
                     tempPath.RemoveAt(selectedPathIndex.intValue);
                     //tempPath.Add(tempPath[^1].GetNewAdjoinedPath(1));
                     ConnectPaths(tempPath, selectedPathIndex.intValue);
                     SetPathCreator(tempPath[selectedPathIndex.intValue]);
-                    tempIsInsert = false;
                 }
                 if (selectedPathIndex.intValue < path.Count &&
-                    ((isInsert.boolValue && !tempIsInsert) || tempPath.Count == 0 || selectedPathIndex.intValue >= tempPath.Count - 1)
+                    ((isInsert.boolValue && tempPath.Count <= path.Count + 1)
+                    || tempPath.Count == 0 || selectedPathIndex.intValue >= tempPath.Count - 1)
                     )
                 {
                     //tempPath[selectedPathIndex.intValue] = path[selectedPathIndex.intValue].GetNewAdjoinedPath(0);
@@ -271,14 +271,14 @@ namespace WaypointPath
                     tempPath[selectedPathIndex.intValue].Test = true;
                     ConnectPaths(tempPath, selectedPathIndex.intValue);
                     SetPathCreator(tempPath[selectedPathIndex.intValue]);
-                    if (isInsert.boolValue && !tempIsInsert) tempIsInsert = true;
                 }
 
                 if (GUILayout.Button("Set path"))
                 {
                     //Setting the new path in the edited object through serializedObject
-                    if (path.Count <= selectedPathIndex.intValue)
+                    if (isInsert.boolValue || selectedPathIndex.intValue > path.Count)
                         path.Insert(selectedPathIndex.intValue, tempPath[selectedPathIndex.intValue].GetNewAdjoinedPath(0));
+                    else path[selectedPathIndex.intValue] = tempPath[selectedPathIndex.intValue].GetNewAdjoinedPath(0);
                     //else if (isInsert.boolValue)
                     //{
                     //    path.InsertArrayElementAtIndex(selectedPathIndex.intValue);

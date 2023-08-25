@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: ExpressionEditor
   m_EditorClassIdentifier: 
   stepSize: 0.5
-  startDeleteIndex: 0
-  endDeleteIndex: 0
-  startPosition: {x: 3.2599826, y: 0.56895816}
+  startDeleteIndex: 1
+  endDeleteIndex: 1
+  startPosition: {x: 3.0427105, y: 1.1497446}
   objectTransform: {fileID: 0}
   pathFormula: x
-  length: 2.34
-  angle: -35.1
+  length: 2.3
+  angle: -19.41
