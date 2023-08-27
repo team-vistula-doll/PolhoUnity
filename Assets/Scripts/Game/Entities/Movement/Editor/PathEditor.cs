@@ -266,7 +266,7 @@ namespace WaypointPath
                     )
                 {
                     //tempPath[selectedPathIndex.intValue] = path[selectedPathIndex.intValue].GetNewAdjoinedPath(0);
-                    tempPath.Insert(selectedPathIndex.intValue, GetPathCreator().GetNewAdjoinedPath(0));
+                    tempPath.Insert(selectedPathIndex.intValue, path[selectedPathIndex.intValue].GetNewAdjoinedPath(0));
                     //tempPath.RemoveAt(tempPath.Count - 1);
                     tempPath[selectedPathIndex.intValue].Test = true;
                     ConnectPaths(tempPath, selectedPathIndex.intValue);
@@ -276,9 +276,13 @@ namespace WaypointPath
                 if (GUILayout.Button("Set path"))
                 {
                     //Setting the new path in the edited object through serializedObject
-                    if (isInsert.boolValue || selectedPathIndex.intValue > path.Count)
-                        path.Insert(selectedPathIndex.intValue, tempPath[selectedPathIndex.intValue].GetNewAdjoinedPath(0));
-                    else path[selectedPathIndex.intValue] = tempPath[selectedPathIndex.intValue].GetNewAdjoinedPath(0);
+                    int startSetIndex = selectedPathIndex.intValue;
+                    if (isInsert.boolValue || startSetIndex >= path.Count)
+                        path.Insert(startSetIndex, tempPath[startSetIndex++].GetNewAdjoinedPath(0));
+                    for (; startSetIndex < path.Count; startSetIndex++)
+                    {
+                        path[startSetIndex] = tempPath[startSetIndex].GetNewAdjoinedPath(0);
+                    }
                     //else if (isInsert.boolValue)
                     //{
                     //    path.InsertArrayElementAtIndex(selectedPathIndex.intValue);
@@ -289,24 +293,25 @@ namespace WaypointPath
 
                     //pathData.ApplyModifiedProperties();
                     //If isInsert true, then start from inserted element; if selected index is new then start one back
-                    int startIndex = selectedPathIndex.intValue + (isInsert.boolValue ? 0 : 1)
-                        - (selectedPathIndex.intValue > path.Count ? 1 : 0);
-                    ConnectPaths(path, startIndex);
+                    //int startIndex = selectedPathIndex.intValue + (isInsert.boolValue ? 0 : 1)
+                    //    - (selectedPathIndex.intValue > path.Count ? 1 : 0);
+                    ConnectPaths(path, selectedPathIndex.intValue);
                     pathData.arraySize = path.Count;
                     for (int i = 0; i < path.Count; i++)
                         pathData.GetArrayElementAtIndex(i).managedReferenceValue = path[i];
                     startDeleteIndex = endDeleteIndex = selectedPathIndex.intValue++;
 
-                    int index = isInsert.boolValue && selectedPathIndex.intValue < tempPath.Count
-                        ? selectedPathIndex.intValue
-                        : tempPath.Count - 1;
+                    //int index = isInsert.boolValue && selectedPathIndex.intValue < tempPath.Count - 1
+                    //    ? selectedPathIndex.intValue
+                    //    : tempPath.Count - 1;
 
-                    tempPath.Insert(index, tempPath[index].GetNewAdjoinedPath(1));
-                    WaypointPathExpression expression = tempPath[index] as WaypointPathExpression;
+                    if (tempPath.Count == path.Count)
+                        tempPath.Insert(selectedPathIndex.intValue, tempPath[selectedPathIndex.intValue].GetNewAdjoinedPath(1));
+                    WaypointPathExpression expression = tempPath[selectedPathIndex.intValue] as WaypointPathExpression;
                     expression.testVector = Vector2.zero;
-                    tempPath[index] = expression;
-                    ConnectPaths(tempPath, index);
-                    SetPathCreator(tempPath[index + (isInsert.boolValue && selectedPathIndex.intValue < tempPath.Count - 1 ? 0 : 1)]);
+                    tempPath[selectedPathIndex.intValue] = expression;
+                    ConnectPaths(tempPath, selectedPathIndex.intValue);
+                    SetPathCreator(tempPath[selectedPathIndex.intValue]);
 
                     result = true;
                 }
