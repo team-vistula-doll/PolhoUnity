@@ -26,8 +26,9 @@ public class WaypointPathDataEditor : Editor
 
         if (data.TempPath != null && data.TempPath.Count != 0)
         {
-            if (data.TempPath.Count > pathData.Path.Count + 1)
-                data.TempPath.RemoveRange(pathData.Path.Count, data.TempPath.Count - pathData.Path.Count);
+            int insert = data.IsInsert ? 2 : 1;
+            if (data.TempPath.Count > pathData.Path.Count + insert)
+                data.TempPath.RemoveRange(pathData.Path.Count, data.TempPath.Count - (pathData.Path.Count + insert));
         }
         else
         {

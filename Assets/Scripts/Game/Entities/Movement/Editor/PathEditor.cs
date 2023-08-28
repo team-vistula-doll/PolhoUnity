@@ -81,7 +81,7 @@ namespace WaypointPath
 
             if (selectedPathIndex.intValue > tempPath.Count) selectedPathIndex.intValue = tempPath.Count - 1;
             int wasSelectedIndex = selectedPathIndex.intValue;
-            EditorGUILayout.LabelField("Select Path: End = " + GetPathCreator().GetVectorAt(1));
+            EditorGUILayout.LabelField("Select Path:");
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.BeginHorizontal();
             {
@@ -306,7 +306,7 @@ namespace WaypointPath
                     //    : tempPath.Count - 1;
 
                     if (tempPath.Count == path.Count)
-                        tempPath.Insert(selectedPathIndex.intValue, tempPath[selectedPathIndex.intValue].GetNewAdjoinedPath(1));
+                        tempPath.Insert(selectedPathIndex.intValue, tempPath[selectedPathIndex.intValue - 1].GetNewAdjoinedPath(1));
                     WaypointPathExpression expression = tempPath[selectedPathIndex.intValue] as WaypointPathExpression;
                     expression.testVector = Vector2.zero;
                     tempPath[selectedPathIndex.intValue] = expression;
@@ -337,27 +337,18 @@ namespace WaypointPath
 
         public virtual void DrawPath(List<WaypointPathCreator> path, int startIndex, EventType e, bool isTemp = false)
         {
-            //List<Vector2> path = GetPathCreator().GeneratePath();
             if (path.Count == 0) return;
-            Handles.color = isTemp ? Color.red : Color.green;
+            Handles.color = isTemp ? new Color(1, 0.843f, 0) : Color.green;
 
-            //if (data.TempPath != null)
-            //{
-            //    foreach (Vector2 point in data.TempPath)
-            //    {
-            //        // Draws a blue line from this transform to the target
-            //        Handles.color = Color.red;
-            //        Handles.SphereHandleCap(0, point, Quaternion.identity, 0.08f, EventType.Repaint);
-            //    }
-            //}
             for (; startIndex < path.Count; startIndex++)
             {
                 WaypointPathCreator x = (WaypointPathCreator)path[startIndex];
                 List<Vector2> vector2s = x.GeneratePath();
                 foreach (Vector2 point in vector2s)
                 {
-                    Handles.SphereHandleCap(0, point, Quaternion.identity, isTemp ? 0.08f : 0.1f, EventType.Repaint);
+                    Handles.SphereHandleCap(0, point, Quaternion.identity, isTemp ? 0.1f : 0.08f, EventType.Repaint);
                 }
+                if (isTemp) Handles.color = Color.red;
             }
         }
     }
