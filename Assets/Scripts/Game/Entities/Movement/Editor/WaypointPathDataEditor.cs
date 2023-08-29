@@ -45,7 +45,7 @@ public class WaypointPathDataEditor : Editor
             data.SelectedOption.SetPathCreator(data.TempPath[data.SelectedPathIndex]);
 
         serialData = new SerializedObject(data);
-        data.SelectedOption.objectTransform = pathData.transform;
+        foreach (var option in WaypointPathEditorData.Options) option.objectTransform = pathData.transform;
         pathData.transform.hasChanged = false;
 
         selectedPathIndex = serialData.FindProperty("SelectedPathIndex");
@@ -125,7 +125,7 @@ public class WaypointPathDataEditor : Editor
         if (selectedPathIndex.intValue < 0) selectedPathIndex.intValue = 0;
 
         EditorGUILayout.Space();
-        PathEditor.PathTypes(pathTypeSelection);
+        PathEditor.PathTypes(pathTypeSelection, selectedPathIndex, tempPath);
 
         if (data.SelectedOption.PathOptions()) data.SelectedOption.ConnectPaths(data.TempPath, selectedPathIndex.intValue);
 

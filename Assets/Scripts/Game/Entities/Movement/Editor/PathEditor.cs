@@ -210,21 +210,27 @@ namespace WaypointPath
             return result;
         }
 
-        public static void PathTypes(SerializedProperty pathTypeSelection)
+        public static void PathTypes(SerializedProperty pathTypeSelection, SerializedProperty selectedPathIndex,
+            SerializedProperty serialTempPath)
         {
             EditorGUILayout.BeginHorizontal();
             {
                 GUILayout.Label("Path type: ");
-
+                EditorGUI.BeginChangeCheck();
                 pathTypeSelection.intValue = GUILayout.Toolbar(
                     pathTypeSelection.intValue, System.Enum.GetNames(typeof(PathType)), EditorStyles.radioButton);
+                if (EditorGUI.EndChangeCheck())
+                {
+                     serialTempPath.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue =
+                        WaypointPathEditorData.Options[pathTypeSelection.intValue].GetPathCreator();
+                }
             }
             EditorGUILayout.EndHorizontal();
         }
 
         public virtual bool PathOptions()
         {
-            stepSize = EditorGUILayout.Slider("Step Size", stepSize, 0.2f, 50); //Sliders currently aren't recorded to Undo history
+            stepSize = EditorGUILayout.Slider("Step Size", stepSize, 0.2f, 50);
             //stepSize = EditorGUILayout.FloatField("Step Size", stepSize);
             //if (stepSize < 0.2f) stepSize = 0.2f;
             //else if (stepSize > 50f) stepSize = 50f;
