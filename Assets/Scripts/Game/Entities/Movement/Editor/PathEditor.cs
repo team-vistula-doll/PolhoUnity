@@ -45,8 +45,9 @@ namespace WaypointPath
             for (; startIndex < path.Count; startIndex++)
             {
                 Vector2? vector2 = path[startIndex - 1].GetVectorAt(1);
-                if (vector2 != null) path[startIndex].ModifyPath((Vector2)vector2, (x, y) => x + y );
-                else return;
+                if (vector2 == null) return;
+                vector2 -= path[startIndex].StartPosition;
+                path[startIndex].ModifyPath((Vector2)vector2, (x, y) => x + y);
             }
         }
 
