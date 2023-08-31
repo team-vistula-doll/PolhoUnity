@@ -35,28 +35,6 @@ namespace WaypointPath
                 pathData.GetArrayElementAtIndex(i).managedReferenceValue = path[i];
         }
 
-        //public void ConnectPaths(SerializedObject pathData, SerializedProperty path, List<WaypointPathCreator> pathList, int startIndex)
-        //{
-        //    pathData.UpdateIfRequiredOrScript();
-        //    if (startIndex == 0)
-        //    {
-        //        SerializedProperty sp = path.GetArrayElementAtIndex(startIndex);
-        //        sp.FindPropertyRelative(nameof(WaypointPathCreator.StartPosition)).vector2Value = objectTransform.position;
-        //        pathData.ApplyModifiedPropertiesWithoutUndo();
-        //        startIndex++;
-        //    }
-        //    for (; startIndex < path.arraySize; startIndex++)
-        //    {
-        //        pathData.UpdateIfRequiredOrScript();
-        //        SerializedProperty sp = path.GetArrayElementAtIndex(startIndex);
-        //        WaypointPathCreator x = pathList[startIndex - 1];
-        //        Vector2? vector2 = x.GetVectorAt(1);
-        //        if (vector2 != null) sp.FindPropertyRelative(nameof(WaypointPathCreator.StartPosition)).vector2Value = (Vector2)vector2;
-        //        else return;
-        //        pathData.ApplyModifiedPropertiesWithoutUndo();
-        //    }
-        //}
-
         public void ConnectPaths(List<WaypointPathCreator> path, int startIndex)
         {
             if (startIndex == 0)
@@ -67,7 +45,7 @@ namespace WaypointPath
             for (; startIndex < path.Count; startIndex++)
             {
                 Vector2? vector2 = path[startIndex - 1].GetVectorAt(1);
-                if (vector2 != null) path[startIndex].StartPosition = (Vector2)vector2;
+                if (vector2 != null) path[startIndex].ModifyPath((Vector2)vector2, (x, y) => x + y );
                 else return;
             }
         }
@@ -146,7 +124,7 @@ namespace WaypointPath
                 option => option.GetPathCreator().GetType() == tempPath[selectedPath].GetType()
                 ); //Get index of used PathEditor child by comparing types
 
-            SetPathCreator(tempPath[selectedPath]);
+            WaypointPathEditorData.Options[pathTypeSelection.intValue].SetPathCreator(tempPath[selectedPath]);
             serialTempPath.arraySize = tempPath.Count;
             for (int i = 0; i < tempPath.Count; i++)
                 serialTempPath.GetArrayElementAtIndex(i).managedReferenceValue = tempPath[i];

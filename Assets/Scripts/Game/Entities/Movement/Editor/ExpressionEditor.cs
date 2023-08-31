@@ -8,28 +8,15 @@ namespace WaypointPath
     {
         [SerializeField]
         WaypointPathExpression pathExpression = new(Vector2.zero, "x", 20, 0);
-        //SerializedObject serialPath;
         [SerializeField, Delayed]
         string pathFormula;
         [SerializeField, Min(0f)]
         float length;
         [SerializeField]
         float angle;
-        //const string assetPath = "Assets/Editor Assets/ExpressionEditor.asset";
-
-        //private void Awake()
-        //{
-        //    pathExpression = (WaypointPathExpression)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathExpression));
-        //    if (pathExpression == null) pathExpression = (WaypointPathExpression)ScriptableObject.
-        //            CreateInstance(typeof(WaypointPathExpression));
-        //}
 
         protected override void OnEnable()
         {
-            //pathExpression = (WaypointPathExpression)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathExpression));
-            //if (pathExpression == null) pathExpression = (WaypointPathExpression)ScriptableObject.
-            //        CreateInstance(typeof(WaypointPathExpression));
-            //serialPath = new SerializedObject(pathExpression);
             base.OnEnable();
 
             stepSize = pathExpression.StepSize;
@@ -37,12 +24,6 @@ namespace WaypointPath
             length = pathExpression.Length;
             angle = pathExpression.Angle;
         }
-
-        //private void OnDisable()
-        //{
-        //    if (!AssetDatabase.Contains(pathExpression)) AssetDatabase.CreateAsset(pathExpression, assetPath);
-        //    AssetDatabase.SaveAssets();
-        //}
 
         public override WaypointPathCreator GetPathCreator() => pathExpression;
         public override void SetPathCreator(WaypointPathCreator pathCreator)

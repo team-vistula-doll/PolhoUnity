@@ -20,14 +20,7 @@ namespace WaypointPath
             EndControl = endControl;
         }
 
-        /// <summary>
-        /// Copies and modifies the curve; for simple operations that change all points
-        /// </summary>
-        /// <param name="vector">What vector to use</param>
-        /// <param name="mod">The operation to do, e.g. <c>(x, y) => x + y</c>, where 'x' is the curve control points 
-        /// and 'y' is <paramref name="vector"/></param>
-        /// <returns>A new modified Bezier curve</returns>
-        public WaypointPathBezier GetModifiedCurveCopy(Vector2 vector, Func<Vector2, Vector2, Vector2> mod)
+        public override WaypointPathCreator GetModifiedPathCopy(Vector2 vector, Func<Vector2, Vector2, Vector2> mod)
         {
             Vector2 startPosition = mod(StartPosition, vector);
             Vector2 endPosition = mod(EndPosition, vector);
@@ -37,13 +30,7 @@ namespace WaypointPath
             return value;
         }
 
-        /// <summary>
-        /// Modifies the curve; for simple operations that change all points
-        /// </summary>
-        /// <param name="vector">What vector to use</param>
-        /// <param name="mod">The operation to do, e.g. <c>(x, y) => x + y</c>, where 'x' is the curve control points 
-        /// and 'y' is <paramref name="vector"/></param>
-        public void ModifyCurve(Vector2 vector, Func<Vector2, Vector2, Vector2> mod)
+        public override void ModifyPath(Vector2 vector, Func<Vector2, Vector2, Vector2> mod)
         {
             StartPosition = mod(StartPosition, vector);
             EndPosition = mod(EndPosition, vector);
@@ -56,7 +43,7 @@ namespace WaypointPath
             if (percent < 0) percent = 0;
             if (percent > 1) percent = 1;
             Vector2 vector = BezierCurve.CubicCurve(StartPosition, StartControl, EndControl, EndPosition, percent);
-            return GetModifiedCurveCopy(vector, (x, y) => x + y);
+            return GetModifiedPathCopy(vector, (x, y) => x + y);
         }
 
         public override Vector2? GetVectorAt(float percent) => BezierCurve.CubicCurve(StartPosition, StartControl,

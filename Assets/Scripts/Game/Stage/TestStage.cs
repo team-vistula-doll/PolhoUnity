@@ -20,9 +20,9 @@ public class TestStage : Stage
 
         WaypointPathBezier enemy1aPath = new(new(-6, 5), new(7, -2), new(-6, -1), new(2, -3));
 
-        var enemy1bPath = enemy1aPath.GetModifiedCurveCopy(new(0.5f, 0.5f), (x, y) => x - y);
-        var enemy1cPath = enemy1aPath.GetModifiedCurveCopy(new(-1f, 1f), (x, y) => x * y);
-        var enemy1dPath = enemy1cPath.GetModifiedCurveCopy(new(0.5f, -0.5f), (x, y) => x + y);
+        var enemy1bPath = enemy1aPath.GetModifiedPathCopy(new(0.5f, 0.5f), (x, y) => x - y);
+        var enemy1cPath = enemy1aPath.GetModifiedPathCopy(new(-1f, 1f), (x, y) => x * y);
+        var enemy1dPath = enemy1cPath.GetModifiedPathCopy(new(0.5f, -0.5f), (x, y) => x + y);
 
         int enemy1a = args.EnemyManager.CreateNewEnemy(new Enemy
         {

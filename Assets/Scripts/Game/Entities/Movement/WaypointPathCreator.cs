@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace WaypointPath
@@ -12,6 +13,22 @@ namespace WaypointPath
         [Range(0.2f, 50f)]
         public float StepSize = 0.5f;
         public bool Test = false;
+
+        /// <summary>
+        /// Copies and modifies the path; for simple operations that change all points
+        /// </summary>
+        /// <param name="vector">What vector to use</param>
+        /// <param name="mod">The operation to do, e.g. <c>(x, y) => x + y</c>, where 'x' is the path control points 
+        /// and 'y' is <paramref name="vector"/></param>
+        public abstract WaypointPathCreator GetModifiedPathCopy(Vector2 vector, Func<Vector2, Vector2, Vector2> mod);
+
+        /// <summary>
+        /// Modifies the path; for simple operations that change all points
+        /// </summary>
+        /// <param name="vector">What vector to use</param>
+        /// <param name="mod">The operation to do, e.g. <c>(x, y) => x + y</c>, where 'x' is the path control points 
+        /// and 'y' is <paramref name="vector"/></param>
+        public abstract void ModifyPath(Vector2 vector, Func<Vector2, Vector2, Vector2> mod);
 
         public abstract WaypointPathCreator GetNewAdjoinedPath(float percent);
 

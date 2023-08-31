@@ -1,4 +1,5 @@
 using B83.ExpressionParser;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -24,11 +25,23 @@ namespace WaypointPath
             Angle = angle;
         }
 
+        public override WaypointPathCreator GetModifiedPathCopy(Vector2 vector, Func<Vector2, Vector2, Vector2> mod)
+        {
+            Vector2 startPosition = mod(StartPosition, vector);
+            WaypointPathExpression value = new(startPosition, PathFormula, Length, Angle);
+            return value;
+        }
+
         public override WaypointPathCreator GetNewAdjoinedPath(float percent)
         {
             Vector2 start = (Vector2)GetPointVector(percent * Length);
             WaypointPathExpression value = new(start, PathFormula, Length, Angle);
             return value;
+        }
+
+        public override void ModifyPath(Vector2 vector, Func<Vector2, Vector2, Vector2> mod)
+        {
+            StartPosition = mod(StartPosition, vector);
         }
 
         static ExpressionParser parser = new();
