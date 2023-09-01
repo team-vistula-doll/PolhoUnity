@@ -327,7 +327,7 @@ namespace WaypointPath
 
             for (; startIndex < path.Count; startIndex++)
             {
-                WaypointPathCreator x = (WaypointPathCreator)path[startIndex];
+                WaypointPathCreator x = path[startIndex];
                 List<Vector2> vector2s = x.GeneratePath();
                 foreach (Vector2 point in vector2s)
                 {

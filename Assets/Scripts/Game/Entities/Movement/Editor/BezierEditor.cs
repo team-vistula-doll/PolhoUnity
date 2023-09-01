@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Xml.XPath;
 using UnityEditor;
 using UnityEngine;
 
@@ -16,7 +15,7 @@ namespace WaypointPath
 
         bool isMousePressed = false;
         bool isEndControlEnabled = false;
-        //bool isStartControlEnabled = false;
+        bool isStartControlEnabled = false;
 
         //private void Awake()
         //{
@@ -126,8 +125,8 @@ namespace WaypointPath
             base.DrawPath(path, startIndex, e, isTemp);
             if (!isTemp) return;
 
-            WaypointPathBezier temp = pathBezier;
-            pathBezier = (WaypointPathBezier)path[startIndex];
+            //WaypointPathBezier temp = pathBezier;
+            //pathBezier = (WaypointPathBezier)path[startIndex];
 
             EditorGUI.BeginChangeCheck();
 
@@ -142,18 +141,18 @@ namespace WaypointPath
             //however this doesn't happen with the Start Control for some reason, both can overlap it and it won't get selected
             //The commented-out code for the SC handle also doesn't work, even though it's the same as for the EC handle
 
-            ////***Prevent Start Control handle from getting selected when End Control is zero
-            //if (e.type == EventType.MouseUp && pathData.EndControl != Vector2.zero && isMousePressed)
-            //{
-            //    isStartControlEnabled = true;
-            //    isMousePressed = false;
-            //}
-            //else if (e.type == EventType.MouseUp && pathData.EndControl == Vector2.zero && isMousePressed)
-            //{
-            //    isStartControlEnabled = false;
-            //    isMousePressed = false;
-            //}
-            ////***
+            //***Prevent Start Control handle from getting selected when End Control is zero
+            if (e == EventType.MouseUp && endControl != Vector2.zero && isMousePressed)
+            {
+                isStartControlEnabled = true;
+                isMousePressed = false;
+            }
+            else if (e == EventType.MouseUp && endControl == Vector2.zero && isMousePressed)
+            {
+                isStartControlEnabled = false;
+                isMousePressed = false;
+            }
+            //***
 
             //***Prevent End Control handle from getting selected when End Position is zero
             if (e == EventType.MouseUp && endPosition != Vector2.zero && isMousePressed)
@@ -168,13 +167,13 @@ namespace WaypointPath
             }
             //***
 
-            //if (isStartControlEnabled)
-            //{
-            size = HandleUtility.GetHandleSize(startControl) * 0.15f;
-            Handles.color = Color.cyan;
-            startControlHandle = Handles.FreeMoveHandle(startControl, Quaternion.identity, size, snap, Handles.SphereHandleCap);
-            //}
-            //else startControlHandle = Vector2.zero;
+            if (isStartControlEnabled)
+            {
+                size = HandleUtility.GetHandleSize(startControl) * 0.15f;
+                Handles.color = Color.cyan;
+                startControlHandle = Handles.FreeMoveHandle(startControl, Quaternion.identity, size, snap, Handles.SphereHandleCap);
+            }
+            else startControlHandle = Vector2.zero;
 
             if (isEndControlEnabled)
             {
@@ -188,19 +187,19 @@ namespace WaypointPath
             Handles.color = Color.red;
             Vector2 endPositionHandle = Handles.FreeMoveHandle(endPosition, Quaternion.identity, size, snap, Handles.SphereHandleCap);
 
-            Handles.color = new Color(1, 0, 0, 0.5f);
+            Handles.color = new Color(1, 0, 0, 0.5f); //red
             if (startControlHandle != Vector2.zero)
             {
                 Handles.DrawLine(endControlHandle, endPositionHandle, 2);
-                Handles.color = new Color(0, 0, 1, 0.5f);
+                Handles.color = new Color(0, 0, 1, 0.5f); //blue
                 Handles.DrawLine(startControlHandle, startPosition, 2);
-                Handles.color = new Color(1, 0.92f, 0.016f, 0.5f);
+                Handles.color = new Color(1, 0.92f, 0.016f, 0.5f); //yellow
                 Handles.DrawLine(endControlHandle, startControlHandle);
             }
             else if (endControlHandle != Vector2.zero)
             {
                 Handles.DrawLine(endControlHandle, endPositionHandle, 2);
-                Handles.color = new Color(0, 0, 1, 0.5f);
+                Handles.color = new Color(0, 0, 1, 0.5f); //blue
                 Handles.DrawLine(endControlHandle, startPosition, 2);
             }
 
@@ -211,7 +210,7 @@ namespace WaypointPath
                 startControl = startControlHandle;
                 endControl = endControlHandle;
                 //serialPath.ApplyModifiedProperties();
-                pathBezier = temp;
+                //pathBezier = temp;
                 //var path = (data.IsInsert) ? pathBezier : pathBezier.GetModifiedCurveCopy(pathBezier.EndControl, (x, y) => x + y);
                 //data.TempPath = path.GeneratePath();
             }
