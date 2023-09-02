@@ -122,97 +122,106 @@ namespace WaypointPath
 
         public override void DrawPath(List<WaypointPathCreator> path, int startIndex, EventType e, bool isTemp = false)
         {
-            base.DrawPath(path, startIndex, e, isTemp);
-            if (!isTemp) return;
+            //base.DrawPath(path, startIndex, e, isTemp);
+            //if (!isTemp) return;
 
-            //WaypointPathBezier temp = pathBezier;
-            //pathBezier = (WaypointPathBezier)path[startIndex];
+            ////WaypointPathBezier temp = pathBezier;
+            ////pathBezier = (WaypointPathBezier)path[startIndex];
 
-            EditorGUI.BeginChangeCheck();
+            //EditorGUI.BeginChangeCheck();
 
+            //Vector2 snap = Vector2.one * 0.2f;
+            //float size;
+            //Vector2 startControlHandle = startPosition;
+            //Vector2 endControlHandle = startPosition;
+
+            //if (e == EventType.MouseDown) isMousePressed = true;
+
+            ////If the End Control handle is right under the End Position handle, the EC handle has priority in selecting it,
+            ////however this doesn't happen with the Start Control for some reason, both can overlap it and it won't get selected
+            ////The commented-out code for the SC handle also doesn't work, even though it's the same as for the EC handle
+
+            ////***Prevent Start Control handle from getting selected when End Control is zero
+            //if (e == EventType.MouseUp && endControl != Vector2.zero && isMousePressed)
+            //{
+            //    isStartControlEnabled = true;
+            //    isMousePressed = false;
+            //}
+            //else if (e == EventType.MouseUp && endControl == Vector2.zero && isMousePressed)
+            //{
+            //    isStartControlEnabled = false;
+            //    isMousePressed = false;
+            //}
+            ////***
+
+            ////***Prevent End Control handle from getting selected when End Position is zero
+            //if (e == EventType.MouseUp && endPosition != Vector2.zero && isMousePressed)
+            //{
+            //    isEndControlEnabled = true;
+            //    isMousePressed = false;
+            //}
+            //else if (e == EventType.MouseUp && endPosition == Vector2.zero && isMousePressed)
+            //{
+            //    isEndControlEnabled = false;
+            //    isMousePressed = false;
+            //}
+            ////***
+
+            //if (isStartControlEnabled)
+            //{
+            //    size = HandleUtility.GetHandleSize(startControl) * 0.15f;
+            //    Handles.color = Color.cyan;
+            //    startControlHandle = Handles.FreeMoveHandle(startControl, Quaternion.identity, size, snap, Handles.SphereHandleCap);
+            //}
+            //else startControlHandle = Vector2.zero;
+
+            //if (isEndControlEnabled)
+            //{
+            //    size = HandleUtility.GetHandleSize(endControl) * 0.15f;
+            //    Handles.color = Color.cyan;
+            //    endControlHandle = Handles.FreeMoveHandle(endControl, Quaternion.identity, size, snap, Handles.SphereHandleCap);
+            //}
+            //else endControlHandle = Vector2.zero;
+
+            //size = HandleUtility.GetHandleSize(endPosition) * 0.2f;
+            //Handles.color = Color.red;
+            //Vector2 endPositionHandle = Handles.FreeMoveHandle(endPosition, Quaternion.identity, size, snap, Handles.SphereHandleCap);
+
+            //Handles.color = new Color(1, 0, 0, 0.5f); //red
+            //if (startControlHandle != Vector2.zero)
+            //{
+            //    Handles.DrawLine(endControlHandle, endPositionHandle, 2);
+            //    Handles.color = new Color(0, 0, 1, 0.5f); //blue
+            //    Handles.DrawLine(startControlHandle, startPosition, 2);
+            //    Handles.color = new Color(1, 0.92f, 0.016f, 0.5f); //yellow
+            //    Handles.DrawLine(endControlHandle, startControlHandle);
+            //}
+            //else if (endControlHandle != Vector2.zero)
+            //{
+            //    Handles.DrawLine(endControlHandle, endPositionHandle, 2);
+            //    Handles.color = new Color(0, 0, 1, 0.5f); //blue
+            //    Handles.DrawLine(endControlHandle, startPosition, 2);
+            //}
+
+            //if (EditorGUI.EndChangeCheck())
+            //{
+            //    //Undo.RecordObject(pathBezier, "Change Handle Position");
+            //    endPosition = endPositionHandle;
+            //    startControl = startControlHandle;
+            //    endControl = endControlHandle;
+            //    //serialPath.ApplyModifiedProperties();
+            //    //pathBezier = temp;
+            //    //var path = (data.IsInsert) ? pathBezier : pathBezier.GetModifiedCurveCopy(pathBezier.EndControl, (x, y) => x + y);
+            //    //data.TempPath = path.GeneratePath();
+            //}
             Vector2 snap = Vector2.one * 0.2f;
-            float size;
-            Vector2 startControlHandle = startPosition;
-            Vector2 endControlHandle = startPosition;
-
-            if (e == EventType.MouseDown) isMousePressed = true;
-
-            //If the End Control handle is right under the End Position handle, the EC handle has priority in selecting it,
-            //however this doesn't happen with the Start Control for some reason, both can overlap it and it won't get selected
-            //The commented-out code for the SC handle also doesn't work, even though it's the same as for the EC handle
-
-            //***Prevent Start Control handle from getting selected when End Control is zero
-            if (e == EventType.MouseUp && endControl != Vector2.zero && isMousePressed)
-            {
-                isStartControlEnabled = true;
-                isMousePressed = false;
-            }
-            else if (e == EventType.MouseUp && endControl == Vector2.zero && isMousePressed)
-            {
-                isStartControlEnabled = false;
-                isMousePressed = false;
-            }
-            //***
-
-            //***Prevent End Control handle from getting selected when End Position is zero
-            if (e == EventType.MouseUp && endPosition != Vector2.zero && isMousePressed)
-            {
-                isEndControlEnabled = true;
-                isMousePressed = false;
-            }
-            else if (e == EventType.MouseUp && endPosition == Vector2.zero && isMousePressed)
-            {
-                isEndControlEnabled = false;
-                isMousePressed = false;
-            }
-            //***
-
-            if (isStartControlEnabled)
-            {
-                size = HandleUtility.GetHandleSize(startControl) * 0.15f;
-                Handles.color = Color.cyan;
-                startControlHandle = Handles.FreeMoveHandle(startControl, Quaternion.identity, size, snap, Handles.SphereHandleCap);
-            }
-            else startControlHandle = Vector2.zero;
-
-            if (isEndControlEnabled)
-            {
-                size = HandleUtility.GetHandleSize(endControl) * 0.15f;
-                Handles.color = Color.cyan;
-                endControlHandle = Handles.FreeMoveHandle(endControl, Quaternion.identity, size, snap, Handles.SphereHandleCap);
-            }
-            else endControlHandle = Vector2.zero;
-
-            size = HandleUtility.GetHandleSize(endPosition) * 0.2f;
+            float size = HandleUtility.GetHandleSize(endPosition) * 0.2f;
             Handles.color = Color.red;
+            EditorGUI.BeginChangeCheck();
             Vector2 endPositionHandle = Handles.FreeMoveHandle(endPosition, Quaternion.identity, size, snap, Handles.SphereHandleCap);
-
-            Handles.color = new Color(1, 0, 0, 0.5f); //red
-            if (startControlHandle != Vector2.zero)
-            {
-                Handles.DrawLine(endControlHandle, endPositionHandle, 2);
-                Handles.color = new Color(0, 0, 1, 0.5f); //blue
-                Handles.DrawLine(startControlHandle, startPosition, 2);
-                Handles.color = new Color(1, 0.92f, 0.016f, 0.5f); //yellow
-                Handles.DrawLine(endControlHandle, startControlHandle);
-            }
-            else if (endControlHandle != Vector2.zero)
-            {
-                Handles.DrawLine(endControlHandle, endPositionHandle, 2);
-                Handles.color = new Color(0, 0, 1, 0.5f); //blue
-                Handles.DrawLine(endControlHandle, startPosition, 2);
-            }
-
             if (EditorGUI.EndChangeCheck())
             {
-                //Undo.RecordObject(pathBezier, "Change Handle Position");
                 endPosition = endPositionHandle;
-                startControl = startControlHandle;
-                endControl = endControlHandle;
-                //serialPath.ApplyModifiedProperties();
-                //pathBezier = temp;
-                //var path = (data.IsInsert) ? pathBezier : pathBezier.GetModifiedCurveCopy(pathBezier.EndControl, (x, y) => x + y);
-                //data.TempPath = path.GeneratePath();
             }
         }
     }

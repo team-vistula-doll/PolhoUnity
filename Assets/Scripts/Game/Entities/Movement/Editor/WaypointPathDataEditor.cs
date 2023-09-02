@@ -17,6 +17,7 @@ public class WaypointPathDataEditor : Editor
     SerializedObject serialPath;
     SerializedProperty path;
 
+        Vector2 endPosition = Vector2.one;
     private void OnEnable()
     {
         if (pathData == null) pathData = target as WaypointPathData;
@@ -158,6 +159,15 @@ public class WaypointPathDataEditor : Editor
         if (e != EventType.Repaint) return;
         //List<Vector2> vector2s = PathEditor.CreateVectorPath(in pathData.Path, 0);
         data.SelectedOption.DrawPath(pathData.Path, 0, e, false);
-        data.SelectedOption.DrawPath(data.TempPath, selectedPathIndex.intValue, e, true);
+        //data.SelectedOption.DrawPath(data.TempPath, selectedPathIndex.intValue, e, true);
+        Vector2 snap = Vector2.one * 0.2f;
+        float size = HandleUtility.GetHandleSize(endPosition) * 0.2f;
+        Handles.color = Color.red;
+        EditorGUI.BeginChangeCheck();
+        Vector2 endPositionHandle = Handles.FreeMoveHandle(endPosition, Quaternion.identity, size, snap, Handles.SphereHandleCap);
+        if (EditorGUI.EndChangeCheck())
+        {
+            endPosition = endPositionHandle;
+        }
     }
 }
