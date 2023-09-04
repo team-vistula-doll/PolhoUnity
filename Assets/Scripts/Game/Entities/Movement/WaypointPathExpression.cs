@@ -100,7 +100,7 @@ namespace WaypointPath
             }
 
             Vector2 end = GetPointVector(exp, Length, Angle);
-            if (waypoints.Any() && Vector2.Distance(waypoints.Last(), end) <= 0.1f)
+            if (waypoints.Count != 0 && Vector2.Distance(waypoints.Last(), end) <= 0.1f)
                 waypoints.RemoveAt(waypoints.Count - 1);
             waypoints.Add(end);
 

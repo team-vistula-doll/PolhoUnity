@@ -17,7 +17,7 @@ public class WaypointPathDataEditor : Editor
     SerializedObject serialPath;
     SerializedProperty path;
 
-        Vector2 endPosition = Vector2.one;
+    Vector2 endPosition = Vector2.one;
     private void OnEnable()
     {
         if (pathData == null) pathData = target as WaypointPathData;
@@ -42,8 +42,11 @@ public class WaypointPathDataEditor : Editor
                 data.TempPath.Add(pathData.Path.Last().GetNewAdjoinedPath(1));
             }
         }
-        if (data.SelectedPathIndex < data.TempPath.Count)
+        //if (data.SelectedPathIndex < data.TempPath.Count)
+        //{
+            data.PathTypeSelection = WaypointPathEditorData.GetSelectedOption(data.TempPath[data.SelectedPathIndex]);
             data.SelectedOption.SetPathCreator(data.TempPath[data.SelectedPathIndex]);
+        //}
 
         serialData = new SerializedObject(data);
         foreach (var option in WaypointPathEditorData.Options) option.objectTransform = pathData.transform;
@@ -81,7 +84,7 @@ public class WaypointPathDataEditor : Editor
         serialPath.Update();
         //var pathCreator = data.SelectedOption.GetPathCreator();
 
-        if (tempPath.arraySize > 1 && pathData.Path.Count == 0)
+        if (tempPath.arraySize > 1 && pathData.Path.Count != 0)
         {
             tempPath.ClearArray();
             //if (pathData.Path == null || pathData.Path.Count == 0)
@@ -99,6 +102,7 @@ public class WaypointPathDataEditor : Editor
             //    data.TempPath.Add(pathData.Path.Last().GetNewAdjoinedPath(0));
             //    data.SelectedOption.ConnectPaths(tempPath, 0);
             //}
+            pathTypeSelection.intValue = 0;
             tempPath.arraySize++;
             WaypointPathCreator newExpression = new WaypointPathExpression();
             tempPath.GetArrayElementAtIndex(0).managedReferenceValue = newExpression;
@@ -156,18 +160,9 @@ public class WaypointPathDataEditor : Editor
     public void OnSceneGUI()
     {
         EventType e = Event.current.type;
-        if (e != EventType.Repaint) return;
+        //if (e != EventType.Repaint) return;
         //List<Vector2> vector2s = PathEditor.CreateVectorPath(in pathData.Path, 0);
         data.SelectedOption.DrawPath(pathData.Path, 0, e, false);
-        //data.SelectedOption.DrawPath(data.TempPath, selectedPathIndex.intValue, e, true);
-        Vector2 snap = Vector2.one * 0.2f;
-        float size = HandleUtility.GetHandleSize(endPosition) * 0.2f;
-        Handles.color = Color.red;
-        EditorGUI.BeginChangeCheck();
-        Vector2 endPositionHandle = Handles.FreeMoveHandle(endPosition, Quaternion.identity, size, snap, Handles.SphereHandleCap);
-        if (EditorGUI.EndChangeCheck())
-        {
-            endPosition = endPositionHandle;
-        }
+        data.SelectedOption.DrawPath(data.TempPath, selectedPathIndex.intValue, e, true);
     }
 }

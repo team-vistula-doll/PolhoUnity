@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -37,6 +38,7 @@ namespace WaypointPath
 
         public void ConnectPaths(List<WaypointPathCreator> path, int startIndex)
         {
+            if (path.Count == 0) return;
             if (startIndex == 0)
             {
                 path[startIndex].StartPosition = objectTransform.position;
@@ -121,9 +123,10 @@ namespace WaypointPath
                     tempPath.Insert(selectedPathIndex.intValue, tempPath[selectedPathIndex.intValue].GetNewAdjoinedPath(1));
             }
             ConnectPaths(tempPath, wasSelectedIndex < selectedPathIndex.intValue ? wasSelectedIndex : selectedPathIndex.intValue);
-            pathTypeSelection.intValue = WaypointPathEditorData.Options.FindIndex(
-                option => option.GetPathCreator().GetType() == tempPath[selectedPath].GetType()
-                ); //Get index of used PathEditor child by comparing types
+            //pathTypeSelection.intValue = WaypointPathEditorData.Options.FindIndex(
+            //    option => option.GetPathCreator().GetType() == tempPath[selectedPath].GetType()
+            //    ); //Get index of used PathEditor child by comparing types
+            pathTypeSelection.intValue = (int)WaypointPathEditorData.GetSelectedOption(tempPath[selectedPath]);
 
             WaypointPathEditorData.Options[pathTypeSelection.intValue].SetPathCreator(tempPath[selectedPath]);
             serialTempPath.arraySize = tempPath.Count;

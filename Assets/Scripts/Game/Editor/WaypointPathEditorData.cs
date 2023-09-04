@@ -42,6 +42,9 @@ namespace WaypointPath
                 AssetDatabase.CreateAsset(Options[1], bezierAssetPath);
             AssetDatabase.SaveAssets();
         }
+
+        public static PathType GetSelectedOption(WaypointPathCreator creator)
+            => (PathType)Options.FindIndex(option => option.GetPathCreator().GetType() == creator.GetType());
     }
 }
 #endif
