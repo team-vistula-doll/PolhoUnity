@@ -82,6 +82,7 @@ namespace WaypointPath
             EditorGUI.BeginDisabledGroup(endControl == Vector2.zero);
                 startControl = EditorGUILayout.Vector2Field("Start Control", startControl);
             EditorGUI.EndDisabledGroup();
+            base.PathOptions();
 
             if (EditorGUI.EndChangeCheck())
             {
@@ -89,7 +90,6 @@ namespace WaypointPath
                 ApplyPathOptions();
             }
 
-            base.PathOptions();
 
             return changed;
         }
@@ -184,7 +184,7 @@ namespace WaypointPath
             else endControlHandle = Vector2.zero;
 
             size = HandleUtility.GetHandleSize(endPosition) * 0.2f;
-            Handles.color = Color.red;
+            Handles.color = Color.yellow;
             Vector2 endPositionHandle = Handles.FreeMoveHandle(endPosition, Quaternion.identity, size, snap, Handles.SphereHandleCap);
 
             Handles.color = new Color(1, 0, 0, 0.5f); //red

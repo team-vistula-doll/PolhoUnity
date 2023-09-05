@@ -51,6 +51,7 @@ namespace WaypointPath
 
         public override List<Vector2> GeneratePath()
         {
+            float step = StepSize * 10;
             if (EndPosition == Vector2.zero)
                 return new List<Vector2>() { Vector2.zero };
 
@@ -61,18 +62,18 @@ namespace WaypointPath
             {
                 if (StartControl != Vector2.zero)
                 {
-                    for (int t = 1; t * StepSize <= 100; t++)
+                    for (int t = 1; t * step <= 100; t++)
                     {
                         waypoints.Add(BezierCurve.CubicCurve(StartPosition, StartControl,
-                            EndControl, EndPosition, t * StepSize / 100));
+                            EndControl, EndPosition, t * step / 100));
                     }
                 }
                 else
                 {
-                    for (int t = 1; t * StepSize <= 100; t++)
+                    for (int t = 1; t * step <= 100; t++)
                     {
-                        waypoints.Add(BezierCurve.QuadraticCurve(StartPosition, StartControl,
-                            EndPosition, t * StepSize / 100));
+                        waypoints.Add(BezierCurve.QuadraticCurve(StartPosition, EndControl,
+                            EndPosition, t * step / 100));
                     }
                 }
             }

@@ -213,9 +213,6 @@ namespace WaypointPath
         public virtual bool PathOptions()
         {
             stepSize = EditorGUILayout.Slider("Step Size", stepSize, 0.2f, 50);
-            //stepSize = EditorGUILayout.FloatField("Step Size", stepSize);
-            //if (stepSize < 0.2f) stepSize = 0.2f;
-            //else if (stepSize > 50f) stepSize = 50f;
             return true;
         }
 
@@ -295,9 +292,6 @@ namespace WaypointPath
 
                     if (tempPath.Count == path.Count)
                         tempPath.Insert(selectedPathIndex.intValue, tempPath[selectedPathIndex.intValue - 1].GetNewAdjoinedPath(1));
-                    WaypointPathExpression expression = tempPath[selectedPathIndex.intValue] as WaypointPathExpression;
-                    expression.testVector = Vector2.zero;
-                    tempPath[selectedPathIndex.intValue] = expression;
                     ConnectPaths(tempPath, selectedPathIndex.intValue);
                     SetPathCreator(tempPath[selectedPathIndex.intValue]);
 

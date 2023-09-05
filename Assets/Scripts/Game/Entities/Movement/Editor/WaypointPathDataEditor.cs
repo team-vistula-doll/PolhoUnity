@@ -84,7 +84,7 @@ public class WaypointPathDataEditor : Editor
         serialPath.Update();
         //var pathCreator = data.SelectedOption.GetPathCreator();
 
-        if (tempPath.arraySize > 1 && pathData.Path.Count != 0)
+        if (tempPath.arraySize > 1 && pathData.Path.Count == 0)
         {
             tempPath.ClearArray();
             //if (pathData.Path == null || pathData.Path.Count == 0)
@@ -164,5 +164,6 @@ public class WaypointPathDataEditor : Editor
         //List<Vector2> vector2s = PathEditor.CreateVectorPath(in pathData.Path, 0);
         data.SelectedOption.DrawPath(pathData.Path, 0, e, false);
         data.SelectedOption.DrawPath(data.TempPath, selectedPathIndex.intValue, e, true);
+        Repaint();
     }
 }
