@@ -86,6 +86,8 @@ public class WaypointPathDataEditor : Editor
 
         if (tempPath.arraySize > 1 && pathData.Path.Count == 0)
         {
+            data.PathTypeSelection = 0;
+            serialData.Update();
             tempPath.ClearArray();
             //if (pathData.Path == null || pathData.Path.Count == 0)
             //{
@@ -102,7 +104,6 @@ public class WaypointPathDataEditor : Editor
             //    data.TempPath.Add(pathData.Path.Last().GetNewAdjoinedPath(0));
             //    data.SelectedOption.ConnectPaths(tempPath, 0);
             //}
-            pathTypeSelection.intValue = 0;
             tempPath.arraySize++;
             WaypointPathCreator newExpression = new WaypointPathExpression();
             tempPath.GetArrayElementAtIndex(0).managedReferenceValue = newExpression;

@@ -17,17 +17,10 @@ namespace WaypointPath
         bool isEndControlEnabled = false;
         //bool isStartControlEnabled = false;
 
-        //private void Awake()
-        //{
-        //    pathBezier = (WaypointPathBezier)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathBezier));
-        //    if (pathBezier == null) pathBezier = (WaypointPathBezier)ScriptableObject.CreateInstance(typeof(WaypointPathBezier));
-        //}
+        bool isLocal = true;
 
         protected override void OnEnable()
         {
-            //pathBezier = (WaypointPathBezier)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathBezier));
-            //if (pathBezier == null) pathBezier = (WaypointPathBezier)ScriptableObject.CreateInstance(typeof(WaypointPathBezier));
-            //serialPath = new SerializedObject(pathBezier);
             base.OnEnable();
 
             stepSize = pathBezier.StepSize;
@@ -75,12 +68,15 @@ namespace WaypointPath
             Undo.RecordObject(this, "Edit path options");
 
             EditorGUI.BeginChangeCheck();
-            endPosition = EditorGUILayout.Vector2Field("End Position", endPosition);
+            isLocal = EditorGUILayout.ToggleLeft("Local coords", isLocal);
+            Vector2 localStart = isLocal ? startPosition : Vector2.zero;
+
+            endPosition = EditorGUILayout.Vector2Field("End Position", endPosition - localStart) + localStart;
             EditorGUI.BeginDisabledGroup(endPosition == Vector2.zero);
-                endControl = EditorGUILayout.Vector2Field("End Control", endControl);
+                endControl = EditorGUILayout.Vector2Field("End Control", endControl - localStart) + localStart;
             EditorGUI.EndDisabledGroup();
             EditorGUI.BeginDisabledGroup(endControl == Vector2.zero);
-                startControl = EditorGUILayout.Vector2Field("Start Control", startControl);
+                startControl = EditorGUILayout.Vector2Field("Start Control", startControl - localStart) + localStart;
             EditorGUI.EndDisabledGroup();
             base.PathOptions();
 
@@ -101,24 +97,6 @@ namespace WaypointPath
             pathBezier.StartControl = startControl;
             pathBezier.EndControl = endControl;
         }
-
-        //protected override void SetPathProperties(SerializedProperty sp)
-        //{
-        //    sp.FindPropertyRelative(nameof(WaypointPathBezier.StartPosition)).vector2Value = startPosition;
-        //    sp.FindPropertyRelative(nameof(WaypointPathBezier.EndPosition)).vector2Value = endPosition;
-        //    sp.FindPropertyRelative(nameof(WaypointPathBezier.StartControl)).vector2Value = startControl;
-        //    sp.FindPropertyRelative(nameof(WaypointPathBezier.EndControl)).vector2Value = endControl;
-        //}
-
-        //public override List<Vector2> MakePath(bool isAddedAtEnd = false)
-        //{
-        //    if (isAddedAtEnd)
-        //    {
-        //        var value = (WaypointPathBezier)pathBezier.GetNewAdjoinedPath(1);
-        //        return value.GeneratePath();
-        //    }
-        //    return pathBezier.GeneratePath();
-        //}
 
         public override void DrawPath(List<WaypointPathCreator> path, int startIndex, EventType e, bool isTemp = false)
         {
