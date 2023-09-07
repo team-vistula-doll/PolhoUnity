@@ -12,7 +12,6 @@ namespace WaypointPath
         public Vector2 StartPosition = Vector2.one;
         [Range(0.2f, 50f)]
         public float StepSize = 0.5f;
-        public bool Test = false;
 
         /// <summary>
         /// Copies and modifies the path; for simple operations that change all points

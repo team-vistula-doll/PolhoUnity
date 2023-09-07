@@ -15,6 +15,7 @@ namespace WaypointPath
     {
         const string expressionAssetPath = "Assets/Editor Assets/ExpressionEditor.asset";
         const string bezierAssetPath = "Assets/Editor Assets/BezierEditor.asset";
+        public int ID = 0;
         public static List<PathEditor> Options { get; private set; } = new() { null, null };
         public PathEditor SelectedOption { get => Options[(int)PathTypeSelection]; }
 
@@ -25,7 +26,7 @@ namespace WaypointPath
         public bool IsInsert = false;
         public PathType PathTypeSelection = 0;
 
-        private void OnEnable()
+        public void Init()
         {
             Options[0] = (ExpressionEditor)AssetDatabase.LoadAssetAtPath(expressionAssetPath, typeof(ExpressionEditor));
             if (Options[0] == null) Options[0] = (ExpressionEditor)ScriptableObject.CreateInstance(typeof(ExpressionEditor));
