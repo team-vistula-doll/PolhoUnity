@@ -29,7 +29,6 @@ namespace WaypointPath
         {
             pathExpression = (WaypointPathExpression)pathCreator;
             base.SetPathCreator(pathExpression);
-            startPosition = pathExpression.StartPosition;
             pathFormula = pathExpression.PathFormula.ToString();
             length = pathExpression.Length;
             angle = pathExpression.Angle;

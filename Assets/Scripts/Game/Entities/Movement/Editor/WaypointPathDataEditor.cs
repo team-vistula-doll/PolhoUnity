@@ -22,10 +22,10 @@ public class WaypointPathDataEditor : Editor
         if (data == null) data = (WaypointPathEditorData)ScriptableObject.CreateInstance(typeof(WaypointPathEditorData));
         data.Init();
 
-        PathEditor.StartDeleteIndex = PathEditor.EndDeleteIndex = data.SelectedPathIndex = 0;
         int newId = pathData.GetInstanceID();
         if (data.ID != newId)
         {
+            PathEditor.StartDeleteIndex = PathEditor.EndDeleteIndex = data.SelectedPathIndex = 0;
             data.TempPath.Clear();
             data.ID = newId;
         }
@@ -69,7 +69,10 @@ public class WaypointPathDataEditor : Editor
     private void UndoRedo()
     {
         if (data.SelectedOption.GetPathCreator() != data.TempPath[data.SelectedPathIndex])
+        {
+            data.PathTypeSelection = WaypointPathEditorData.GetSelectedOption(data.TempPath[selectedPathIndex.intValue]);
             data.SelectedOption.SetPathCreator(data.TempPath[data.SelectedPathIndex]);
+        }
         else data.SelectedOption.ApplyPathOptions();
         data.SelectedOption.ConnectPaths(data.TempPath, 0);
     }
@@ -153,7 +156,13 @@ public class WaypointPathDataEditor : Editor
         //}
         //if (pathOptionsChanged) data.SelectedOption.ConnectPaths(tempPath, selectedPathIndex.intValue);
 
-        data.SelectedOption.SetPath(path, isInsert, selectedPathIndex, tempPath);
+        if (data.SelectedOption.SetPath(path, isInsert, selectedPathIndex, tempPath))
+        {
+            pathTypeSelection.intValue = (int)WaypointPathEditorData.GetSelectedOption(
+                    (WaypointPathCreator)tempPath.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue);
+            WaypointPathEditorData.Options[pathTypeSelection.intValue].SetPathCreator(
+                (WaypointPathCreator)tempPath.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue);
+        }
 
         EditorGUILayout.Space();
         DrawPropertiesExcluding(serializedObject, "m_Script");

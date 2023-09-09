@@ -7,7 +7,7 @@ namespace WaypointPath
     public class BezierEditor : PathEditor
     {
         [SerializeField]
-        WaypointPathBezier pathBezier = new(Vector2.zero, Vector2.zero, Vector2.zero ,Vector2.zero);
+        WaypointPathBezier pathBezier = new(Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero);
         //SerializedObject serialPath;
         [SerializeField]
         Vector2 endPosition, startControl, endControl;
@@ -40,10 +40,10 @@ namespace WaypointPath
         public override void SetPathCreator(WaypointPathCreator pathCreator)
         {
             pathBezier = (WaypointPathBezier)pathCreator;
-            startPosition = pathBezier.StartPosition;
+            base.SetPathCreator(pathBezier);
             endPosition = pathBezier.EndPosition;
-            startControl = pathBezier.StartControl;
             endControl = pathBezier.EndControl;
+            startControl = pathBezier.StartControl;
         }
 
         //public override bool SelectPath(ref SerializedProperty selectedPathIndex, ref SerializedProperty pathTypeSelection,
@@ -94,8 +94,8 @@ namespace WaypointPath
         {
             base.ApplyPathOptions();
             pathBezier.EndPosition = endPosition;
-            pathBezier.StartControl = startControl;
             pathBezier.EndControl = endControl;
+            pathBezier.StartControl = startControl;
         }
 
         public override void DrawPath(List<WaypointPathCreator> path, int startIndex, EventType e, bool isTemp = false)
@@ -110,8 +110,9 @@ namespace WaypointPath
 
             Vector2 snap = Vector2.one * 0.2f;
             float size;
-            Vector2 startControlHandle = startPosition;
-            Vector2 endControlHandle = startPosition;
+            Vector2 startControlHandle = startControl;
+            Vector2 endControlHandle = endControl;
+            if (endControlHandle != Vector2.zero) isEndControlEnabled = true;
 
             if (e == EventType.MouseDown) isMousePressed = true;
 

@@ -295,8 +295,8 @@ namespace WaypointPath
                     if (tempPath.Count == path.Count)
                         tempPath.Insert(selectedPathIndex.intValue, tempPath[selectedPathIndex.intValue - 1].GetNewAdjoinedPath(1));
                     ConnectPaths(tempPath, selectedPathIndex.intValue);
-                    if (tempPath[selectedPathIndex.intValue].GetType() == this.GetType())
-                        SetPathCreator(tempPath[selectedPathIndex.intValue]);
+                    //if (tempPath[selectedPathIndex.intValue].GetType() == this.GetType())
+                    //    SetPathCreator(tempPath[selectedPathIndex.intValue]);
 
                     result = true;
                 }
