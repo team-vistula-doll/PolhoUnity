@@ -70,19 +70,23 @@ namespace WaypointPath
             EditorGUI.BeginChangeCheck();
             isLocal = EditorGUILayout.ToggleLeft("Local coords", isLocal);
             Vector2 localStart = isLocal ? startPosition : Vector2.zero;
+            Vector2 endPos, endCon, startCon; //There's a bug with Undoing enemy movement if you use the class fields directly
 
-            endPosition = EditorGUILayout.Vector2Field("End Position", endPosition - localStart) + localStart;
+            endPos = EditorGUILayout.Vector2Field("End Position", endPosition - localStart) + localStart;
             EditorGUI.BeginDisabledGroup(endPosition == Vector2.zero);
-                endControl = EditorGUILayout.Vector2Field("End Control", endControl - localStart) + localStart;
+                endCon = EditorGUILayout.Vector2Field("End Control", endControl - localStart) + localStart;
             EditorGUI.EndDisabledGroup();
             EditorGUI.BeginDisabledGroup(endControl == Vector2.zero);
-                startControl = EditorGUILayout.Vector2Field("Start Control", startControl - localStart) + localStart;
+                startCon = EditorGUILayout.Vector2Field("Start Control", startControl - localStart) + localStart;
             EditorGUI.EndDisabledGroup();
             base.PathOptions();
 
             if (EditorGUI.EndChangeCheck())
             {
                 changed = true;
+                endPosition = endPos;
+                endControl = endCon;
+                startControl = startCon;
                 ApplyPathOptions();
             }
 

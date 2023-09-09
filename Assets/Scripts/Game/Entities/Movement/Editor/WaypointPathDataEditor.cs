@@ -70,8 +70,9 @@ public class WaypointPathDataEditor : Editor
     {
         if (data.SelectedOption.GetPathCreator() != data.TempPath[data.SelectedPathIndex])
         {
-            data.PathTypeSelection = WaypointPathEditorData.GetSelectedOption(data.TempPath[selectedPathIndex.intValue]);
+            data.PathTypeSelection = WaypointPathEditorData.GetSelectedOption(data.TempPath[data.SelectedPathIndex]);
             data.SelectedOption.SetPathCreator(data.TempPath[data.SelectedPathIndex]);
+            //serialData.Update();
         }
         else data.SelectedOption.ApplyPathOptions();
         data.SelectedOption.ConnectPaths(data.TempPath, 0);
