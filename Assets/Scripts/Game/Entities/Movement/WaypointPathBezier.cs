@@ -58,9 +58,9 @@ namespace WaypointPath
             //if (StepSize < 0.2f) StepSize = 0.2f; //Prevent too many waypoints and Unity freezing
 
             List<Vector2> waypoints = new();
-            if (EndControl != Vector2.zero)
+            if (EndControl - StartPosition != Vector2.zero)
             {
-                if (StartControl != Vector2.zero)
+                if (StartControl - StartPosition != Vector2.zero)
                 {
                     for (int t = 1; t * step <= 100; t++)
                     {

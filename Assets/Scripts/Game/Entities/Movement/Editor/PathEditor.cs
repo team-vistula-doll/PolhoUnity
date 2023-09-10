@@ -195,9 +195,10 @@ namespace WaypointPath
             return result;
         }
 
-        public static void PathTypes(SerializedProperty pathTypeSelection, SerializedProperty selectedPathIndex,
+        public static bool PathTypes(SerializedProperty pathTypeSelection, SerializedProperty selectedPathIndex,
             SerializedProperty serialTempPath)
         {
+            bool result = false;
             EditorGUILayout.BeginHorizontal();
             {
                 GUILayout.Label("Path type: ");
@@ -206,11 +207,16 @@ namespace WaypointPath
                     pathTypeSelection.intValue, System.Enum.GetNames(typeof(PathType)), EditorStyles.radioButton);
                 if (EditorGUI.EndChangeCheck())
                 {
-                     serialTempPath.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue =
-                        WaypointPathEditorData.Options[pathTypeSelection.intValue].GetPathCreator();
+                    result = true;
+                    serialTempPath.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue =
+                        WaypointPathEditorData.Options[pathTypeSelection.intValue].GetPathCreator().GetNewAdjoinedPath(0);
+                    WaypointPathEditorData.Options[pathTypeSelection.intValue].ConnectPaths(serialTempPath, selectedPathIndex.intValue);
+                    WaypointPathEditorData.Options[pathTypeSelection.intValue].SetPathCreator(
+                        (WaypointPathCreator)serialTempPath.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue);
                 }
             }
             EditorGUILayout.EndHorizontal();
+            return result;
         }
 
         public virtual bool PathOptions()

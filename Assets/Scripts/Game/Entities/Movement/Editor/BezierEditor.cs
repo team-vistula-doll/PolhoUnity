@@ -73,10 +73,10 @@ namespace WaypointPath
             Vector2 endPos, endCon, startCon; //There's a bug with Undoing enemy movement if you use the class fields directly
 
             endPos = EditorGUILayout.Vector2Field("End Position", endPosition - localStart) + localStart;
-            EditorGUI.BeginDisabledGroup(endPosition == Vector2.zero);
+            EditorGUI.BeginDisabledGroup(endPosition - startPosition == Vector2.zero);
                 endCon = EditorGUILayout.Vector2Field("End Control", endControl - localStart) + localStart;
             EditorGUI.EndDisabledGroup();
-            EditorGUI.BeginDisabledGroup(endControl == Vector2.zero);
+            EditorGUI.BeginDisabledGroup(endControl - startPosition == Vector2.zero);
                 startCon = EditorGUILayout.Vector2Field("Start Control", startControl - localStart) + localStart;
             EditorGUI.EndDisabledGroup();
             base.PathOptions();
@@ -116,7 +116,7 @@ namespace WaypointPath
             float size;
             Vector2 startControlHandle = startControl;
             Vector2 endControlHandle = endControl;
-            if (endControlHandle != Vector2.zero) isEndControlEnabled = true;
+            if (endControlHandle - startPosition != Vector2.zero) isEndControlEnabled = true;
 
             if (e == EventType.MouseDown) isMousePressed = true;
 
@@ -138,12 +138,12 @@ namespace WaypointPath
             //***
 
             //***Prevent End Control handle from getting selected when End Position is zero
-            if (e == EventType.MouseUp && endPosition != Vector2.zero && isMousePressed)
+            if (e == EventType.MouseUp && endPosition - startPosition != Vector2.zero && isMousePressed)
             {
                 isEndControlEnabled = true;
                 isMousePressed = false;
             }
-            else if (e == EventType.MouseUp && endPosition == Vector2.zero && isMousePressed)
+            else if (e == EventType.MouseUp && endPosition - startPosition == Vector2.zero && isMousePressed)
             {
                 isEndControlEnabled = false;
                 isMousePressed = false;
@@ -171,7 +171,7 @@ namespace WaypointPath
             Vector2 endPositionHandle = Handles.FreeMoveHandle(endPosition, Quaternion.identity, size, snap, Handles.SphereHandleCap);
 
             Handles.color = new Color(1, 0, 0, 0.5f); //red
-            if (startControlHandle != Vector2.zero)
+            if (startControlHandle - startPosition != Vector2.zero)
             {
                 Handles.DrawLine(endControlHandle, endPositionHandle, 2);
                 Handles.color = new Color(0, 0, 1, 0.5f); //blue
@@ -179,7 +179,7 @@ namespace WaypointPath
                 Handles.color = new Color(1, 0.92f, 0.016f, 0.5f); //yellow
                 Handles.DrawLine(endControlHandle, startControlHandle);
             }
-            else if (endControlHandle != Vector2.zero)
+            else if (endControlHandle - startPosition != Vector2.zero)
             {
                 Handles.DrawLine(endControlHandle, endPositionHandle, 2);
                 Handles.color = new Color(0, 0, 1, 0.5f); //blue

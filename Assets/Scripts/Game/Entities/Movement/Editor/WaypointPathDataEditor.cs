@@ -97,6 +97,7 @@ public class WaypointPathDataEditor : Editor
             data.PathTypeSelection = 0;
             serialData.Update();
             tempPath.ClearArray();
+            WaypointPathEditorData.Options[1].SetPathCreator(new WaypointPathBezier());
             //if (pathData.Path == null || pathData.Path.Count == 0)
             //{
             //    tempPath.arraySize++;
