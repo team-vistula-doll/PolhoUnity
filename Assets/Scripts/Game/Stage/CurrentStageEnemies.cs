@@ -6,5 +6,5 @@ using WaypointPath;
 public class CurrentStageEnemies : MonoBehaviour
 {
     [SerializeField]
-    private List<Enemy> enemies;
+    public List<Enemy> enemies;
 }
