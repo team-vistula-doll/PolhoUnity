@@ -51,7 +51,7 @@ public class WaypointPathDataEditor : Editor
         //}
 
         serialData = new SerializedObject(data);
-        foreach (var option in WaypointPathEditorData.Options) option.ObjectTransform = pathData.transform;
+        foreach (var option in WaypointPathEditorData.Options) option.StartPosition = pathData.transform.position;
         pathData.transform.hasChanged = false;
 
         selectedPathIndex = serialData.FindProperty("SelectedPathIndex");
@@ -102,7 +102,7 @@ public class WaypointPathDataEditor : Editor
 
         if (pathData.transform.hasChanged)
         {
-            data.SelectedOption.ObjectTransform = pathData.transform;
+            data.SelectedOption.StartPosition = pathData.transform.position;
             data.SelectedOption.ConnectPaths(pathData.Path, 0);
             serializedObject.UpdateIfRequiredOrScript();
             data.SelectedOption.ConnectPaths(tempPath, 0);

@@ -11,8 +11,7 @@ namespace WaypointPath
         protected float stepSize;
         public static int StartDeleteIndex = 0, EndDeleteIndex = 0;
         [SerializeField, SerializeReference]
-        protected Vector2 startPosition;
-        public Transform ObjectTransform;
+        public Vector2 StartPosition;
         //private bool tempAddedOnEnd = true;
 
         protected virtual void OnEnable()
@@ -22,7 +21,7 @@ namespace WaypointPath
         public virtual void SetPathCreator(WaypointPathCreator pathCreator)
         {
             stepSize = pathCreator.StepSize;
-            startPosition = pathCreator.StartPosition;
+            StartPosition = pathCreator.StartPosition;
         }
 
         public void ConnectPaths(SerializedProperty pathData, int startIndex)
@@ -49,7 +48,7 @@ namespace WaypointPath
             //}
             for (; startIndex < path.Count; startIndex++)
             {
-                Vector2? vector2 = startIndex == 0 ? ObjectTransform.position : path[startIndex - 1].GetVectorAt(1);
+                Vector2? vector2 = startIndex == 0 ? StartPosition : path[startIndex - 1].GetVectorAt(1);
                 if (vector2 == null) return;
                 vector2 -= path[startIndex].StartPosition;
                 path[startIndex].ModifyPath((Vector2)vector2, (x, y) => x + y);
@@ -227,7 +226,7 @@ namespace WaypointPath
 
         public virtual void ApplyPathOptions()
         {
-            GetPathCreator().StartPosition = startPosition;
+            GetPathCreator().StartPosition = StartPosition;
             GetPathCreator().StepSize = stepSize;
         }
 

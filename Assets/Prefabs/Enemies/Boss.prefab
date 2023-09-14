@@ -259,7 +259,6 @@ MonoBehaviour:
       data:
         StartPosition: {x: 0, y: 0}
         StepSize: 0.5
-        Test: 0
         PathFormula: x
         Length: 2.3
         Angle: -24.3
@@ -267,9 +266,8 @@ MonoBehaviour:
     - rid: 8425135975486717985
       type: {class: WaypointPathExpression, ns: WaypointPath, asm: Game}
       data:
-        StartPosition: {x: 3.0427105, y: 1.1497446}
+        StartPosition: {x: 3.0427105, y: 1.1497445}
         StepSize: 0.5
-        Test: 0
         PathFormula: x
         Length: 2.3
         Angle: -54
