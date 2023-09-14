@@ -6,19 +6,18 @@ using UnityEngine;
 public struct EnemyEntry
 {
     public string Name;
-    public int Difficulty;
     public GameObject Prefab;
 }
 public class EnemyBank : MonoBehaviour
 {
-    public Dictionary<Tuple<string, int>, GameObject> EnemyEntries;
+    public Dictionary<string, GameObject> EnemyEntries;
     
     [SerializeField]
     private List<EnemyEntry> definedEnemies;
 
     public void Start()
     {
-        EnemyEntries = new Dictionary<Tuple<string, int>, GameObject>();
-        definedEnemies.ForEach(e => EnemyEntries.Add(new Tuple<string, int>(e.Name, e.Difficulty), e.Prefab));
+        EnemyEntries = new Dictionary<string, GameObject>();
+        definedEnemies.ForEach(e => EnemyEntries.Add(e.Name, e.Prefab));
     }
 }

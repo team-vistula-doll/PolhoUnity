@@ -64,7 +64,7 @@ public class EnemyManager : MonoBehaviour
     public int SpawnNewEnemy(int id)
     {
         id--;
-        GameObject enemyObject = Instantiate(_enemyBank.EnemyEntries[new Tuple<string, int>(_enemies[id].Name, GameState.Difficulty)], _enemies[id].SpawnPosition, Quaternion.identity, transform);
+        GameObject enemyObject = Instantiate(_enemyBank.EnemyEntries[_enemies[id].Name], _enemies[id].SpawnPosition, Quaternion.identity, transform);
         if (_enemies[id].Fireable != null)
             enemyObject.GetComponentInChildren<EnemyDanmakuEmitter>().Fireable = _enemies[id].Fireable;
         enemyObject.GetComponent<WaypointPathData>().Path = _enemies[id].Path.ToList();
