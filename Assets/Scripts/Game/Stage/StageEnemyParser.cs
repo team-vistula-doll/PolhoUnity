@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Tommy;
 using UnityEngine;
-using EnemyStruct;
+using EnemyClass;
 using WaypointPath;
 
 public class StageEnemyParser

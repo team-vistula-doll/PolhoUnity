@@ -3,14 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using EnemyStruct;
+using EnemyClass;
 using WaypointPath;
 
 [RequireComponent(typeof(EnemyBank))]
 public class EnemyManager : MonoBehaviour
 {
     private Dictionary<int, GameObject> _enemyObjects;
-    private List<Enemy> _enemies;
+    private List<EnemyClass.Enemy> _enemies;
     private int _enemyObjectIDs = 0;
     private int _enemyStructIDs = 0;
     private EnemyBank _enemyBank;
@@ -18,7 +18,7 @@ public class EnemyManager : MonoBehaviour
     void Start()
     {
         _enemyObjects = new Dictionary<int, GameObject>();
-        _enemies = new List<Enemy>();
+        _enemies = new List<EnemyClass.Enemy>();
         _enemyBank = GetComponent<EnemyBank>();
     }
 
@@ -32,7 +32,7 @@ public class EnemyManager : MonoBehaviour
     /// </summary>
     /// <param name="spawnRepeats">optional</param>
     /// <returns>Enemy struct ID</returns>
-    public int CreateNewEnemy (Enemy enemy)
+    public int CreateNewEnemy (EnemyClass.Enemy enemy)
     {
         enemy.ID = ++_enemyStructIDs;
         enemy.Path[0].StartPosition = enemy.SpawnPosition;

@@ -1,10 +1,9 @@
 using System.Collections.Generic;
-using EnemyStruct;
+using EnemyClass;
 using UnityEngine;
-using WaypointPath;
 
 public class CurrentStageEnemies : MonoBehaviour
 {
-    [SerializeField]
-    public List<Enemy> enemies;
+    [SerializeReference]
+    public List<Enemy> Enemies;
 }

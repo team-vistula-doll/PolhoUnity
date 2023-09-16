@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using EnemyStruct;
+using EnemyClass;
 using DanmakU.Fireables;
 using System.Linq;
 using WaypointPath;

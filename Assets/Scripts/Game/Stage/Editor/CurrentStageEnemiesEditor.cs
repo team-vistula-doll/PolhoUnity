@@ -1,4 +1,4 @@
-using EnemyStruct;
+using EnemyClass;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -18,17 +18,18 @@ public class CurrentStageEnemiesEditor : Editor
     const string assetPath = "Assets/Editor Assets/CurrentStageEnemiesEditorData.asset";
 
     int selectedEnemyIndex = 0;
+    SerializedProperty serialEnemy;
+    SerializedProperty id, enemyName, spawnTime, spawnPosition, path, spawnRepeats, fireable;
     Enemy enemy;
     Vector2 enemySpawnPosition;
     Sprite enemySprite = null;
-    List<WaypointPathCreator> enemyPath { get { return stageEnemies.enemies[selectedEnemyIndex].Path; } }
     List<bool> foldouts;
     int foldedOut = -1;
 
     private void OnEnable()
     {
         if (stageEnemies == null) stageEnemies = target as CurrentStageEnemies;
-        enemies = serializedObject.FindProperty("enemies");
+        enemies = serializedObject.FindProperty("Enemies");
         foldouts = new();
         for (int i = 0; i < enemies.arraySize; i++) foldouts.Add(false);
 
@@ -56,10 +57,21 @@ public class CurrentStageEnemiesEditor : Editor
         EditorGUILayout.LabelField("List size: " + enemies.arraySize);
         EditorGUILayout.Space();
 
+        if (GUILayout.Button("New enemy"))
+        {
+            EnemyClass.Enemy newEnemy = new EnemyClass.Enemy();
+            if (stageEnemies.Enemies.Count > 0) newEnemy.SpawnTime = stageEnemies.Enemies[^1].SpawnTime;
+            enemies.arraySize++;
+            enemies.GetArrayElementAtIndex(enemies.arraySize - 1).managedReferenceValue = newEnemy;
+            foldouts.Add(false);
+        };
+
         for (int i = 0; i < enemies.arraySize; i++)
         {
-            enemy = (Enemy)enemies.GetArrayElementAtIndex(i).managedReferenceValue;
-            string label = "(" + enemy.SpawnTime.ToString("0.00") + ") Enemy " + (i+1);
+            enemy = (EnemyClass.Enemy)enemies.GetArrayElementAtIndex(i).managedReferenceValue;
+            serialEnemy = enemies.GetArrayElementAtIndex(i);
+            spawnTime = serialEnemy.FindPropertyRelative("SpawnTime");
+            string label = "(" + spawnTime.floatValue.ToString("0.00") + ") Enemy " + (i+1);
             foldouts[i] = EditorGUILayout.Foldout(foldouts[i], label);
             if (!foldouts[i])
             {
@@ -75,7 +87,7 @@ public class CurrentStageEnemiesEditor : Editor
                 for (int j = 0; j < foldouts.Count; j++) foldouts[j] = false;
                 foldouts[i] = true;
 
-                GameObject enemyPrefab = PrefabUtility.LoadPrefabContents("Prefabs/Enemies/" + enemy.Name);
+                GameObject enemyPrefab = PrefabUtility.LoadPrefabContents("Prefabs/Enemies/" + enemyName.stringValue);
                 //{
                     enemySpawnPosition = enemyPrefab.transform.position;
                     enemySprite = enemyPrefab.GetComponent<SpriteRenderer>().sprite;
@@ -85,7 +97,14 @@ public class CurrentStageEnemiesEditor : Editor
                 foldedOut = i;
             }
 
-            if (tempPath.arraySize > 1 && enemyPath.Count == 0)
+            id = serialEnemy.FindPropertyRelative("ID");
+            enemyName = serialEnemy.FindPropertyRelative("Name");
+            spawnPosition = serialEnemy.FindPropertyRelative("SpawnPosition");
+            path = serialEnemy.FindPropertyRelative("Path");
+            spawnRepeats = serialEnemy.FindPropertyRelative("SpawnRepeats");
+            fireable = serialEnemy.FindPropertyRelative("Fireable");
+
+            if (tempPath.arraySize > 1 && path.arraySize == 0)
             {
                 data.PathTypeSelection = 0;
                 serialData.Update();
@@ -98,11 +117,13 @@ public class CurrentStageEnemiesEditor : Editor
             }
             data.SelectedOption.ConnectPaths(tempPath, 0);
 
+            EditorGUI.BeginChangeCheck();
+
             enemySpawnPosition = EditorGUILayout.Vector2Field("Start Position", enemySpawnPosition);
 
-            data.SelectedOption.SelectPath(selectedPathIndex, pathTypeSelection, isInsert, tempPath, enemyPath);
+            data.SelectedOption.SelectPath(selectedPathIndex, pathTypeSelection, isInsert, tempPath, enemy.Path);
 
-            selectedPathIndex.intValue -= data.SelectedOption.DeletePath(enemies, tempPath);
+            selectedPathIndex.intValue -= data.SelectedOption.DeletePath(path, tempPath);
             if (selectedPathIndex.intValue < 0) selectedPathIndex.intValue = 0;
 
             EditorGUILayout.Space();
@@ -110,12 +131,16 @@ public class CurrentStageEnemiesEditor : Editor
 
             if (data.SelectedOption.PathOptions()) data.SelectedOption.ConnectPaths(data.TempPath, selectedPathIndex.intValue);
 
-            if (data.SelectedOption.SetPath(enemies, isInsert, selectedPathIndex, tempPath))
+            if (data.SelectedOption.SetPath(path, isInsert, selectedPathIndex, tempPath))
             {
                 pathTypeSelection.intValue = (int)WaypointPathEditorData.GetSelectedOption(
                         (WaypointPathCreator)tempPath.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue);
                 WaypointPathEditorData.Options[pathTypeSelection.intValue].SetPathCreator(
                     (WaypointPathCreator)tempPath.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue);
+            }
+            if (EditorGUI.EndChangeCheck())
+            {
+                enemies.GetArrayElementAtIndex(i).managedReferenceValue = serialEnemy;
             }
         }
 
@@ -126,6 +151,7 @@ public class CurrentStageEnemiesEditor : Editor
 
     public void OnSceneGUI()
     {
+        if (foldedOut == -1) return;
         EventType e = Event.current.type;
 
         GUI.DrawTexture(new Rect(enemySpawnPosition, enemySprite.textureRect.size), enemySprite.texture);
@@ -136,7 +162,7 @@ public class CurrentStageEnemiesEditor : Editor
             Undo.RecordObject(this, "Moved enemy");
             enemySpawnPosition = newSpawnPosition;
             data.SelectedOption.StartPosition = enemySpawnPosition;
-            data.SelectedOption.ConnectPaths(enemyPath, 0);
+            data.SelectedOption.ConnectPaths(path, 0);
             serializedObject.UpdateIfRequiredOrScript();
             data.SelectedOption.ConnectPaths(tempPath, 0);
             data.SelectedOption.SetPathCreator(
