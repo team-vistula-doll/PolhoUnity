@@ -10,11 +10,12 @@ namespace EnemyClass
     public class Enemy
     {
         public int ID;
-        public string Name = "enemy";
+        public string Name = "Enemy";
         public float SpawnTime = 0f;
         public Vector2 SpawnPosition = Vector2.zero;
-        [HideInInspector]
+        [SerializeReference]
         public List<WaypointPathCreator> Path = new();
+        [SerializeReference]
         public List<(float delay, int amount)> SpawnRepeats; //delay between spawns, amount of spawns; Optional
         public IFireable Fireable;
     }

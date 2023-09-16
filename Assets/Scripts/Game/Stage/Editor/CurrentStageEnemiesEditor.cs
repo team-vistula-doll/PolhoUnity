@@ -17,7 +17,7 @@ public class CurrentStageEnemiesEditor : Editor
     SerializedProperty selectedPathIndex, isInsert, pathTypeSelection, tempPath;
     const string assetPath = "Assets/Editor Assets/CurrentStageEnemiesEditorData.asset";
 
-    int selectedEnemyIndex = 0;
+    //int selectedEnemyIndex = 0;
     SerializedProperty serialEnemy;
     SerializedProperty id, enemyName, spawnTime, spawnPosition, path, spawnRepeats, fireable;
     Enemy enemy;
@@ -35,6 +35,7 @@ public class CurrentStageEnemiesEditor : Editor
 
         data = (WaypointPathEditorData)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathEditorData));
         if (data == null) data = (WaypointPathEditorData)ScriptableObject.CreateInstance(typeof(WaypointPathEditorData));
+        data.Init();
         serialData = new SerializedObject(data);
 
         selectedPathIndex = serialData.FindProperty("SelectedPathIndex");
@@ -59,7 +60,7 @@ public class CurrentStageEnemiesEditor : Editor
 
         if (GUILayout.Button("New enemy"))
         {
-            EnemyClass.Enemy newEnemy = new EnemyClass.Enemy();
+            Enemy newEnemy = new();
             if (stageEnemies.Enemies.Count > 0) newEnemy.SpawnTime = stageEnemies.Enemies[^1].SpawnTime;
             enemies.arraySize++;
             enemies.GetArrayElementAtIndex(enemies.arraySize - 1).managedReferenceValue = newEnemy;
@@ -68,7 +69,7 @@ public class CurrentStageEnemiesEditor : Editor
 
         for (int i = 0; i < enemies.arraySize; i++)
         {
-            enemy = (EnemyClass.Enemy)enemies.GetArrayElementAtIndex(i).managedReferenceValue;
+            enemy = (Enemy)enemies.GetArrayElementAtIndex(i).managedReferenceValue;
             serialEnemy = enemies.GetArrayElementAtIndex(i);
             spawnTime = serialEnemy.FindPropertyRelative("SpawnTime");
             string label = "(" + spawnTime.floatValue.ToString("0.00") + ") Enemy " + (i+1);
@@ -78,6 +79,7 @@ public class CurrentStageEnemiesEditor : Editor
                 if (foldedOut == i)
                 {
                     enemySprite = null;
+                    id = spawnPosition = path = spawnRepeats = fireable = null;
                     foldedOut = -1;
                 }
                 continue;
@@ -87,22 +89,24 @@ public class CurrentStageEnemiesEditor : Editor
                 for (int j = 0; j < foldouts.Count; j++) foldouts[j] = false;
                 foldouts[i] = true;
 
-                GameObject enemyPrefab = PrefabUtility.LoadPrefabContents("Prefabs/Enemies/" + enemyName.stringValue);
+                id = serialEnemy.FindPropertyRelative("ID");
+                enemyName = serialEnemy.FindPropertyRelative("Name");
+                spawnPosition = serialEnemy.FindPropertyRelative("SpawnPosition");
+                path = serialEnemy.FindPropertyRelative("Path");
+                spawnRepeats = serialEnemy.FindPropertyRelative("SpawnRepeats");
+                fireable = serialEnemy.FindPropertyRelative("Fireable");
+
+                GameObject enemyPrefab = PrefabUtility.LoadPrefabContents("Assets/Prefabs/Enemies/" + enemyName.stringValue + ".prefab");
                 //{
                     enemySpawnPosition = enemyPrefab.transform.position;
                     enemySprite = enemyPrefab.GetComponent<SpriteRenderer>().sprite;
                 //}
                 PrefabUtility.UnloadPrefabContents(enemyPrefab);
 
+
                 foldedOut = i;
             }
 
-            id = serialEnemy.FindPropertyRelative("ID");
-            enemyName = serialEnemy.FindPropertyRelative("Name");
-            spawnPosition = serialEnemy.FindPropertyRelative("SpawnPosition");
-            path = serialEnemy.FindPropertyRelative("Path");
-            spawnRepeats = serialEnemy.FindPropertyRelative("SpawnRepeats");
-            fireable = serialEnemy.FindPropertyRelative("Fireable");
 
             if (tempPath.arraySize > 1 && path.arraySize == 0)
             {
@@ -119,7 +123,7 @@ public class CurrentStageEnemiesEditor : Editor
 
             EditorGUI.BeginChangeCheck();
 
-            enemySpawnPosition = EditorGUILayout.Vector2Field("Start Position", enemySpawnPosition);
+            enemySpawnPosition = EditorGUILayout.Vector2Field("Spawn Position", enemySpawnPosition);
 
             data.SelectedOption.SelectPath(selectedPathIndex, pathTypeSelection, isInsert, tempPath, enemy.Path);
 
@@ -154,7 +158,7 @@ public class CurrentStageEnemiesEditor : Editor
         if (foldedOut == -1) return;
         EventType e = Event.current.type;
 
-        GUI.DrawTexture(new Rect(enemySpawnPosition, enemySprite.textureRect.size), enemySprite.texture);
+        GUI.DrawTexture(new Rect(enemySpawnPosition - enemySprite.rect.size/2, enemySprite.rect.size/100), enemySprite.texture);
         EditorGUI.BeginChangeCheck();
         Vector2 newSpawnPosition = Handles.PositionHandle(enemySpawnPosition, Quaternion.identity);
         if (EditorGUI.EndChangeCheck())
