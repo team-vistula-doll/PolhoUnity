@@ -2,6 +2,7 @@ using EnemyClass;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using WaypointPath;
 
 [CustomEditor(typeof(CurrentStageEnemies))]
@@ -22,6 +23,7 @@ public class CurrentStageEnemiesEditor : Editor
     SerializedProperty id, enemyName, spawnTime, spawnPosition, path, spawnRepeats, fireable;
     Enemy enemy;
     Vector2 enemySpawnPosition;
+    Vector2 enemyScale;
     Sprite enemySprite = null;
     List<bool> foldouts;
     int foldedOut = -1;
@@ -100,6 +102,7 @@ public class CurrentStageEnemiesEditor : Editor
                 //{
                     enemySpawnPosition = enemyPrefab.transform.position;
                     enemySprite = enemyPrefab.GetComponent<SpriteRenderer>().sprite;
+                    enemyScale = enemyPrefab.transform.localScale;
                 //}
                 PrefabUtility.UnloadPrefabContents(enemyPrefab);
 
@@ -158,7 +161,14 @@ public class CurrentStageEnemiesEditor : Editor
         if (foldedOut == -1) return;
         EventType e = Event.current.type;
 
-        GUI.DrawTexture(new Rect(enemySpawnPosition - enemySprite.rect.size/2, enemySprite.rect.size/100), enemySprite.texture);
+        Vector2 screenPosition = HandleUtility.WorldToGUIPoint(enemySpawnPosition);
+        Vector2 screenScale = enemySprite.rect.size / HandleUtility.GetHandleSize(enemySpawnPosition) * enemyScale;
+        Handles.BeginGUI();
+        GUI.DrawTexture(new Rect(
+            screenPosition - screenScale / 2, screenScale),
+            enemySprite.texture);
+        Handles.EndGUI();
+
         EditorGUI.BeginChangeCheck();
         Vector2 newSpawnPosition = Handles.PositionHandle(enemySpawnPosition, Quaternion.identity);
         if (EditorGUI.EndChangeCheck())

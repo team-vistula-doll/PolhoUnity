@@ -1623,16 +1623,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   definedEnemies:
   - Name: enemy1
-    Difficulty: 0
     Prefab: {fileID: 2092912531510788433, guid: 1b25910f37cc1754a8c6ee26e59a9802, type: 3}
   - Name: enemy2
-    Difficulty: 0
     Prefab: {fileID: 7829635670147028809, guid: c068a600d90f1944a96486e8d3d42071, type: 3}
   - Name: enemy3
-    Difficulty: 0
     Prefab: {fileID: 317357075254503586, guid: f5eeef1cccc085a418f6e0738626b30e, type: 3}
   - Name: boss
-    Difficulty: 0
     Prefab: {fileID: 545863818296485109, guid: d11ff07a24b1ffe4d976d56e8c4ae331, type: 3}
 --- !u!114 &966855639
 MonoBehaviour:
@@ -1695,7 +1691,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4716b63354d2ad94f9196b3e7f0c89c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemies: []
+  Enemies:
+  - rid: 7903597843476381713
+  references:
+    version: 2
+    RefIds:
+    - rid: 7903597843476381713
+      type: {class: Enemy, ns: EnemyClass, asm: Game}
+      data:
+        ID: 0
+        Name: Enemy
+        SpawnTime: 0
+        SpawnPosition: {x: 0, y: 0}
+        Path: []
 --- !u!1 &1022631778
 GameObject:
   m_ObjectHideFlags: 0

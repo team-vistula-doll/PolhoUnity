@@ -31,8 +31,8 @@ Transform:
   m_GameObject: {fileID: 2092912531510788433}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 2, y: 2, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5984705698576210585}
   m_Father: {fileID: 0}
@@ -262,6 +262,7 @@ MonoBehaviour:
         PathFormula: x
         Length: 1.99
         Angle: -17.2
+        testVector: {x: 1, y: 1}
     - rid: 3803625656537055337
       type: {class: WaypointPathExpression, ns: WaypointPath, asm: Game}
       data:
@@ -270,6 +271,7 @@ MonoBehaviour:
         PathFormula: x
         Length: 1.99
         Angle: -42.5
+        testVector: {x: 1, y: 1}
 --- !u!1 &2092912531923440514
 GameObject:
   m_ObjectHideFlags: 0
