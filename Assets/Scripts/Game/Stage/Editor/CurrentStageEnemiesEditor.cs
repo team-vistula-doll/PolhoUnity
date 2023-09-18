@@ -22,11 +22,13 @@ public class CurrentStageEnemiesEditor : Editor
     SerializedProperty serialEnemy;
     SerializedProperty id, enemyName, spawnTime, spawnPosition, path, spawnRepeats, fireable;
     Enemy enemy;
+    [SerializeField]
     Vector2 enemySpawnPosition;
     Vector2 enemyScale;
     Sprite enemySprite = null;
     List<bool> foldouts;
     int foldedOut = -1;
+    bool wasTextureMoved = false;
 
     private void OnEnable()
     {
@@ -106,10 +108,26 @@ public class CurrentStageEnemiesEditor : Editor
                 //}
                 PrefabUtility.UnloadPrefabContents(enemyPrefab);
 
+                if (data.TempPath != null && data.TempPath.Count != 0)
+                {
+                    int insert = data.IsInsert ? 2 : 1;
+                    if (data.TempPath.Count > enemy.Path.Count + insert)
+                        data.TempPath.RemoveRange(enemy.Path.Count, data.TempPath.Count - (enemy.Path.Count + insert));
+                }
+                else
+                {
+                    if (enemy.Path == null || enemy.Path.Count == 0)
+                        data.TempPath = new() { new WaypointPathExpression() };
+                    else if (enemy.Path != null && enemy.Path.Count != 0)
+                    {
+                        foreach (var creator in enemy.Path)
+                            data.TempPath.Add(creator.GetNewAdjoinedPath(0));
+                        data.TempPath.Add(enemy.Path[^1].GetNewAdjoinedPath(1));
+                    }
+                }
 
                 foldedOut = i;
             }
-
 
             if (tempPath.arraySize > 1 && path.arraySize == 0)
             {
@@ -121,6 +139,17 @@ public class CurrentStageEnemiesEditor : Editor
                 WaypointPathCreator newExpression = new WaypointPathExpression();
                 tempPath.GetArrayElementAtIndex(0).managedReferenceValue = newExpression;
                 data.SelectedOption.SetPathCreator(newExpression);
+            }
+
+            if (wasTextureMoved)
+            {
+                data.SelectedOption.StartPosition = enemySpawnPosition;
+                data.SelectedOption.ConnectPaths(path, 0);
+                serializedObject.UpdateIfRequiredOrScript();
+                data.SelectedOption.ConnectPaths(tempPath, 0);
+                data.SelectedOption.SetPathCreator(
+                    (WaypointPathCreator)tempPath.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue);
+                wasTextureMoved = false;
             }
             data.SelectedOption.ConnectPaths(tempPath, 0);
 
@@ -175,12 +204,8 @@ public class CurrentStageEnemiesEditor : Editor
         {
             Undo.RecordObject(this, "Moved enemy");
             enemySpawnPosition = newSpawnPosition;
-            data.SelectedOption.StartPosition = enemySpawnPosition;
-            data.SelectedOption.ConnectPaths(path, 0);
-            serializedObject.UpdateIfRequiredOrScript();
-            data.SelectedOption.ConnectPaths(tempPath, 0);
-            data.SelectedOption.SetPathCreator(
-                (WaypointPathCreator)tempPath.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue);
+            wasTextureMoved = true;
+            Repaint();
         }
 
         //PathEditor.DrawPath(false, e);

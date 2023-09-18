@@ -12,10 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d751a49c23cbf74a8a6fa0f897a07fa, type: 3}
   m_Name: CurrentStageEnemiesEditorData
   m_EditorClassIdentifier: 
+  ID: 0
   SelectedPathIndex: 0
-  TempPath: []
+  TempPath:
+  - rid: 7903597870018723842
   IsInsert: 0
   PathTypeSelection: 0
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 7903597870018723842
+      type: {class: WaypointPathExpression, ns: WaypointPath, asm: Game}
+      data:
+        StartPosition: {x: 2.902615, y: -0.21769613}
+        StepSize: 0.5
+        PathFormula: x
+        Length: 20
+        Angle: 0
+        testVector: {x: 1, y: 1}
