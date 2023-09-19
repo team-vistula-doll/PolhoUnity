@@ -2,7 +2,6 @@ using EnemyClass;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using WaypointPath;
 
 [CustomEditor(typeof(CurrentStageEnemies))]
@@ -21,7 +20,7 @@ public class CurrentStageEnemiesEditor : Editor
     //int selectedEnemyIndex = 0;
     SerializedProperty serialEnemy;
     SerializedProperty id, enemyName, spawnTime, spawnPosition, path, spawnRepeats, fireable;
-    Enemy enemy;
+    Enemy enemy, selectedEnemy = null;
     [SerializeField]
     Vector2 enemySpawnPosition;
     Vector2 enemyScale;
@@ -29,6 +28,7 @@ public class CurrentStageEnemiesEditor : Editor
     List<bool> foldouts;
     int foldedOut = -1;
     bool wasTextureMoved = false;
+    int idIncrement = 0;
 
     private void OnEnable()
     {
@@ -47,11 +47,23 @@ public class CurrentStageEnemiesEditor : Editor
         pathTypeSelection = serialData.FindProperty("PathTypeSelection");
         tempPath = serialData.FindProperty("TempPath");
     }
+    private void UndoRedo()
+    {
+        if (data.SelectedOption.GetPathCreator() != data.TempPath[data.SelectedPathIndex])
+        {
+            data.PathTypeSelection = WaypointPathEditorData.GetSelectedOption(data.TempPath[data.SelectedPathIndex]);
+            data.SelectedOption.SetPathCreator(data.TempPath[data.SelectedPathIndex]);
+            //serialData.Update();
+        }
+        else data.SelectedOption.ApplyPathOptions();
+        data.SelectedOption.ConnectPaths(data.TempPath, 0);
+    }
 
     private void OnDisable()
     {
         if (!AssetDatabase.Contains(data)) AssetDatabase.CreateAsset(data, assetPath);
         AssetDatabase.SaveAssets();
+        Undo.undoRedoPerformed -= UndoRedo;
     }
 
     public override void OnInspectorGUI()
@@ -74,9 +86,7 @@ public class CurrentStageEnemiesEditor : Editor
         for (int i = 0; i < enemies.arraySize; i++)
         {
             enemy = (Enemy)enemies.GetArrayElementAtIndex(i).managedReferenceValue;
-            serialEnemy = enemies.GetArrayElementAtIndex(i);
-            spawnTime = serialEnemy.FindPropertyRelative("SpawnTime");
-            string label = "(" + spawnTime.floatValue.ToString("0.00") + ") Enemy " + (i+1);
+            string label = "(" + enemy.SpawnTime.ToString("0.00") + ") Enemy " + (i+1);
             foldouts[i] = EditorGUILayout.Foldout(foldouts[i], label);
             if (!foldouts[i])
             {
@@ -84,6 +94,7 @@ public class CurrentStageEnemiesEditor : Editor
                 {
                     enemySprite = null;
                     id = spawnPosition = path = spawnRepeats = fireable = null;
+                    selectedEnemy = null;
                     foldedOut = -1;
                 }
                 continue;
@@ -92,9 +103,14 @@ public class CurrentStageEnemiesEditor : Editor
             {
                 for (int j = 0; j < foldouts.Count; j++) foldouts[j] = false;
                 foldouts[i] = true;
+                selectedEnemy = enemy;
+                selectedEnemy.ID = idIncrement++;
+                foreach (var option in WaypointPathEditorData.Options) option.StartPosition = selectedEnemy.SpawnPosition;
 
+                serialEnemy = enemies.GetArrayElementAtIndex(i);
                 id = serialEnemy.FindPropertyRelative("ID");
                 enemyName = serialEnemy.FindPropertyRelative("Name");
+                spawnTime = serialEnemy.FindPropertyRelative("SpawnTime");
                 spawnPosition = serialEnemy.FindPropertyRelative("SpawnPosition");
                 path = serialEnemy.FindPropertyRelative("Path");
                 spawnRepeats = serialEnemy.FindPropertyRelative("SpawnRepeats");
@@ -108,23 +124,35 @@ public class CurrentStageEnemiesEditor : Editor
                 //}
                 PrefabUtility.UnloadPrefabContents(enemyPrefab);
 
+                int newId = selectedEnemy.ID;
+                if (data.ID != newId)
+                {
+                    PathEditor.StartDeleteIndex = PathEditor.EndDeleteIndex = data.SelectedPathIndex = 0;
+                    data.TempPath.Clear();
+                    data.ID = newId;
+                }
+
                 if (data.TempPath != null && data.TempPath.Count != 0)
                 {
                     int insert = data.IsInsert ? 2 : 1;
-                    if (data.TempPath.Count > enemy.Path.Count + insert)
-                        data.TempPath.RemoveRange(enemy.Path.Count, data.TempPath.Count - (enemy.Path.Count + insert));
+                    if (data.TempPath.Count > selectedEnemy.Path.Count + insert)
+                        data.TempPath.RemoveRange(selectedEnemy.Path.Count, data.TempPath.Count - (selectedEnemy.Path.Count + insert));
                 }
                 else
                 {
-                    if (enemy.Path == null || enemy.Path.Count == 0)
+                    if (selectedEnemy.Path == null || selectedEnemy.Path.Count == 0)
                         data.TempPath = new() { new WaypointPathExpression() };
-                    else if (enemy.Path != null && enemy.Path.Count != 0)
+                    else if (selectedEnemy.Path != null && selectedEnemy.Path.Count != 0)
                     {
-                        foreach (var creator in enemy.Path)
+                        foreach (var creator in selectedEnemy.Path)
                             data.TempPath.Add(creator.GetNewAdjoinedPath(0));
-                        data.TempPath.Add(enemy.Path[^1].GetNewAdjoinedPath(1));
+                        data.TempPath.Add(selectedEnemy.Path[^1].GetNewAdjoinedPath(1));
                     }
                 }
+
+                data.PathTypeSelection = WaypointPathEditorData.GetSelectedOption(data.TempPath[data.SelectedPathIndex]);
+                data.SelectedOption.SetPathCreator(data.TempPath[data.SelectedPathIndex]);
+                Undo.undoRedoPerformed -= UndoRedo; Undo.undoRedoPerformed += UndoRedo;
 
                 foldedOut = i;
             }
@@ -143,7 +171,7 @@ public class CurrentStageEnemiesEditor : Editor
 
             if (wasTextureMoved)
             {
-                data.SelectedOption.StartPosition = enemySpawnPosition;
+                data.SelectedOption.StartPosition = selectedEnemy.SpawnPosition;
                 data.SelectedOption.ConnectPaths(path, 0);
                 serializedObject.UpdateIfRequiredOrScript();
                 data.SelectedOption.ConnectPaths(tempPath, 0);
@@ -153,11 +181,9 @@ public class CurrentStageEnemiesEditor : Editor
             }
             data.SelectedOption.ConnectPaths(tempPath, 0);
 
-            EditorGUI.BeginChangeCheck();
-
             enemySpawnPosition = EditorGUILayout.Vector2Field("Spawn Position", enemySpawnPosition);
 
-            data.SelectedOption.SelectPath(selectedPathIndex, pathTypeSelection, isInsert, tempPath, enemy.Path);
+            data.SelectedOption.SelectPath(selectedPathIndex, pathTypeSelection, isInsert, tempPath, selectedEnemy.Path);
 
             selectedPathIndex.intValue -= data.SelectedOption.DeletePath(path, tempPath);
             if (selectedPathIndex.intValue < 0) selectedPathIndex.intValue = 0;
@@ -174,10 +200,6 @@ public class CurrentStageEnemiesEditor : Editor
                 WaypointPathEditorData.Options[pathTypeSelection.intValue].SetPathCreator(
                     (WaypointPathCreator)tempPath.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue);
             }
-            if (EditorGUI.EndChangeCheck())
-            {
-                enemies.GetArrayElementAtIndex(i).managedReferenceValue = serialEnemy;
-            }
         }
 
         serialData.ApplyModifiedProperties();
@@ -187,7 +209,7 @@ public class CurrentStageEnemiesEditor : Editor
 
     public void OnSceneGUI()
     {
-        if (foldedOut == -1) return;
+        if (foldedOut == -1 || selectedEnemy == null) return;
         EventType e = Event.current.type;
 
         Vector2 screenPosition = HandleUtility.WorldToGUIPoint(enemySpawnPosition);
@@ -203,10 +225,14 @@ public class CurrentStageEnemiesEditor : Editor
         if (EditorGUI.EndChangeCheck())
         {
             Undo.RecordObject(this, "Moved enemy");
-            enemySpawnPosition = newSpawnPosition;
+            selectedEnemy.SpawnPosition = enemySpawnPosition = newSpawnPosition;
             wasTextureMoved = true;
-            Repaint();
+            //Repaint();
         }
+
+        data.SelectedOption.DrawPath(selectedEnemy.Path, 0, e, false);
+        data.SelectedOption.DrawPath(data.TempPath, selectedPathIndex.intValue, e, true);
+        Repaint();
 
         //PathEditor.DrawPath(false, e);
     }

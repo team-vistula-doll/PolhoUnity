@@ -13,10 +13,7 @@ MonoBehaviour:
   m_Name: BezierEditor
   m_EditorClassIdentifier: 
   stepSize: 0.5
-  startDeleteIndex: 0
-  endDeleteIndex: 0
-  startPosition: {x: 3.0427105, y: 1.1497446}
-  objectTransform: {fileID: 0}
-  endPosition: {x: -1.8872893, y: 2.03}
-  startControl: {x: 8.65, y: -3.32}
-  endControl: {x: -15.53, y: 1.1497446}
+  StartPosition: {x: 0, y: 0}
+  endPosition: {x: 0, y: 0}
+  startControl: {x: 0, y: 0}
+  endControl: {x: 0, y: 0}

@@ -11,8 +11,7 @@ namespace WaypointPath
         protected float stepSize;
         public static int StartDeleteIndex = 0, EndDeleteIndex = 0;
         [SerializeField, SerializeReference]
-        public Vector2 StartPosition;
-        //private bool tempAddedOnEnd = true;
+        public Vector2 StartPosition = Vector2.zero;
 
         protected virtual void OnEnable()
         { }

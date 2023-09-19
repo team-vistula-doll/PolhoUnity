@@ -15,18 +15,17 @@ MonoBehaviour:
   ID: 0
   SelectedPathIndex: 0
   TempPath:
-  - rid: 7903597870018723842
+  - rid: 7903597887680413716
   IsInsert: 0
   PathTypeSelection: 0
   references:
     version: 2
     RefIds:
-    - rid: 7903597870018723842
+    - rid: 7903597887680413716
       type: {class: WaypointPathExpression, ns: WaypointPath, asm: Game}
       data:
-        StartPosition: {x: 2.902615, y: -0.21769613}
+        StartPosition: {x: 0, y: 0}
         StepSize: 0.5
         PathFormula: x
         Length: 20
         Angle: 0
-        testVector: {x: 1, y: 1}
