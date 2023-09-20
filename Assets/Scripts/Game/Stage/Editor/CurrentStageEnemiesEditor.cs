@@ -56,7 +56,7 @@ public class CurrentStageEnemiesEditor : Editor
             //serialData.Update();
         }
         else data.SelectedOption.ApplyPathOptions();
-        data.SelectedOption.ConnectPaths(data.TempPath, 0);
+        PathEditor.ConnectPaths(data.TempPath, 0);
     }
 
     private void OnDisable()
@@ -172,14 +172,14 @@ public class CurrentStageEnemiesEditor : Editor
             if (wasTextureMoved)
             {
                 data.SelectedOption.StartPosition = selectedEnemy.SpawnPosition;
-                data.SelectedOption.ConnectPaths(path, 0);
+                PathEditor.ConnectPaths(path, 0);
                 serializedObject.UpdateIfRequiredOrScript();
-                data.SelectedOption.ConnectPaths(tempPath, 0);
+                PathEditor.ConnectPaths(tempPath, 0);
                 data.SelectedOption.SetPathCreator(
                     (WaypointPathCreator)tempPath.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue);
                 wasTextureMoved = false;
             }
-            data.SelectedOption.ConnectPaths(tempPath, 0);
+            PathEditor.ConnectPaths(tempPath, 0);
 
             enemySpawnPosition = EditorGUILayout.Vector2Field("Spawn Position", enemySpawnPosition);
 
@@ -191,7 +191,7 @@ public class CurrentStageEnemiesEditor : Editor
             EditorGUILayout.Space();
             PathEditor.PathTypes(pathTypeSelection, selectedPathIndex, tempPath);
 
-            if (data.SelectedOption.PathOptions()) data.SelectedOption.ConnectPaths(data.TempPath, selectedPathIndex.intValue);
+            if (data.SelectedOption.PathOptions()) PathEditor.ConnectPaths(data.TempPath, selectedPathIndex.intValue);
 
             if (data.SelectedOption.SetPath(path, isInsert, selectedPathIndex, tempPath))
             {

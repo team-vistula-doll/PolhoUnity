@@ -12,42 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d751a49c23cbf74a8a6fa0f897a07fa, type: 3}
   m_Name: WaypointPathEditorData
   m_EditorClassIdentifier: 
-  SelectedPathIndex: 1
+  ID: 0
+  SelectedPathIndex: 0
   TempPath:
-  - rid: 5109282134582099975
-  - rid: 5109282134582099976
-  - rid: 5109282134582099974
+  - rid: 7903597911487021129
   IsInsert: 0
-  PathTypeSelection: 1
+  PathTypeSelection: 0
   references:
     version: 2
     RefIds:
-    - rid: 5109282134582099974
-      type: {class: WaypointPathExpression, ns: WaypointPath, asm: Game}
-      data:
-        StartPosition: {x: -1.8872893, y: 1.1497446}
-        StepSize: 0.5
-        Test: 0
-        PathFormula: x
-        Length: 2.3
-        Angle: -54
-        testVector: {x: 1, y: 1}
-    - rid: 5109282134582099975
+    - rid: 7903597911487021129
       type: {class: WaypointPathExpression, ns: WaypointPath, asm: Game}
       data:
         StartPosition: {x: 0, y: 0}
         StepSize: 0.5
-        Test: 0
         PathFormula: x
-        Length: 2.3
-        Angle: -24.3
-        testVector: {x: 1, y: 1}
-    - rid: 5109282134582099976
-      type: {class: WaypointPathBezier, ns: WaypointPath, asm: Game}
-      data:
-        StartPosition: {x: 3.0427105, y: 1.1497446}
-        StepSize: 0.5
-        Test: 0
-        EndPosition: {x: -1.8872893, y: 1.1497446}
-        StartControl: {x: 3.0427105, y: 1.1497446}
-        EndControl: {x: 3.0427105, y: 1.1497446}
+        Length: 20
+        Angle: 0

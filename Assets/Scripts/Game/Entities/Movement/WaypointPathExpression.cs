@@ -33,7 +33,7 @@ namespace WaypointPath
 
         public override WaypointPathCreator GetNewAdjoinedPath(float percent)
         {
-            Vector2 start = (Vector2)GetPointVector(percent * Length);
+            Vector2 start = (Vector2)GetPointVector(percent * Length, Angle);
             WaypointPathExpression value = new(start, PathFormula, Length, Angle);
             return value;
         }

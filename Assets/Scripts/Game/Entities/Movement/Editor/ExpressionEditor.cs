@@ -41,7 +41,7 @@ namespace WaypointPath
 
             EditorGUI.BeginChangeCheck();
             pathFormula = EditorGUILayout.TextField("Path Formula", pathFormula);
-            length = EditorGUILayout.FloatField("Length", length); if (length < 0f) length = 0f;
+            length = EditorGUILayout.FloatField("Length (x)", length); if (length < 0f) length = 0f;
             angle = EditorGUILayout.FloatField("Angle", angle);
             base.PathOptions();
 

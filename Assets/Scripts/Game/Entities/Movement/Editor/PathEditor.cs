@@ -23,7 +23,7 @@ namespace WaypointPath
             StartPosition = pathCreator.StartPosition;
         }
 
-        public void ConnectPaths(SerializedProperty pathData, int startIndex)
+        public static void ConnectPaths(SerializedProperty pathData, int startIndex)
         {
             List<WaypointPathCreator> path = new();
             for (int i = 0; i < pathData.arraySize; i++)
@@ -34,7 +34,7 @@ namespace WaypointPath
                 pathData.GetArrayElementAtIndex(i).managedReferenceValue = path[i];
         }
 
-        public void ConnectPaths(List<WaypointPathCreator> path, int startIndex)
+        public static void ConnectPaths(List<WaypointPathCreator> path, int startIndex)
         {
             if (path.Count == 0) return;
             //if (startIndex == 0)
@@ -45,9 +45,10 @@ namespace WaypointPath
             //    path[startIndex].ModifyPath((Vector2)vector2, (x, y) => x + y);
             //    startIndex++;
             //}
+            if (startIndex <= 0) startIndex = 1;
             for (; startIndex < path.Count; startIndex++)
             {
-                Vector2? vector2 = startIndex == 0 ? StartPosition : path[startIndex - 1].GetVectorAt(1);
+                Vector2? vector2 = path[startIndex - 1].GetVectorAt(1);
                 if (vector2 == null) return;
                 vector2 -= path[startIndex].StartPosition;
                 path[startIndex].ModifyPath((Vector2)vector2, (x, y) => x + y);
@@ -208,7 +209,7 @@ namespace WaypointPath
                     result = true;
                     serialTempPath.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue =
                         WaypointPathEditorData.Options[pathTypeSelection.intValue].GetPathCreator().GetNewAdjoinedPath(0);
-                    WaypointPathEditorData.Options[pathTypeSelection.intValue].ConnectPaths(serialTempPath, selectedPathIndex.intValue);
+                    PathEditor.ConnectPaths(serialTempPath, selectedPathIndex.intValue);
                     WaypointPathEditorData.Options[pathTypeSelection.intValue].SetPathCreator(
                         (WaypointPathCreator)serialTempPath.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue);
                 }

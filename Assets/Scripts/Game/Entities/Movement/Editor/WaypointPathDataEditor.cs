@@ -73,7 +73,7 @@ public class WaypointPathDataEditor : Editor
             //serialData.Update();
         }
         else data.SelectedOption.ApplyPathOptions();
-        data.SelectedOption.ConnectPaths(data.TempPath, 0);
+        PathEditor.ConnectPaths(data.TempPath, 0);
     }
 
     private void OnDisable()
@@ -102,15 +102,15 @@ public class WaypointPathDataEditor : Editor
 
         if (pathData.transform.hasChanged)
         {
-            data.SelectedOption.StartPosition = pathData.transform.position;
-            data.SelectedOption.ConnectPaths(pathData.Path, 0);
+            //data.SelectedOption.StartPosition = pathData.transform.position;
+            PathEditor.ConnectPaths(pathData.Path, 0);
             serializedObject.UpdateIfRequiredOrScript();
-            data.SelectedOption.ConnectPaths(tempPath, 0);
+            PathEditor.ConnectPaths(tempPath, 0);
             data.SelectedOption.SetPathCreator(
                 (WaypointPathCreator)tempPath.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue);
             pathData.transform.hasChanged = false;
         }
-        data.SelectedOption.ConnectPaths(tempPath, 0);
+        PathEditor.ConnectPaths(tempPath, 0);
 
         data.SelectedOption.SelectPath(selectedPathIndex, pathTypeSelection, isInsert, tempPath, pathData.Path);
 
@@ -120,7 +120,7 @@ public class WaypointPathDataEditor : Editor
         EditorGUILayout.Space();
         PathEditor.PathTypes(pathTypeSelection, selectedPathIndex, tempPath);
 
-        if (data.SelectedOption.PathOptions()) data.SelectedOption.ConnectPaths(data.TempPath, selectedPathIndex.intValue);
+        if (data.SelectedOption.PathOptions()) PathEditor.ConnectPaths(data.TempPath, selectedPathIndex.intValue);
 
         if (data.SelectedOption.SetPath(path, isInsert, selectedPathIndex, tempPath))
         {
