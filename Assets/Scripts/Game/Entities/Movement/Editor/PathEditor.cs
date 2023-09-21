@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -10,7 +9,6 @@ namespace WaypointPath
         [SerializeField]
         protected float stepSize;
         public static int StartDeleteIndex = 0, EndDeleteIndex = 0;
-        [SerializeField, SerializeReference]
         public Vector2 StartPosition = Vector2.zero;
 
         protected virtual void OnEnable()

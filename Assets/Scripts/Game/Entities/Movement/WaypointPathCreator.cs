@@ -4,8 +4,8 @@ using UnityEngine;
 
 namespace WaypointPath
 {
-    [System.Serializable]
-    public abstract class WaypointPathCreator : object
+    [Serializable]
+    public abstract class WaypointPathCreator
     //Given starting position and an implemented path creator,
     //will generate List of waypoints
     {

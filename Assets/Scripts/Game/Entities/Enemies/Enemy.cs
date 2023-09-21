@@ -13,7 +13,7 @@ namespace EnemyClass
         public string Name = "Enemy";
         public float SpawnTime = 0f;
         public Vector2 SpawnPosition = Vector2.zero;
-        [SerializeReference]
+        [SerializeReference, NonReorderable]
         public List<WaypointPathCreator> Path = new();
         [SerializeReference]
         public List<(float delay, int amount)> SpawnRepeats; //delay between spawns, amount of spawns; Optional

@@ -157,7 +157,7 @@ public class CurrentStageEnemiesEditor : Editor
                 foldedOut = i;
             }
 
-            if (tempPath.arraySize > 1 && path.arraySize == 0)
+            if (tempPath.arraySize > 1 && selectedEnemy.Path.Count == 0)
             {
                 data.PathTypeSelection = 0;
                 serialData.Update();
@@ -172,7 +172,7 @@ public class CurrentStageEnemiesEditor : Editor
             if (wasTextureMoved)
             {
                 data.SelectedOption.StartPosition = selectedEnemy.SpawnPosition;
-                PathEditor.ConnectPaths(path, 0);
+                PathEditor.ConnectPaths(selectedEnemy.Path, 0);
                 serializedObject.UpdateIfRequiredOrScript();
                 PathEditor.ConnectPaths(tempPath, 0);
                 data.SelectedOption.SetPathCreator(
