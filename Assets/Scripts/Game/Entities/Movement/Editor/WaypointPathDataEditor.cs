@@ -128,6 +128,7 @@ public class WaypointPathDataEditor : Editor
                     (WaypointPathCreator)tempPath.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue);
             WaypointPathEditorData.Options[pathTypeSelection.intValue].SetPathCreator(
                 (WaypointPathCreator)tempPath.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue);
+            EditorUtility.SetDirty(pathData);
         }
 
         EditorGUILayout.Space();

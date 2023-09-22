@@ -10,6 +10,7 @@ namespace EnemyClass
     public class Enemy
     {
         public int ID;
+        public string PrefabName = "Enemy";
         public string Name = "Enemy";
         public float SpawnTime = 0f;
         public Vector2 SpawnPosition = Vector2.zero;
