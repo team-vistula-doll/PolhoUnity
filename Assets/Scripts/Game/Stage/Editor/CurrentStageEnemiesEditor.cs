@@ -19,11 +19,17 @@ public class CurrentStageEnemiesEditor : Editor
 
     //int selectedEnemyIndex = 0;
     SerializedProperty serialEnemy;
-    SerializedProperty id, prefab, enemyName, spawnTime, spawnPosition, path, spawnRepeats, fireable;
+    SerializedProperty id, enemyName, spawnTime, spawnPosition, path, spawnRepeats, fireable;
     Enemy enemy, selectedEnemy = null;
     [SerializeField]
     Vector2 enemySpawnPosition;
+    [SerializeField]
+    GameObject enemyPrefab;
+    [SerializeField]
+    bool isIncorrectPrefab = false;
+    [SerializeField]
     Vector2 enemyScale;
+    [SerializeField]
     Sprite enemySprite = null;
     List<bool> foldouts;
     int foldedOut = -1;
@@ -109,7 +115,6 @@ public class CurrentStageEnemiesEditor : Editor
 
                 serialEnemy = enemies.GetArrayElementAtIndex(i);
                 id = serialEnemy.FindPropertyRelative("ID");
-                prefab = serialEnemy.FindPropertyRelative("PrefabName");
                 enemyName = serialEnemy.FindPropertyRelative("Name");
                 spawnTime = serialEnemy.FindPropertyRelative("SpawnTime");
                 spawnPosition = serialEnemy.FindPropertyRelative("SpawnPosition");
@@ -117,13 +122,15 @@ public class CurrentStageEnemiesEditor : Editor
                 spawnRepeats = serialEnemy.FindPropertyRelative("SpawnRepeats");
                 fireable = serialEnemy.FindPropertyRelative("Fireable");
 
-                GameObject enemyPrefab = PrefabUtility.LoadPrefabContents("Assets/Prefabs/Enemies/" + enemyName.stringValue + ".prefab");
-                //{
+                if (enemyPrefab == null && foldedOut != i)
+                {
+                    //if (enemyPrefab != null) DestroyImmediate(enemyPrefab);
+                    enemyPrefab = (GameObject)AssetDatabase.LoadAssetAtPath(
+                        "Assets/Prefabs/Enemies/" + selectedEnemy.PrefabName + ".prefab", typeof(GameObject));
                     enemySpawnPosition = enemyPrefab.transform.position;
                     enemySprite = enemyPrefab.GetComponent<SpriteRenderer>().sprite;
                     enemyScale = enemyPrefab.transform.localScale;
-                //}
-                PrefabUtility.UnloadPrefabContents(enemyPrefab);
+                }
 
                 int newId = selectedEnemy.ID;
                 if (data.ID != newId)
@@ -182,7 +189,25 @@ public class CurrentStageEnemiesEditor : Editor
             }
             PathEditor.ConnectPaths(tempPath, 0);
 
-            //obj = EditorGUILayout.ObjectField("Prefab", obj, typeof(GameObject), false);
+            string objectPath = "Assets/Prefabs/Enemies/Enemy.prefab";
+            EditorGUI.BeginChangeCheck();
+            GameObject obj = (GameObject)EditorGUILayout.ObjectField("Prefab", enemyPrefab, typeof(GameObject), false);
+            if (EditorGUI.EndChangeCheck()) 
+            {
+                Undo.RecordObject(this, "Change prefab");
+                enemyPrefab = obj;
+                objectPath = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(obj);
+                isIncorrectPrefab = objectPath.IndexOf("Assets/Prefabs/Enemies/") != 0;
+                if (!isIncorrectPrefab)
+                {
+                    enemySpawnPosition = enemyPrefab.transform.position;
+                    enemySprite = enemyPrefab.GetComponent<SpriteRenderer>().sprite;
+                    enemyScale = enemyPrefab.transform.localScale;
+                }
+            }
+            if (isIncorrectPrefab)
+                EditorGUILayout.HelpBox("The provided object isn't in the enemies folder!", MessageType.Warning);
+
             EditorGUILayout.PropertyField(enemyName);
             enemySpawnPosition = EditorGUILayout.Vector2Field("Spawn Position", enemySpawnPosition);
 
