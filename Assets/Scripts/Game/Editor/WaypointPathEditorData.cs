@@ -47,5 +47,11 @@ namespace WaypointPath
         public static PathType GetSelectedOption(WaypointPathCreator creator)
             => (PathType)Options.FindIndex(option => option.GetPathCreator().GetType() == creator.GetType());
     }
+
+    public class CurrentStageEnemiesEditorData : WaypointPathEditorData
+    {
+        public List<bool> Foldouts = new();
+        public int FoldedOut = -1;
+    }
 }
-#endif
+#endif //UNITY_EDITOR
