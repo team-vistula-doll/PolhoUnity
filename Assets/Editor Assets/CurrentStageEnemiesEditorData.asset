@@ -9,16 +9,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 66801b3d444b94141b136e405f454614, type: 3}
   m_Name: CurrentStageEnemiesEditorData
-  m_EditorClassIdentifier: Game:WaypointPath:CurrentStageEnemiesEditorData
+  m_EditorClassIdentifier: 
   ID: 0
   SelectedPathIndex: 0
   TempPath: []
   IsInsert: 0
   PathTypeSelection: 0
+  EnemyPrefab: {fileID: 2092912531510788433, guid: 1b25910f37cc1754a8c6ee26e59a9802, type: 3}
   Foldouts: 01
   FoldedOut: 0
+  EnemySpawnPosition: {x: 0, y: 0}
+  EnemyScale: {x: 2, y: 2}
+  EnemySprite: {fileID: 21300000, guid: 95987d6b402edb9439e008181342cff7, type: 3}
   references:
     version: 2
     RefIds: []

@@ -1,4 +1,5 @@
 using EnemyClass;
+using System;
 using UnityEditor;
 using UnityEngine;
 using WaypointPath;
@@ -11,26 +12,24 @@ public class CurrentStageEnemiesEditor : Editor
     SerializedProperty enemies;
 
     CurrentStageEnemiesEditorData data;
-
     SerializedObject serialData;
     SerializedProperty selectedPathIndex, isInsert, pathTypeSelection, tempPath;
     const string assetPath = "Assets/Editor Assets/CurrentStageEnemiesEditorData.asset";
 
     //int selectedEnemyIndex = 0;
-    SerializedProperty serialEnemy;
     SerializedProperty id, prefabName, enemyName, spawnTime, spawnPosition, path, spawnRepeats, fireable;
-    SerializedProperty foldouts, foldedOut;
+    SerializedProperty enemyPrefab, enemySpawnPosition, enemyScale, enemySprite, foldouts, foldedOut;
     Enemy enemy, selectedEnemy = null;
     [SerializeField]
-    Vector2 enemySpawnPosition;
-    [SerializeField]
-    GameObject enemyPrefab;
-    [SerializeField]
     bool isIncorrectPrefab = false;
-    [SerializeField]
-    Vector2 enemyScale;
-    [SerializeField]
-    Sprite enemySprite = null;
+    //[SerializeField]
+    //GameObject enemyPrefab;
+    //[SerializeField]
+    //Vector2 enemySpawnPosition;
+    //[SerializeField]
+    //Vector2 enemyScale;
+    //[SerializeField]
+    //Sprite enemySprite = null;
     //List<bool> foldouts;
     //int foldedOut = -1;
     bool wasTextureMoved = false;
@@ -53,8 +52,18 @@ public class CurrentStageEnemiesEditor : Editor
         pathTypeSelection = serialData.FindProperty("PathTypeSelection");
         tempPath = serialData.FindProperty("TempPath");
 
+        enemyPrefab = serialData.FindProperty("EnemyPrefab");
+        enemySpawnPosition = serialData.FindProperty("EnemySpawnPosition");
+        enemyScale = serialData.FindProperty("EnemyScale");
+        enemySprite = serialData.FindProperty("EnemySprite");
         foldouts = serialData.FindProperty("Foldouts");
         foldedOut = serialData.FindProperty("FoldedOut");
+
+        if (data.FoldedOut != -1)
+        {
+            enemy = (Enemy)enemies.GetArrayElementAtIndex(data.FoldedOut).managedReferenceValue;
+            PaintFoldout(data.FoldedOut);
+        }
     }
     private void UndoRedo()
     {
@@ -111,61 +120,7 @@ public class CurrentStageEnemiesEditor : Editor
             }
             else if (foldedOut.intValue != i)
             {
-                for (int j = 0; j < foldouts.arraySize; j++) foldouts.GetArrayElementAtIndex(j).boolValue = false;
-                foldouts.GetArrayElementAtIndex(i).boolValue = true;
-                selectedEnemy = enemy;
-                selectedEnemy.ID = idIncrement++;
-                foreach (var option in CurrentStageEnemiesEditorData.Options) option.StartPosition = selectedEnemy.SpawnPosition;
-
-                serialEnemy = enemies.GetArrayElementAtIndex(i);
-                id = serialEnemy.FindPropertyRelative("ID");
-                prefabName = serialEnemy.FindPropertyRelative("PrefabName");
-                enemyName = serialEnemy.FindPropertyRelative("Name");
-                spawnTime = serialEnemy.FindPropertyRelative("SpawnTime");
-                spawnPosition = serialEnemy.FindPropertyRelative("SpawnPosition");
-                path = serialEnemy.FindPropertyRelative("Path");
-                spawnRepeats = serialEnemy.FindPropertyRelative("SpawnRepeats");
-                fireable = serialEnemy.FindPropertyRelative("Fireable");
-
-                if (enemyPrefab == null && foldedOut.intValue != i)
-                {
-                    //if (enemyPrefab != null) DestroyImmediate(enemyPrefab);
-                    enemyPrefab = (GameObject)AssetDatabase.LoadAssetAtPath(
-                        "Assets/Prefabs/Enemies/" + selectedEnemy.PrefabName + ".prefab", typeof(GameObject));
-                    enemySpawnPosition = enemyPrefab.transform.position;
-                    enemySprite = enemyPrefab.GetComponent<SpriteRenderer>().sprite;
-                    enemyScale = enemyPrefab.transform.localScale;
-                }
-
-                int newId = selectedEnemy.ID;
-                if (data.ID != newId)
-                {
-                    PathEditor.StartDeleteIndex = PathEditor.EndDeleteIndex = data.SelectedPathIndex = 0;
-                    data.TempPath.Clear();
-                    data.ID = newId;
-                }
-
-                if (data.TempPath != null && data.TempPath.Count != 0)
-                {
-                    int insert = data.IsInsert ? 2 : 1;
-                    if (data.TempPath.Count > selectedEnemy.Path.Count + insert)
-                        data.TempPath.RemoveRange(selectedEnemy.Path.Count, data.TempPath.Count - (selectedEnemy.Path.Count + insert));
-                }
-                else
-                {
-                    if (selectedEnemy.Path == null || selectedEnemy.Path.Count == 0)
-                        data.TempPath = new() { new WaypointPathExpression() };
-                    else if (selectedEnemy.Path != null && selectedEnemy.Path.Count != 0)
-                    {
-                        foreach (var creator in selectedEnemy.Path)
-                            data.TempPath.Add(creator.GetNewAdjoinedPath(0));
-                        data.TempPath.Add(selectedEnemy.Path[^1].GetNewAdjoinedPath(1));
-                    }
-                }
-
-                data.PathTypeSelection = CurrentStageEnemiesEditorData.GetSelectedOption(data.TempPath[data.SelectedPathIndex]);
-                data.SelectedOption.SetPathCreator(data.TempPath[data.SelectedPathIndex]);
-                Undo.undoRedoPerformed -= UndoRedo; Undo.undoRedoPerformed += UndoRedo;
+                PaintFoldout(i);
 
                 foldedOut.intValue = i;
             }
@@ -196,11 +151,12 @@ public class CurrentStageEnemiesEditor : Editor
 
             string objectPath = "Assets/Prefabs/Enemies/Enemy.prefab";
             EditorGUI.BeginChangeCheck();
-            GameObject obj = (GameObject)EditorGUILayout.ObjectField("Prefab", enemyPrefab, typeof(GameObject), false);
+            GameObject obj = (GameObject)EditorGUILayout.ObjectField(
+                "Prefab", (GameObject)enemyPrefab.objectReferenceValue, typeof(GameObject), false);
             if (EditorGUI.EndChangeCheck()) 
             {
                 Undo.RecordObject(this, "Change prefab");
-                enemyPrefab = obj;
+                enemyPrefab.objectReferenceValue = obj;
                 objectPath = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(obj);
                 isIncorrectPrefab = objectPath.IndexOf("Assets/Prefabs/Enemies/") != 0;
                 if (!isIncorrectPrefab)
@@ -208,16 +164,16 @@ public class CurrentStageEnemiesEditor : Editor
                     prefabName.stringValue = objectPath.Substring(objectPath.LastIndexOf('/') + 1);
                     prefabName.stringValue = prefabName.stringValue.Substring(0, prefabName.stringValue.LastIndexOf('.') );
                     Debug.Log(prefabName.stringValue);
-                    enemySpawnPosition = enemyPrefab.transform.position;
-                    enemySprite = enemyPrefab.GetComponent<SpriteRenderer>().sprite;
-                    enemyScale = enemyPrefab.transform.localScale;
+                    enemySpawnPosition.vector2Value = obj.transform.position;
+                    enemyScale.vector2Value = obj.transform.localScale;
+                    enemySprite.objectReferenceValue = obj.GetComponent<SpriteRenderer>().sprite;
                 }
             }
             if (isIncorrectPrefab)
                 EditorGUILayout.HelpBox("The provided object isn't in the enemies folder!", MessageType.Warning);
 
-            EditorGUILayout.PropertyField(enemyName);
-            enemySpawnPosition = EditorGUILayout.Vector2Field("Spawn Position", enemySpawnPosition);
+            EditorGUILayout.PropertyField(enemyName, new GUIContent("Name"));
+            EditorGUILayout.PropertyField(enemySpawnPosition, new GUIContent("Spawn Position"));
 
             data.SelectedOption.SelectPath(selectedPathIndex, pathTypeSelection, isInsert, tempPath, selectedEnemy.Path);
 
@@ -244,25 +200,88 @@ public class CurrentStageEnemiesEditor : Editor
         SceneView.RepaintAll();
     }
 
+    private void PaintFoldout(int i)
+    {
+        if (i < 0) throw new ArgumentException("Negative foldout number to be painted");
+
+        for (int j = 0; j < foldouts.arraySize; j++) foldouts.GetArrayElementAtIndex(j).boolValue = false;
+        foldouts.GetArrayElementAtIndex(i).boolValue = true;
+        selectedEnemy = enemy;
+        selectedEnemy.ID = idIncrement++;
+        foreach (var option in CurrentStageEnemiesEditorData.Options) option.StartPosition = selectedEnemy.SpawnPosition;
+
+        SerializedProperty serialEnemy = enemies.GetArrayElementAtIndex(i);
+        id = serialEnemy.FindPropertyRelative("ID");
+        prefabName = serialEnemy.FindPropertyRelative("PrefabName");
+        enemyName = serialEnemy.FindPropertyRelative("Name");
+        spawnTime = serialEnemy.FindPropertyRelative("SpawnTime");
+        spawnPosition = serialEnemy.FindPropertyRelative("SpawnPosition");
+        path = serialEnemy.FindPropertyRelative("Path");
+        spawnRepeats = serialEnemy.FindPropertyRelative("SpawnRepeats");
+        fireable = serialEnemy.FindPropertyRelative("Fireable");
+
+        if (enemyPrefab.objectReferenceValue == null && foldedOut.intValue != i)
+        {
+            //if (enemyPrefab != null) DestroyImmediate(enemyPrefab);
+            GameObject prefab = (GameObject)AssetDatabase.LoadAssetAtPath(
+                "Assets/Prefabs/Enemies/" + selectedEnemy.PrefabName + ".prefab", typeof(GameObject));
+            enemySpawnPosition.vector2Value = prefab.transform.position;
+            enemySprite.objectReferenceValue = prefab.GetComponent<SpriteRenderer>().sprite;
+            enemyScale.vector2Value = prefab.transform.localScale;
+            enemyPrefab.objectReferenceValue = prefab;
+        }
+
+        int newId = selectedEnemy.ID;
+        if (data.ID != newId)
+        {
+            PathEditor.StartDeleteIndex = PathEditor.EndDeleteIndex = data.SelectedPathIndex = 0;
+            data.TempPath.Clear();
+            data.ID = newId;
+        }
+
+        if (data.TempPath != null && data.TempPath.Count != 0)
+        {
+            int insert = data.IsInsert ? 2 : 1;
+            if (data.TempPath.Count > selectedEnemy.Path.Count + insert)
+                data.TempPath.RemoveRange(selectedEnemy.Path.Count, data.TempPath.Count - (selectedEnemy.Path.Count + insert));
+        }
+        else
+        {
+            if (selectedEnemy.Path == null || selectedEnemy.Path.Count == 0)
+                data.TempPath = new() { new WaypointPathExpression() };
+            else if (selectedEnemy.Path != null && selectedEnemy.Path.Count != 0)
+            {
+                foreach (var creator in selectedEnemy.Path)
+                    data.TempPath.Add(creator.GetNewAdjoinedPath(0));
+                data.TempPath.Add(selectedEnemy.Path[^1].GetNewAdjoinedPath(1));
+            }
+        }
+
+        data.PathTypeSelection = CurrentStageEnemiesEditorData.GetSelectedOption(data.TempPath[data.SelectedPathIndex]);
+        data.SelectedOption.SetPathCreator(data.TempPath[data.SelectedPathIndex]);
+        Undo.undoRedoPerformed -= UndoRedo; Undo.undoRedoPerformed += UndoRedo;
+
+    }
+
     public void OnSceneGUI()
     {
-        if (foldedOut.intValue == -1 || selectedEnemy == null) return;
+        if (data.FoldedOut == -1 || selectedEnemy == null) return;
         EventType e = Event.current.type;
 
-        Vector2 screenPosition = HandleUtility.WorldToGUIPoint(enemySpawnPosition);
-        Vector2 screenScale = enemySprite.rect.size / HandleUtility.GetHandleSize(enemySpawnPosition) * enemyScale;
+        Vector2 screenPosition = HandleUtility.WorldToGUIPoint(data.EnemySpawnPosition);
+        Vector2 screenScale = data.EnemySprite.rect.size / HandleUtility.GetHandleSize(data.EnemySpawnPosition) * data.EnemyScale;
         Handles.BeginGUI();
         GUI.DrawTexture(new Rect(
             screenPosition - screenScale / 2, screenScale),
-            enemySprite.texture);
+            data.EnemySprite.texture);
         Handles.EndGUI();
 
         EditorGUI.BeginChangeCheck();
-        Vector2 newSpawnPosition = Handles.PositionHandle(enemySpawnPosition, Quaternion.identity);
+        Vector2 newSpawnPosition = Handles.PositionHandle(data.EnemySpawnPosition, Quaternion.identity);
         if (EditorGUI.EndChangeCheck())
         {
             Undo.RecordObject(this, "Moved enemy");
-            selectedEnemy.SpawnPosition = enemySpawnPosition = newSpawnPosition;
+            selectedEnemy.SpawnPosition = data.EnemySpawnPosition = newSpawnPosition;
             wasTextureMoved = true;
             //Repaint();
         }
