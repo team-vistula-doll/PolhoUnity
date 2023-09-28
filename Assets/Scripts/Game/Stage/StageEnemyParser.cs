@@ -5,7 +5,6 @@ using System.Linq;
 using Tommy;
 using UnityEngine;
 using EnemyClass;
-using WaypointPath;
 
 public class StageEnemyParser
 {

@@ -15,7 +15,7 @@ namespace WaypointPath
     {
         const string expressionAssetPath = "Assets/Editor Assets/ExpressionEditor.asset";
         const string bezierAssetPath = "Assets/Editor Assets/BezierEditor.asset";
-        public int ID = 0;
+        public int PrefabID = 0;
         public static List<PathEditor> Options { get; private set; } = new() { null, null };
         public PathEditor SelectedOption { get => Options[(int)PathTypeSelection]; }
 

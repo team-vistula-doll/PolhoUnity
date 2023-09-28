@@ -18,7 +18,8 @@ public class CurrentStageEnemiesEditor : Editor
 
     //int selectedEnemyIndex = 0;
     SerializedProperty id, prefabName, enemyName, spawnTime, spawnPosition, path, spawnRepeats, fireable;
-    SerializedProperty enemyPrefab, enemySpawnPosition, enemyScale, enemySprite, foldouts, foldedOut;
+    SerializedProperty enemyPrefab, enemySpawnPosition, enemyScale, enemySprite, foldouts, foldedOut, idIncrement;
+    [SerializeField]
     Enemy enemy, selectedEnemy = null;
     [SerializeField]
     bool isIncorrectPrefab = false;
@@ -33,7 +34,7 @@ public class CurrentStageEnemiesEditor : Editor
     //List<bool> foldouts;
     //int foldedOut = -1;
     bool wasTextureMoved = false;
-    int idIncrement = 0;
+    //int idIncrement = 0;
 
     private void OnEnable()
     {
@@ -46,6 +47,7 @@ public class CurrentStageEnemiesEditor : Editor
         data.Init();
         serialData = new SerializedObject(data);
         for (int i = 0; i < enemies.arraySize; i++) data.Foldouts.Add(false);
+        if (stageEnemies.Enemies.Count > 0) data.IDIncrement = stageEnemies.Enemies[^1].ID + 1;
 
         selectedPathIndex = serialData.FindProperty("SelectedPathIndex");
         isInsert = serialData.FindProperty("IsInsert");
@@ -58,15 +60,17 @@ public class CurrentStageEnemiesEditor : Editor
         enemySprite = serialData.FindProperty("EnemySprite");
         foldouts = serialData.FindProperty("Foldouts");
         foldedOut = serialData.FindProperty("FoldedOut");
+        idIncrement = serialData.FindProperty("IDIncrement");
 
         if (data.FoldedOut != -1)
         {
             enemy = (Enemy)enemies.GetArrayElementAtIndex(data.FoldedOut).managedReferenceValue;
-            PaintFoldout(data.FoldedOut);
+            PrepareFoldout(data.FoldedOut);
         }
     }
     private void UndoRedo()
     {
+        if (data.FoldedOut == -1 || data.TempPath.Count == 0) return;
         if (data.SelectedOption.GetPathCreator() != data.TempPath[data.SelectedPathIndex])
         {
             data.PathTypeSelection = CurrentStageEnemiesEditorData.GetSelectedOption(data.TempPath[data.SelectedPathIndex]);
@@ -92,9 +96,12 @@ public class CurrentStageEnemiesEditor : Editor
         EditorGUILayout.LabelField("List size: " + enemies.arraySize);
         EditorGUILayout.Space();
 
+        if (data.IDIncrement > 0 && stageEnemies.Enemies.Count == 0) data.IDIncrement = 0; 
+
         if (GUILayout.Button("New enemy"))
         {
-            Enemy newEnemy = new();
+            Enemy newEnemy = new()
+            { ID = idIncrement.intValue++ };
             if (stageEnemies.Enemies.Count > 0) newEnemy.SpawnTime = stageEnemies.Enemies[^1].SpawnTime;
             enemies.arraySize++;
             enemies.GetArrayElementAtIndex(enemies.arraySize - 1).managedReferenceValue = newEnemy;
@@ -105,12 +112,13 @@ public class CurrentStageEnemiesEditor : Editor
         for (int i = 0; i < enemies.arraySize; i++)
         {
             enemy = (Enemy)enemies.GetArrayElementAtIndex(i).managedReferenceValue;
-            string label = "(" + enemy.SpawnTime.ToString("0.00") + ") " + enemy.Name + " " + (i+1);
+            string label = "(" + enemy.SpawnTime.ToString("0.00") + ") " + enemy.Name + ", ID " + enemy.ID;
             foldouts.GetArrayElementAtIndex(i).boolValue = EditorGUILayout.Foldout(foldouts.GetArrayElementAtIndex(i).boolValue, label);
             if (!foldouts.GetArrayElementAtIndex(i).boolValue)
             {
                 if (foldedOut.intValue == i)
                 {
+                    Undo.RecordObject(this, "Close foldout");
                     enemySprite = null;
                     id = spawnPosition = path = spawnRepeats = fireable = null;
                     selectedEnemy = null;
@@ -120,7 +128,7 @@ public class CurrentStageEnemiesEditor : Editor
             }
             else if (foldedOut.intValue != i)
             {
-                PaintFoldout(i);
+                PrepareFoldout(i);
 
                 foldedOut.intValue = i;
             }
@@ -212,14 +220,14 @@ public class CurrentStageEnemiesEditor : Editor
         SceneView.RepaintAll();
     }
 
-    private void PaintFoldout(int i)
+    private void PrepareFoldout(int i)
     {
         if (i < 0) throw new ArgumentException("Negative foldout number to be painted");
 
+        Undo.RecordObject(this, "Open foldout");
         for (int j = 0; j < foldouts.arraySize; j++) foldouts.GetArrayElementAtIndex(j).boolValue = false;
         foldouts.GetArrayElementAtIndex(i).boolValue = true;
         selectedEnemy = enemy;
-        selectedEnemy.ID = idIncrement++;
         foreach (var option in CurrentStageEnemiesEditorData.Options) option.StartPosition = selectedEnemy.SpawnPosition;
 
         SerializedProperty serialEnemy = enemies.GetArrayElementAtIndex(i);
@@ -244,11 +252,11 @@ public class CurrentStageEnemiesEditor : Editor
         }
 
         int newId = selectedEnemy.ID;
-        if (data.ID != newId)
+        if (data.PrefabID != newId)
         {
             PathEditor.StartDeleteIndex = PathEditor.EndDeleteIndex = data.SelectedPathIndex = 0;
             data.TempPath.Clear();
-            data.ID = newId;
+            data.PrefabID = newId;
         }
 
         if (data.TempPath != null && data.TempPath.Count != 0)

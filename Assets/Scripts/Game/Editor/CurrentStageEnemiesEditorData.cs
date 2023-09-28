@@ -10,4 +10,5 @@ public class CurrentStageEnemiesEditorData : WaypointPathEditorData
     public Vector2 EnemySpawnPosition;
     public Vector2 EnemyScale;
     public Sprite EnemySprite;
+    public int IDIncrement = 0;
 }

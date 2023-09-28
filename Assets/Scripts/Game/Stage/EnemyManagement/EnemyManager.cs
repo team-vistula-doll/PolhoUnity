@@ -1,9 +1,7 @@
 using DanmakU;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using EnemyClass;
 using WaypointPath;
 
 [RequireComponent(typeof(EnemyBank))]

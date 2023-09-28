@@ -21,11 +21,11 @@ public class WaypointPathDataEditor : Editor
         data.Init();
 
         int newId = pathData.GetInstanceID();
-        if (data.ID != newId)
+        if (data.PrefabID != newId)
         {
             PathEditor.StartDeleteIndex = PathEditor.EndDeleteIndex = data.SelectedPathIndex = 0;
             data.TempPath.Clear();
-            data.ID = newId;
+            data.PrefabID = newId;
         }
         if (data.TempPath != null && data.TempPath.Count != 0)
         {
