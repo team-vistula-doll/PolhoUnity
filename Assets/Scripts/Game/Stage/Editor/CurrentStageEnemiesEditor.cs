@@ -163,7 +163,6 @@ public class CurrentStageEnemiesEditor : Editor
                 {
                     prefabName.stringValue = objectPath.Substring(objectPath.LastIndexOf('/') + 1);
                     prefabName.stringValue = prefabName.stringValue.Substring(0, prefabName.stringValue.LastIndexOf('.') );
-                    Debug.Log(prefabName.stringValue);
                     enemySpawnPosition.vector2Value = obj.transform.position;
                     enemyScale.vector2Value = obj.transform.localScale;
                     enemySprite.objectReferenceValue = obj.GetComponent<SpriteRenderer>().sprite;
@@ -172,7 +171,20 @@ public class CurrentStageEnemiesEditor : Editor
             if (isIncorrectPrefab)
                 EditorGUILayout.HelpBox("The provided object isn't in the enemies folder!", MessageType.Warning);
 
-            EditorGUILayout.PropertyField(enemyName, new GUIContent("Name"));
+            EditorGUI.BeginChangeCheck();
+            spawnTime.floatValue = EditorGUILayout.DelayedFloatField("Spawn time", spawnTime.floatValue);
+            if (spawnTime.floatValue < 0) spawnTime.floatValue = 0;
+            if (EditorGUI.EndChangeCheck())
+            {
+                serializedObject.ApplyModifiedProperties();
+                int id = selectedEnemy.ID;
+                Enemy[] list = new Enemy[enemies.arraySize];
+                for (int j = 0; j < enemies.arraySize; j++) list[j] = (Enemy)enemies.GetArrayElementAtIndex(j).managedReferenceValue;
+                Array.Sort(list);
+                for (int j = 0; j < enemies.arraySize; j++) enemies.GetArrayElementAtIndex(j).managedReferenceValue = list[j];
+                foldedOut.intValue = Array.FindIndex(list, x => x.ID == id);
+            }
+            EditorGUILayout.PropertyField(enemyName);
             EditorGUILayout.PropertyField(enemySpawnPosition, new GUIContent("Spawn Position"));
 
             data.SelectedOption.SelectPath(selectedPathIndex, pathTypeSelection, isInsert, tempPath, selectedEnemy.Path);

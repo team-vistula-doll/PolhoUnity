@@ -14,15 +14,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 0
   SelectedPathIndex: 0
-  TempPath: []
+  TempPath:
+  - rid: 7903598073634619423
   IsInsert: 0
   PathTypeSelection: 0
   EnemyPrefab: {fileID: 2092912531510788433, guid: 1b25910f37cc1754a8c6ee26e59a9802, type: 3}
-  Foldouts: 01
-  FoldedOut: 0
+  Foldouts: 000100000000000000000000
+  FoldedOut: 1
   EnemySpawnPosition: {x: 0, y: 0}
   EnemyScale: {x: 2, y: 2}
   EnemySprite: {fileID: 21300000, guid: 95987d6b402edb9439e008181342cff7, type: 3}
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 7903598073634619423
+      type: {class: WaypointPathExpression, ns: WaypointPath, asm: Game}
+      data:
+        StartPosition: {x: 0, y: 0}
+        StepSize: 0.5
+        PathFormula: x
+        Length: 20
+        Angle: 0
