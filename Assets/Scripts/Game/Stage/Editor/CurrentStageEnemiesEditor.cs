@@ -1,5 +1,6 @@
 using EnemyClass;
 using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using WaypointPath;
@@ -10,15 +11,15 @@ public class CurrentStageEnemiesEditor : Editor
 {
     CurrentStageEnemies stageEnemies;
     SerializedProperty enemies;
+    SerializedProperty id, prefabName, enemyName, spawnTime, spawnPosition, path, spawnRepeats, fireable;
 
     CurrentStageEnemiesEditorData data;
     SerializedObject serialData;
-    SerializedProperty selectedPathIndex, isInsert, pathTypeSelection, tempPath;
+    SerializedProperty prefabID, selectedPathIndex, isInsert, pathTypeSelection, tempPath;
+    SerializedProperty enemyPrefab, enemySpawnPosition, enemyScale, enemySprite, foldouts, foldedOut, idIncrement;
     const string assetPath = "Assets/Editor Assets/CurrentStageEnemiesEditorData.asset";
 
     //int selectedEnemyIndex = 0;
-    SerializedProperty id, prefabName, enemyName, spawnTime, spawnPosition, path, spawnRepeats, fireable;
-    SerializedProperty enemyPrefab, enemySpawnPosition, enemyScale, enemySprite, foldouts, foldedOut, idIncrement;
     [SerializeField]
     Enemy enemy, selectedEnemy = null;
     [SerializeField]
@@ -49,6 +50,7 @@ public class CurrentStageEnemiesEditor : Editor
         for (int i = 0; i < enemies.arraySize; i++) data.Foldouts.Add(false);
         if (stageEnemies.Enemies.Count > 0) data.IDIncrement = stageEnemies.Enemies[^1].ID + 1;
 
+        prefabID = serialData.FindProperty("PrefabID");
         selectedPathIndex = serialData.FindProperty("SelectedPathIndex");
         isInsert = serialData.FindProperty("IsInsert");
         pathTypeSelection = serialData.FindProperty("PathTypeSelection");
@@ -120,7 +122,7 @@ public class CurrentStageEnemiesEditor : Editor
                 {
                     Undo.RecordObject(this, "Close foldout");
                     enemySprite = null;
-                    id = spawnPosition = path = spawnRepeats = fireable = null;
+                    //id = spawnPosition = path = spawnRepeats = fireable = null;
                     selectedEnemy = null;
                     foldedOut.intValue = -1;
                 }
@@ -129,6 +131,9 @@ public class CurrentStageEnemiesEditor : Editor
             else if (foldedOut.intValue != i)
             {
                 PrepareFoldout(i);
+                //tempPath.arraySize = data.TempPath.Count;
+                //for (int j = 0; j < tempPath.arraySize; j++)
+                //    tempPath.GetArrayElementAtIndex(j).managedReferenceValue = data.TempPath[j];
 
                 foldedOut.intValue = i;
             }
@@ -220,17 +225,17 @@ public class CurrentStageEnemiesEditor : Editor
         SceneView.RepaintAll();
     }
 
-    private void PrepareFoldout(int i)
+    private void PrepareFoldout(int index)
     {
-        if (i < 0) throw new ArgumentException("Negative foldout number to be painted");
+        if (index < 0) throw new ArgumentException("Negative foldout number to be painted");
 
         Undo.RecordObject(this, "Open foldout");
         for (int j = 0; j < foldouts.arraySize; j++) foldouts.GetArrayElementAtIndex(j).boolValue = false;
-        foldouts.GetArrayElementAtIndex(i).boolValue = true;
+        foldouts.GetArrayElementAtIndex(index).boolValue = true;
         selectedEnemy = enemy;
         foreach (var option in CurrentStageEnemiesEditorData.Options) option.StartPosition = selectedEnemy.SpawnPosition;
 
-        SerializedProperty serialEnemy = enemies.GetArrayElementAtIndex(i);
+        SerializedProperty serialEnemy = enemies.GetArrayElementAtIndex(index);
         id = serialEnemy.FindPropertyRelative("ID");
         prefabName = serialEnemy.FindPropertyRelative("PrefabName");
         enemyName = serialEnemy.FindPropertyRelative("Name");
@@ -240,7 +245,7 @@ public class CurrentStageEnemiesEditor : Editor
         spawnRepeats = serialEnemy.FindPropertyRelative("SpawnRepeats");
         fireable = serialEnemy.FindPropertyRelative("Fireable");
 
-        if (enemyPrefab.objectReferenceValue == null && foldedOut.intValue != i)
+        if (enemyPrefab.objectReferenceValue == null && foldedOut.intValue != index)
         {
             //if (enemyPrefab != null) DestroyImmediate(enemyPrefab);
             GameObject prefab = (GameObject)AssetDatabase.LoadAssetAtPath(
@@ -251,34 +256,56 @@ public class CurrentStageEnemiesEditor : Editor
             enemyPrefab.objectReferenceValue = prefab;
         }
 
-        int newId = selectedEnemy.ID;
-        if (data.PrefabID != newId)
+        if (prefabID.intValue != id.intValue)
         {
-            PathEditor.StartDeleteIndex = PathEditor.EndDeleteIndex = data.SelectedPathIndex = 0;
-            data.TempPath.Clear();
-            data.PrefabID = newId;
+            PathEditor.StartDeleteIndex = PathEditor.EndDeleteIndex = selectedPathIndex.intValue = 0;
+            tempPath.arraySize = 0;
+            prefabID.intValue = id.intValue;
         }
 
-        if (data.TempPath != null && data.TempPath.Count != 0)
+        if (tempPath.arraySize != 0)
         {
-            int insert = data.IsInsert ? 2 : 1;
-            if (data.TempPath.Count > selectedEnemy.Path.Count + insert)
-                data.TempPath.RemoveRange(selectedEnemy.Path.Count, data.TempPath.Count - (selectedEnemy.Path.Count + insert));
+            int insert = isInsert.boolValue ? 2 : 1;
+            if (tempPath.arraySize > path.arraySize + insert)
+            {
+                for (int i = path.arraySize; i < tempPath.arraySize - insert; i++)
+                    tempPath.GetArrayElementAtIndex(i).managedReferenceValue = tempPath.GetArrayElementAtIndex(
+                        i + tempPath.arraySize - (path.arraySize + insert)).managedReferenceValue;
+                tempPath.arraySize -= insert;
+                //data.TempPath.RemoveRange(selectedEnemy.Path.Count, data.TempPath.Count - (selectedEnemy.Path.Count + insert));
+            }
         }
         else
         {
-            if (selectedEnemy.Path == null || selectedEnemy.Path.Count == 0)
-                data.TempPath = new() { new WaypointPathExpression() };
-            else if (selectedEnemy.Path != null && selectedEnemy.Path.Count != 0)
+            if (path.arraySize == 0)
             {
-                foreach (var creator in selectedEnemy.Path)
-                    data.TempPath.Add(creator.GetNewAdjoinedPath(0));
-                data.TempPath.Add(selectedEnemy.Path[^1].GetNewAdjoinedPath(1));
+                tempPath.arraySize = 1;
+                tempPath.GetArrayElementAtIndex(tempPath.arraySize - 1).managedReferenceValue = new WaypointPathExpression();
+            }
+                //tempPath.managedReferenceValue = new List<WaypointPathCreator>() { new WaypointPathExpression() };
+            else if (path.arraySize != 0)
+            {
+                int tempPathOldSize = tempPath.arraySize;
+                tempPath.arraySize += path.arraySize;
+                for (int i = 0; i < path.arraySize; i++)
+                {
+                    WaypointPathCreator creator = (WaypointPathCreator)path.GetArrayElementAtIndex(i).managedReferenceValue;
+                    tempPath.GetArrayElementAtIndex(tempPathOldSize + i).managedReferenceValue = creator.GetNewAdjoinedPath(0);
+                //foreach (var creator in selectedEnemy.Path)
+                //    data.TempPath.Add(creator.GetNewAdjoinedPath(0));
+                }
+                WaypointPathCreator c = (WaypointPathCreator)path.GetArrayElementAtIndex(path.arraySize - 1).managedReferenceValue;
+                tempPath.arraySize++;
+                tempPath.GetArrayElementAtIndex(tempPath.arraySize - 1).managedReferenceValue = c.GetNewAdjoinedPath(1);
+                //data.TempPath.Add(selectedEnemy.Path[^1].GetNewAdjoinedPath(1));
             }
         }
 
-        data.PathTypeSelection = CurrentStageEnemiesEditorData.GetSelectedOption(data.TempPath[data.SelectedPathIndex]);
-        data.SelectedOption.SetPathCreator(data.TempPath[data.SelectedPathIndex]);
+        pathTypeSelection.intValue = (int)CurrentStageEnemiesEditorData.GetSelectedOption(
+            (WaypointPathCreator)tempPath.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue);
+            //data.TempPath[data.SelectedPathIndex]);
+        data.SelectedOption.SetPathCreator(
+            (WaypointPathCreator)tempPath.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue);
         Undo.undoRedoPerformed -= UndoRedo; Undo.undoRedoPerformed += UndoRedo;
 
     }
