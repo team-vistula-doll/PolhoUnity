@@ -23,7 +23,8 @@ public class WaypointPathDataEditor : Editor
         int newId = pathData.GetInstanceID();
         if (data.PrefabID != newId)
         {
-            PathEditor.StartDeleteIndex = PathEditor.EndDeleteIndex = data.SelectedPathIndex = 0;
+            PathEditor.StartDeleteIndex = PathEditor.EndDeleteIndex = data.SelectedPathIndex = pathData.Path.Count - 2;
+            if (data.SelectedPathIndex < 0) PathEditor.StartDeleteIndex = PathEditor.EndDeleteIndex = data.SelectedPathIndex = 0;
             data.TempPath.Clear();
             data.PrefabID = newId;
         }

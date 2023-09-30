@@ -258,7 +258,8 @@ public class CurrentStageEnemiesEditor : Editor
 
         if (prefabID.intValue != id.intValue)
         {
-            PathEditor.StartDeleteIndex = PathEditor.EndDeleteIndex = selectedPathIndex.intValue = 0;
+            PathEditor.StartDeleteIndex = PathEditor.EndDeleteIndex = selectedPathIndex.intValue = path.arraySize - 2;
+            if (selectedPathIndex.intValue < 0) PathEditor.StartDeleteIndex = PathEditor.EndDeleteIndex = selectedPathIndex.intValue = 0;
             tempPath.arraySize = 0;
             prefabID.intValue = id.intValue;
         }
