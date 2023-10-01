@@ -1,6 +1,5 @@
 using EnemyClass;
 using System;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using WaypointPath;
@@ -16,7 +15,7 @@ public class CurrentStageEnemiesEditor : Editor
     CurrentStageEnemiesEditorData data;
     SerializedObject serialData;
     SerializedProperty prefabID, selectedPathIndex, isInsert, pathTypeSelection, tempPath;
-    SerializedProperty enemyPrefab, enemySpawnPosition, enemyScale, enemySprite, foldouts, foldedOut, idIncrement;
+    SerializedProperty enemyPrefab, enemyScale, enemySprite, foldouts, foldedOut, idIncrement;
     const string assetPath = "Assets/Editor Assets/CurrentStageEnemiesEditorData.asset";
 
     //int selectedEnemyIndex = 0;
@@ -57,7 +56,7 @@ public class CurrentStageEnemiesEditor : Editor
         tempPath = serialData.FindProperty("TempPath");
 
         enemyPrefab = serialData.FindProperty("EnemyPrefab");
-        enemySpawnPosition = serialData.FindProperty("EnemySpawnPosition");
+        //enemySpawnPosition = serialData.FindProperty("EnemySpawnPosition");
         enemyScale = serialData.FindProperty("EnemyScale");
         enemySprite = serialData.FindProperty("EnemySprite");
         foldouts = serialData.FindProperty("Foldouts");
@@ -69,6 +68,7 @@ public class CurrentStageEnemiesEditor : Editor
             enemy = (Enemy)enemies.GetArrayElementAtIndex(data.FoldedOut).managedReferenceValue;
             PrepareFoldout(data.FoldedOut);
         }
+        Undo.undoRedoPerformed -= UndoRedo; Undo.undoRedoPerformed += UndoRedo;
     }
     private void UndoRedo()
     {
@@ -80,7 +80,12 @@ public class CurrentStageEnemiesEditor : Editor
             //serialData.Update();
         }
         else data.SelectedOption.ApplyPathOptions();
-        PathEditor.ConnectPaths(data.TempPath, 0);
+
+        if (data.TempPath.Count > 0)
+        {
+            data.TempPath[0].StartPosition = selectedEnemy.SpawnPosition;
+            PathEditor.ConnectPaths(data.TempPath, 0);
+        }
     }
 
     private void OnDisable()
@@ -152,10 +157,20 @@ public class CurrentStageEnemiesEditor : Editor
 
             if (wasTextureMoved)
             {
-                data.SelectedOption.StartPosition = selectedEnemy.SpawnPosition;
-                PathEditor.ConnectPaths(selectedEnemy.Path, 0);
-                serializedObject.UpdateIfRequiredOrScript();
-                PathEditor.ConnectPaths(tempPath, 0);
+                if (path.arraySize > 0)
+                {
+                    WaypointPathCreator p = (WaypointPathCreator)path.GetArrayElementAtIndex(0).managedReferenceValue;
+                    p.StartPosition = spawnPosition.vector2Value;
+                    path.GetArrayElementAtIndex(0).managedReferenceValue = p;
+                    PathEditor.ConnectPaths(path, 0);
+                }
+                if (tempPath.arraySize > 0)
+                {
+                    WaypointPathCreator p = (WaypointPathCreator)tempPath.GetArrayElementAtIndex(0).managedReferenceValue;
+                    p.StartPosition = spawnPosition.vector2Value;
+                    tempPath.GetArrayElementAtIndex(0).managedReferenceValue = p;
+                    PathEditor.ConnectPaths(tempPath, 0);
+                }
                 data.SelectedOption.SetPathCreator(
                     (WaypointPathCreator)tempPath.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue);
                 wasTextureMoved = false;
@@ -176,7 +191,7 @@ public class CurrentStageEnemiesEditor : Editor
                 {
                     prefabName.stringValue = objectPath.Substring(objectPath.LastIndexOf('/') + 1);
                     prefabName.stringValue = prefabName.stringValue.Substring(0, prefabName.stringValue.LastIndexOf('.') );
-                    enemySpawnPosition.vector2Value = obj.transform.position;
+                    //spawnPosition.vector2Value = obj.transform.position;
                     enemyScale.vector2Value = obj.transform.localScale;
                     enemySprite.objectReferenceValue = obj.GetComponent<SpriteRenderer>().sprite;
                 }
@@ -190,15 +205,18 @@ public class CurrentStageEnemiesEditor : Editor
             if (EditorGUI.EndChangeCheck())
             {
                 serializedObject.ApplyModifiedProperties();
-                int id = selectedEnemy.ID;
+                int currId = id.intValue;
                 Enemy[] list = new Enemy[enemies.arraySize];
                 for (int j = 0; j < enemies.arraySize; j++) list[j] = (Enemy)enemies.GetArrayElementAtIndex(j).managedReferenceValue;
+                //list[i].SpawnTime = spawnTime.floatValue;
                 Array.Sort(list);
                 for (int j = 0; j < enemies.arraySize; j++) enemies.GetArrayElementAtIndex(j).managedReferenceValue = list[j];
-                foldedOut.intValue = Array.FindIndex(list, x => x.ID == id);
+                foldedOut.intValue = Array.FindIndex(list, x => x.ID == currId);
+                foldouts.GetArrayElementAtIndex(foldedOut.intValue).boolValue = true;
+                foldouts.GetArrayElementAtIndex(i).boolValue = false;
             }
             EditorGUILayout.PropertyField(enemyName);
-            EditorGUILayout.PropertyField(enemySpawnPosition, new GUIContent("Spawn Position"));
+            EditorGUILayout.PropertyField(spawnPosition);
 
             data.SelectedOption.SelectPath(selectedPathIndex, pathTypeSelection, isInsert, tempPath, selectedEnemy.Path);
 
@@ -250,7 +268,7 @@ public class CurrentStageEnemiesEditor : Editor
             //if (enemyPrefab != null) DestroyImmediate(enemyPrefab);
             GameObject prefab = (GameObject)AssetDatabase.LoadAssetAtPath(
                 "Assets/Prefabs/Enemies/" + selectedEnemy.PrefabName + ".prefab", typeof(GameObject));
-            enemySpawnPosition.vector2Value = prefab.transform.position;
+            //enemySpawnPosition.vector2Value = prefab.transform.position;
             enemySprite.objectReferenceValue = prefab.GetComponent<SpriteRenderer>().sprite;
             enemyScale.vector2Value = prefab.transform.localScale;
             enemyPrefab.objectReferenceValue = prefab;
@@ -307,7 +325,6 @@ public class CurrentStageEnemiesEditor : Editor
             //data.TempPath[data.SelectedPathIndex]);
         data.SelectedOption.SetPathCreator(
             (WaypointPathCreator)tempPath.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue);
-        Undo.undoRedoPerformed -= UndoRedo; Undo.undoRedoPerformed += UndoRedo;
 
     }
 
@@ -316,8 +333,8 @@ public class CurrentStageEnemiesEditor : Editor
         if (data.FoldedOut == -1 || selectedEnemy == null) return;
         EventType e = Event.current.type;
 
-        Vector2 screenPosition = HandleUtility.WorldToGUIPoint(data.EnemySpawnPosition);
-        Vector2 screenScale = data.EnemySprite.rect.size / HandleUtility.GetHandleSize(data.EnemySpawnPosition) * data.EnemyScale;
+        Vector2 screenPosition = HandleUtility.WorldToGUIPoint(spawnPosition.vector2Value);
+        Vector2 screenScale = data.EnemySprite.rect.size / HandleUtility.GetHandleSize(spawnPosition.vector2Value) * data.EnemyScale;
         Handles.BeginGUI();
         GUI.DrawTexture(new Rect(
             screenPosition - screenScale / 2, screenScale),
@@ -325,11 +342,11 @@ public class CurrentStageEnemiesEditor : Editor
         Handles.EndGUI();
 
         EditorGUI.BeginChangeCheck();
-        Vector2 newSpawnPosition = Handles.PositionHandle(data.EnemySpawnPosition, Quaternion.identity);
+        Vector2 newSpawnPosition = Handles.PositionHandle(spawnPosition.vector2Value, Quaternion.identity);
         if (EditorGUI.EndChangeCheck())
         {
             Undo.RecordObject(this, "Moved enemy");
-            selectedEnemy.SpawnPosition = data.EnemySpawnPosition = newSpawnPosition;
+            selectedEnemy.SpawnPosition = spawnPosition.vector2Value = newSpawnPosition;
             wasTextureMoved = true;
             //Repaint();
         }
@@ -337,7 +354,5 @@ public class CurrentStageEnemiesEditor : Editor
         data.SelectedOption.DrawPath(selectedEnemy.Path, 0, e, false);
         data.SelectedOption.DrawPath(data.TempPath, selectedPathIndex.intValue, e, true);
         Repaint();
-
-        //PathEditor.DrawPath(false, e);
     }
 }

@@ -262,7 +262,6 @@ MonoBehaviour:
         PathFormula: x
         Length: 1.99
         Angle: -17.2
-        testVector: {x: 1, y: 1}
     - rid: 3803625656537055337
       type: {class: WaypointPathExpression, ns: WaypointPath, asm: Game}
       data:
@@ -271,7 +270,6 @@ MonoBehaviour:
         PathFormula: x
         Length: 1.99
         Angle: -42.5
-        testVector: {x: 1, y: 1}
 --- !u!1 &2092912531923440514
 GameObject:
   m_ObjectHideFlags: 0

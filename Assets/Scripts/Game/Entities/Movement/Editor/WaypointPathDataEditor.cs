@@ -103,10 +103,20 @@ public class WaypointPathDataEditor : Editor
 
         if (pathData.transform.hasChanged)
         {
-            //data.SelectedOption.StartPosition = pathData.transform.position;
-            PathEditor.ConnectPaths(pathData.Path, 0);
-            serializedObject.UpdateIfRequiredOrScript();
-            PathEditor.ConnectPaths(tempPath, 0);
+            if (path.arraySize > 0)
+            {
+                WaypointPathCreator p = (WaypointPathCreator)path.GetArrayElementAtIndex(0).managedReferenceValue;
+                p.StartPosition = pathData.transform.position;
+                path.GetArrayElementAtIndex(0).managedReferenceValue = p;
+                PathEditor.ConnectPaths(path, 0);
+            }
+            if (tempPath.arraySize > 0)
+            {
+                WaypointPathCreator p = (WaypointPathCreator)tempPath.GetArrayElementAtIndex(0).managedReferenceValue;
+                p.StartPosition = pathData.transform.position;
+                tempPath.GetArrayElementAtIndex(0).managedReferenceValue = p;
+                PathEditor.ConnectPaths(tempPath, 0);
+            }
             data.SelectedOption.SetPathCreator(
                 (WaypointPathCreator)tempPath.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue);
             pathData.transform.hasChanged = false;
