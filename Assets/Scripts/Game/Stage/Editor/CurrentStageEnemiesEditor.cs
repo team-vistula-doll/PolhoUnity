@@ -63,6 +63,7 @@ public class CurrentStageEnemiesEditor : Editor
         foldedOut = serialData.FindProperty("FoldedOut");
         idIncrement = serialData.FindProperty("IDIncrement");
 
+        //if (enemies.arraySize < data.FoldedOut)
         if (data.FoldedOut != -1)
         {
             enemy = (Enemy)enemies.GetArrayElementAtIndex(data.FoldedOut).managedReferenceValue;
@@ -103,7 +104,12 @@ public class CurrentStageEnemiesEditor : Editor
         EditorGUILayout.LabelField("List size: " + enemies.arraySize);
         EditorGUILayout.Space();
 
-        if (data.IDIncrement > 0 && stageEnemies.Enemies.Count == 0) data.IDIncrement = 0; 
+        if (data.IDIncrement > 0 && stageEnemies.Enemies.Count == 0)
+        {
+            data.FoldedOut = -1;
+            data.Foldouts = new();
+            data.IDIncrement = 0;
+        }
 
         if (GUILayout.Button("New enemy"))
         {
@@ -176,6 +182,31 @@ public class CurrentStageEnemiesEditor : Editor
                 wasTextureMoved = false;
             }
             PathEditor.ConnectPaths(tempPath, 0);
+
+            GUILayout.BeginHorizontal();
+            {
+                var style = new GUIStyle(GUI.skin.button);
+                style.normal.textColor = new Color(0.863f, 0.078f, 0.235f);
+                GUILayout.FlexibleSpace();
+                bool isDelete = GUILayout.Button("Delete", style, GUILayout.MaxWidth(EditorStyles.label.CalcSize(new GUIContent("Delete")).x + 20));
+                if (isDelete)
+                {
+                    for (int j = i; j < enemies.arraySize - 1; j++)
+                    {
+                        enemies.GetArrayElementAtIndex(j).managedReferenceValue = enemies.GetArrayElementAtIndex(j + 1).managedReferenceValue;
+                    }
+                    enemies.arraySize--;
+
+                    for (int j = i; j < foldouts.arraySize - 1; j++)
+                    {
+                        foldouts.GetArrayElementAtIndex(j).boolValue = foldouts.GetArrayElementAtIndex(j + 1).boolValue;
+                    }
+                    foldouts.arraySize--;
+                    foldedOut.intValue = -1;
+                    break;
+                }
+            }
+            GUILayout.EndHorizontal();
 
             string objectPath = "Assets/Prefabs/Enemies/Enemy.prefab";
             EditorGUI.BeginChangeCheck();
@@ -333,8 +364,8 @@ public class CurrentStageEnemiesEditor : Editor
         if (data.FoldedOut == -1 || selectedEnemy == null) return;
         EventType e = Event.current.type;
 
-        Vector2 screenPosition = HandleUtility.WorldToGUIPoint(spawnPosition.vector2Value);
-        Vector2 screenScale = data.EnemySprite.rect.size / HandleUtility.GetHandleSize(spawnPosition.vector2Value) * data.EnemyScale;
+        Vector2 screenPosition = HandleUtility.WorldToGUIPoint(selectedEnemy.SpawnPosition);
+        Vector2 screenScale = data.EnemySprite.rect.size / HandleUtility.GetHandleSize(selectedEnemy.SpawnPosition) * data.EnemyScale;
         Handles.BeginGUI();
         GUI.DrawTexture(new Rect(
             screenPosition - screenScale / 2, screenScale),
@@ -342,11 +373,11 @@ public class CurrentStageEnemiesEditor : Editor
         Handles.EndGUI();
 
         EditorGUI.BeginChangeCheck();
-        Vector2 newSpawnPosition = Handles.PositionHandle(spawnPosition.vector2Value, Quaternion.identity);
+        Vector2 newSpawnPosition = Handles.PositionHandle(selectedEnemy.SpawnPosition, Quaternion.identity);
         if (EditorGUI.EndChangeCheck())
         {
             Undo.RecordObject(this, "Moved enemy");
-            selectedEnemy.SpawnPosition = spawnPosition.vector2Value = newSpawnPosition;
+            selectedEnemy.SpawnPosition = newSpawnPosition;
             wasTextureMoved = true;
             //Repaint();
         }
