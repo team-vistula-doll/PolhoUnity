@@ -73,6 +73,7 @@ public class CurrentStageEnemiesEditor : Editor
     }
     private void UndoRedo()
     {
+        Debug.Log(id.intValue);
         if (data.FoldedOut == -1 || data.TempPath.Count == 0) return;
         if (data.SelectedOption.GetPathCreator() != data.TempPath[data.SelectedPathIndex])
         {
@@ -293,12 +294,13 @@ public class CurrentStageEnemiesEditor : Editor
         path = serialEnemy.FindPropertyRelative("Path");
         spawnRepeats = serialEnemy.FindPropertyRelative("SpawnRepeats");
         fireable = serialEnemy.FindPropertyRelative("Fireable");
+        Debug.Log(id.intValue);
 
         if (enemyPrefab.objectReferenceValue == null && foldedOut.intValue != index)
         {
             //if (enemyPrefab != null) DestroyImmediate(enemyPrefab);
             GameObject prefab = (GameObject)AssetDatabase.LoadAssetAtPath(
-                "Assets/Prefabs/Enemies/" + selectedEnemy.PrefabName + ".prefab", typeof(GameObject));
+                "Assets/Prefabs/Enemies/" + prefabName.stringValue + ".prefab", typeof(GameObject));
             //enemySpawnPosition.vector2Value = prefab.transform.position;
             enemySprite.objectReferenceValue = prefab.GetComponent<SpriteRenderer>().sprite;
             enemyScale.vector2Value = prefab.transform.localScale;
