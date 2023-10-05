@@ -10,7 +10,7 @@ public class CurrentStageEnemiesEditor : Editor
 {
     CurrentStageEnemies stageEnemies;
     SerializedProperty enemies;
-    SerializedProperty id, prefabName, enemyName, spawnTime, spawnPosition, path, spawnRepeats, fireable;
+    SerializedProperty id, prefabName, enemyName, spawnTime, spawnPosition, path/*, spawnRepeats, fireable*/;
 
     CurrentStageEnemiesEditorData data;
     SerializedObject serialData;
@@ -62,6 +62,9 @@ public class CurrentStageEnemiesEditor : Editor
         foldouts = serialData.FindProperty("Foldouts");
         foldedOut = serialData.FindProperty("FoldedOut");
         idIncrement = serialData.FindProperty("IDIncrement");
+
+        if (data.FoldedOut < data.Foldouts.Count - 1)
+            data.FoldedOut = -1;
 
         //if (enemies.arraySize < data.FoldedOut)
         if (data.FoldedOut != -1)
@@ -164,7 +167,7 @@ public class CurrentStageEnemiesEditor : Editor
 
             if (wasTextureMoved)
             {
-                if (path.arraySize > 0)
+                if (selectedEnemy.Path.Count > 0)
                 {
                     WaypointPathCreator p = (WaypointPathCreator)path.GetArrayElementAtIndex(0).managedReferenceValue;
                     p.StartPosition = spawnPosition.vector2Value;
@@ -279,7 +282,7 @@ public class CurrentStageEnemiesEditor : Editor
     {
         if (index < 0) throw new ArgumentException("Negative foldout number to be painted");
 
-        Undo.RecordObject(this, "Open foldout");
+        //Undo.RecordObject(this, "Open foldout");
         for (int j = 0; j < foldouts.arraySize; j++) foldouts.GetArrayElementAtIndex(j).boolValue = false;
         foldouts.GetArrayElementAtIndex(index).boolValue = true;
         selectedEnemy = enemy;
@@ -292,61 +295,61 @@ public class CurrentStageEnemiesEditor : Editor
         spawnTime = serialEnemy.FindPropertyRelative("SpawnTime");
         spawnPosition = serialEnemy.FindPropertyRelative("SpawnPosition");
         path = serialEnemy.FindPropertyRelative("Path");
-        spawnRepeats = serialEnemy.FindPropertyRelative("SpawnRepeats");
-        fireable = serialEnemy.FindPropertyRelative("Fireable");
+        //spawnRepeats = serialEnemy.FindPropertyRelative("SpawnRepeats");
+        //fireable = serialEnemy.FindPropertyRelative("Fireable");
         Debug.Log(id.intValue);
 
         if (enemyPrefab.objectReferenceValue == null && foldedOut.intValue != index)
         {
             //if (enemyPrefab != null) DestroyImmediate(enemyPrefab);
             GameObject prefab = (GameObject)AssetDatabase.LoadAssetAtPath(
-                "Assets/Prefabs/Enemies/" + prefabName.stringValue + ".prefab", typeof(GameObject));
+                "Assets/Prefabs/Enemies/" + selectedEnemy.PrefabName + ".prefab", typeof(GameObject));
             //enemySpawnPosition.vector2Value = prefab.transform.position;
             enemySprite.objectReferenceValue = prefab.GetComponent<SpriteRenderer>().sprite;
             enemyScale.vector2Value = prefab.transform.localScale;
             enemyPrefab.objectReferenceValue = prefab;
         }
 
-        if (prefabID.intValue != id.intValue)
+        if (prefabID.intValue != selectedEnemy.ID)
         {
-            PathEditor.StartDeleteIndex = PathEditor.EndDeleteIndex = selectedPathIndex.intValue = path.arraySize - 2;
+            PathEditor.StartDeleteIndex = PathEditor.EndDeleteIndex = selectedPathIndex.intValue = selectedEnemy.Path.Count - 2;
             if (selectedPathIndex.intValue < 0) PathEditor.StartDeleteIndex = PathEditor.EndDeleteIndex = selectedPathIndex.intValue = 0;
             tempPath.arraySize = 0;
-            prefabID.intValue = id.intValue;
+            prefabID.intValue = selectedEnemy.ID;
         }
 
         if (tempPath.arraySize != 0)
         {
             int insert = isInsert.boolValue ? 2 : 1;
-            if (tempPath.arraySize > path.arraySize + insert)
+            if (tempPath.arraySize > selectedEnemy.Path.Count + insert)
             {
-                for (int i = path.arraySize; i < tempPath.arraySize - insert; i++)
+                for (int i = selectedEnemy.Path.Count; i < tempPath.arraySize - insert; i++)
                     tempPath.GetArrayElementAtIndex(i).managedReferenceValue = tempPath.GetArrayElementAtIndex(
-                        i + tempPath.arraySize - (path.arraySize + insert)).managedReferenceValue;
+                        i + tempPath.arraySize - (selectedEnemy.Path.Count + insert)).managedReferenceValue;
                 tempPath.arraySize -= insert;
                 //data.TempPath.RemoveRange(selectedEnemy.Path.Count, data.TempPath.Count - (selectedEnemy.Path.Count + insert));
             }
         }
         else
         {
-            if (path.arraySize == 0)
+            if (selectedEnemy.Path.Count == 0)
             {
                 tempPath.arraySize = 1;
                 tempPath.GetArrayElementAtIndex(tempPath.arraySize - 1).managedReferenceValue = new WaypointPathExpression();
             }
                 //tempPath.managedReferenceValue = new List<WaypointPathCreator>() { new WaypointPathExpression() };
-            else if (path.arraySize != 0)
+            else if (selectedEnemy.Path.Count != 0)
             {
                 int tempPathOldSize = tempPath.arraySize;
-                tempPath.arraySize += path.arraySize;
-                for (int i = 0; i < path.arraySize; i++)
+                tempPath.arraySize += selectedEnemy.Path.Count;
+                for (int i = 0; i < selectedEnemy.Path.Count; i++)
                 {
-                    WaypointPathCreator creator = (WaypointPathCreator)path.GetArrayElementAtIndex(i).managedReferenceValue;
+                    WaypointPathCreator creator = selectedEnemy.Path[i];
                     tempPath.GetArrayElementAtIndex(tempPathOldSize + i).managedReferenceValue = creator.GetNewAdjoinedPath(0);
                 //foreach (var creator in selectedEnemy.Path)
                 //    data.TempPath.Add(creator.GetNewAdjoinedPath(0));
                 }
-                WaypointPathCreator c = (WaypointPathCreator)path.GetArrayElementAtIndex(path.arraySize - 1).managedReferenceValue;
+                WaypointPathCreator c = selectedEnemy.Path[selectedEnemy.Path.Count - 1];
                 tempPath.arraySize++;
                 tempPath.GetArrayElementAtIndex(tempPath.arraySize - 1).managedReferenceValue = c.GetNewAdjoinedPath(1);
                 //data.TempPath.Add(selectedEnemy.Path[^1].GetNewAdjoinedPath(1));
