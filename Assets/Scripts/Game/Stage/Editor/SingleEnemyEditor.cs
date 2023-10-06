@@ -1,8 +1,4 @@
 using EnemyClass;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 using UnityEditor;
 using UnityEngine;
 using WaypointPath;
@@ -103,32 +99,62 @@ public class SingleEnemyEditor
             (WaypointPathCreator)tempPath.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns>If the spawn time was changed</returns>
     public bool DrawFoldout()
     {
+        bool result = false;
         //enemy = (Enemy)enemies.GetArrayElementAtIndex(i).managedReferenceValue;
         //string label = "(" + enemy.SpawnTime.ToString("0.00") + ") " + enemy.Name + ", ID " + enemy.ID;
-        foldouts.GetArrayElementAtIndex(i).boolValue = EditorGUILayout.Foldout(foldouts.GetArrayElementAtIndex(i).boolValue, label);
-        if (!foldouts.GetArrayElementAtIndex(i).boolValue)
-        {
-            if (foldedOut.intValue == i)
-            {
-                Undo.RecordObject(this, "Close foldout");
-                enemySprite = null;
-                //id = spawnPosition = path = spawnRepeats = fireable = null;
-                enemy = null;
-                foldedOut.intValue = -1;
-            }
-            continue;
-        }
-        else if (foldedOut.intValue != i)
-        {
-            PrepareFoldout(i);
-            //tempPath.arraySize = data.TempPath.Count;
-            //for (int j = 0; j < tempPath.arraySize; j++)
-            //    tempPath.GetArrayElementAtIndex(j).managedReferenceValue = data.TempPath[j];
+        //foldouts.GetArrayElementAtIndex(i).boolValue = EditorGUILayout.Foldout(foldouts.GetArrayElementAtIndex(i).boolValue, label);
+        //if (!foldouts.GetArrayElementAtIndex(i).boolValue)
+        //{
+        //    if (foldedOut.intValue == i)
+        //    {
+        //        Undo.RecordObject(this, "Close foldout");
+        //        enemySprite = null;
+        //        //id = spawnPosition = path = spawnRepeats = fireable = null;
+        //        enemy = null;
+        //        foldedOut.intValue = -1;
+        //    }
+        //    continue;
+        //}
+        //else if (foldedOut.intValue != i)
+        //{
+        //    PrepareFoldout(i);
+        //    //tempPath.arraySize = data.TempPath.Count;
+        //    //for (int j = 0; j < tempPath.arraySize; j++)
+        //    //    tempPath.GetArrayElementAtIndex(j).managedReferenceValue = data.TempPath[j];
 
-            foldedOut.intValue = i;
-        }
+        //    foldedOut.intValue = i;
+        //}
+
+        //GUILayout.BeginHorizontal();
+        //{
+        //    var style = new GUIStyle(GUI.skin.button);
+        //    style.normal.textColor = new Color(0.863f, 0.078f, 0.235f);
+        //    GUILayout.FlexibleSpace();
+        //    bool isDelete = GUILayout.Button("Delete", style, GUILayout.MaxWidth(EditorStyles.label.CalcSize(new GUIContent("Delete")).x + 20));
+        //    if (isDelete)
+        //    {
+        //        for (int j = i; j < enemies.arraySize - 1; j++)
+        //        {
+        //            enemies.GetArrayElementAtIndex(j).managedReferenceValue = enemies.GetArrayElementAtIndex(j + 1).managedReferenceValue;
+        //        }
+        //        enemies.arraySize--;
+
+        //        for (int j = i; j < foldouts.arraySize - 1; j++)
+        //        {
+        //            foldouts.GetArrayElementAtIndex(j).boolValue = foldouts.GetArrayElementAtIndex(j + 1).boolValue;
+        //        }
+        //        foldouts.arraySize--;
+        //        foldedOut.intValue = -1;
+        //        break;
+        //    }
+        //}
+        //GUILayout.EndHorizontal();
 
         if (tempPath.arraySize > 1 && enemy.Path.Count == 0)
         {
@@ -164,31 +190,6 @@ public class SingleEnemyEditor
         }
         PathEditor.ConnectPaths(tempPath, 0);
 
-        GUILayout.BeginHorizontal();
-        {
-            var style = new GUIStyle(GUI.skin.button);
-            style.normal.textColor = new Color(0.863f, 0.078f, 0.235f);
-            GUILayout.FlexibleSpace();
-            bool isDelete = GUILayout.Button("Delete", style, GUILayout.MaxWidth(EditorStyles.label.CalcSize(new GUIContent("Delete")).x + 20));
-            if (isDelete)
-            {
-                for (int j = i; j < enemies.arraySize - 1; j++)
-                {
-                    enemies.GetArrayElementAtIndex(j).managedReferenceValue = enemies.GetArrayElementAtIndex(j + 1).managedReferenceValue;
-                }
-                enemies.arraySize--;
-
-                for (int j = i; j < foldouts.arraySize - 1; j++)
-                {
-                    foldouts.GetArrayElementAtIndex(j).boolValue = foldouts.GetArrayElementAtIndex(j + 1).boolValue;
-                }
-                foldouts.arraySize--;
-                foldedOut.intValue = -1;
-                break;
-            }
-        }
-        GUILayout.EndHorizontal();
-
         string objectPath = "Assets/Prefabs/Enemies/Enemy.prefab";
         EditorGUI.BeginChangeCheck();
         GameObject obj = (GameObject)EditorGUILayout.ObjectField(
@@ -216,16 +217,17 @@ public class SingleEnemyEditor
         if (spawnTime.floatValue < 0) spawnTime.floatValue = 0;
         if (EditorGUI.EndChangeCheck())
         {
-            serializedObject.ApplyModifiedProperties();
-            int currId = id.intValue;
-            Enemy[] list = new Enemy[enemies.arraySize];
-            for (int j = 0; j < enemies.arraySize; j++) list[j] = (Enemy)enemies.GetArrayElementAtIndex(j).managedReferenceValue;
-            //list[i].SpawnTime = spawnTime.floatValue;
-            Array.Sort(list);
-            for (int j = 0; j < enemies.arraySize; j++) enemies.GetArrayElementAtIndex(j).managedReferenceValue = list[j];
-            foldedOut.intValue = Array.FindIndex(list, x => x.ID == currId);
-            foldouts.GetArrayElementAtIndex(foldedOut.intValue).boolValue = true;
-            foldouts.GetArrayElementAtIndex(i).boolValue = false;
+            result = true;
+            //serializedObject.ApplyModifiedProperties();
+            //int currId = id.intValue;
+            //Enemy[] list = new Enemy[enemies.arraySize];
+            //for (int j = 0; j < enemies.arraySize; j++) list[j] = (Enemy)enemies.GetArrayElementAtIndex(j).managedReferenceValue;
+            ////list[i].SpawnTime = spawnTime.floatValue;
+            //Array.Sort(list);
+            //for (int j = 0; j < enemies.arraySize; j++) enemies.GetArrayElementAtIndex(j).managedReferenceValue = list[j];
+            //foldedOut.intValue = Array.FindIndex(list, x => x.ID == currId);
+            //foldouts.GetArrayElementAtIndex(foldedOut.intValue).boolValue = true;
+            //foldouts.GetArrayElementAtIndex(i).boolValue = false;
         }
         EditorGUILayout.PropertyField(enemyName);
         EditorGUILayout.PropertyField(spawnPosition);
@@ -246,7 +248,8 @@ public class SingleEnemyEditor
                     (WaypointPathCreator)tempPath.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue);
             CurrentStageEnemiesEditorData.Options[pathTypeSelection.intValue].SetPathCreator(
                 (WaypointPathCreator)tempPath.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue);
-            EditorUtility.SetDirty(stageEnemies);
+            //EditorUtility.SetDirty(stageEnemies);
         }
+        return result;
     }
 }
