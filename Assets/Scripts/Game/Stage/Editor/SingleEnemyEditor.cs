@@ -12,10 +12,11 @@ public class SingleEnemyEditor
     CurrentStageEnemiesEditorData data;
     SerializedObject serialData;
     SerializedProperty prefabID, selectedPathIndex, isInsert, pathTypeSelection, tempPath;
-    SerializedProperty enemyPrefab, enemyScale, enemySprite;
 
     bool wasTextureMoved = false;
     bool isIncorrectPrefab = false;
+
+    public SingleEnemyEditor(Enemy enemy) => this.enemy = enemy;
     public void PrepareFoldout()
     {
         //Undo.RecordObject(this, "Open foldout");

@@ -1,5 +1,6 @@
 using EnemyClass;
 using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using WaypointPath;
@@ -15,7 +16,7 @@ public class CurrentStageEnemiesEditor : Editor
     CurrentStageEnemiesEditorData data;
     SerializedObject serialData;
     SerializedProperty prefabID, selectedPathIndex, isInsert, pathTypeSelection, tempPath;
-    SerializedProperty enemyPrefab, enemyScale, enemySprite, foldouts, foldedOut, idIncrement;
+    SerializedProperty enemyEditors, foldouts, foldedOut, idIncrement;
     const string assetPath = "Assets/Editor Assets/CurrentStageEnemiesEditorData.asset";
 
     //int selectedEnemyIndex = 0;
@@ -55,10 +56,7 @@ public class CurrentStageEnemiesEditor : Editor
         pathTypeSelection = serialData.FindProperty("PathTypeSelection");
         tempPath = serialData.FindProperty("TempPath");
 
-        enemyPrefab = serialData.FindProperty("EnemyPrefab");
-        //enemySpawnPosition = serialData.FindProperty("EnemySpawnPosition");
-        enemyScale = serialData.FindProperty("EnemyScale");
-        enemySprite = serialData.FindProperty("EnemySprite");
+        enemyEditors = serialData.FindProperty("EnemyEditors");
         foldouts = serialData.FindProperty("Foldouts");
         foldedOut = serialData.FindProperty("FoldedOut");
         idIncrement = serialData.FindProperty("IDIncrement");
@@ -72,6 +70,16 @@ public class CurrentStageEnemiesEditor : Editor
             enemy = (Enemy)enemies.GetArrayElementAtIndex(data.FoldedOut).managedReferenceValue;
             PrepareFoldout(data.FoldedOut);
         }
+
+        if (stageEnemies.Enemies.Count > 0)
+        {
+            foreach (var en in stageEnemies.Enemies)
+            {
+                enemyEditors.arraySize++;
+                enemyEditors.GetArrayElementAtIndex(enemyEditors.arraySize - 1).managedReferenceValue = new SingleEnemyEditor(en);
+            }
+        }
+
         Undo.undoRedoPerformed -= UndoRedo; Undo.undoRedoPerformed += UndoRedo;
     }
     private void UndoRedo()
@@ -122,11 +130,13 @@ public class CurrentStageEnemiesEditor : Editor
             if (stageEnemies.Enemies.Count > 0) newEnemy.SpawnTime = stageEnemies.Enemies[^1].SpawnTime;
             enemies.arraySize++;
             enemies.GetArrayElementAtIndex(enemies.arraySize - 1).managedReferenceValue = newEnemy;
+            enemyEditors.arraySize++;
+            enemies.GetArrayElementAtIndex(enemies.arraySize - 1).managedReferenceValue = new SingleEnemyEditor(newEnemy);
             foldouts.arraySize++;
             foldouts.GetArrayElementAtIndex(foldouts.arraySize - 1).boolValue = false;
         };
 
-        for (int i = 0; i < enemies.arraySize; i++)
+        for (int i = 0; i < enemyEditors.arraySize; i++)
         {
             enemy = (Enemy)enemies.GetArrayElementAtIndex(i).managedReferenceValue;
             string label = "(" + enemy.SpawnTime.ToString("0.00") + ") " + enemy.Name + ", ID " + enemy.ID;
