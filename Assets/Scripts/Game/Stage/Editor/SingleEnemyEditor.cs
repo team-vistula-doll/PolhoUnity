@@ -257,4 +257,30 @@ public class SingleEnemyEditor
         }
         return result;
     }
+
+    public bool DrawPath()
+    {
+        bool result = false;
+
+        EventType e = Event.current.type;
+        Vector2 screenPosition = HandleUtility.WorldToGUIPoint(enemy.SpawnPosition);
+        Vector2 screenScale = sprite.rect.size / HandleUtility.GetHandleSize(enemy.SpawnPosition) * scale;
+        Handles.BeginGUI();
+        GUI.DrawTexture(new Rect(
+            screenPosition - screenScale / 2, screenScale),
+            sprite.texture);
+        Handles.EndGUI();
+
+        EditorGUI.BeginChangeCheck();
+        Vector2 newSpawnPosition = Handles.PositionHandle(enemy.SpawnPosition, Quaternion.identity);
+        if (EditorGUI.EndChangeCheck())
+        {
+            //Undo.RecordObject(this, "")
+            result = true;
+        }
+
+        data.SelectedOption.DrawPath(enemy.Path, 0, e, false);
+        data.SelectedOption.DrawPath(data.TempPath, selectedPathIndex.intValue, e, true);
+        return result;
+    }
 }

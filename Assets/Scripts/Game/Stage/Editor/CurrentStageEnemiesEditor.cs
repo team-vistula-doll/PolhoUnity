@@ -208,29 +208,10 @@ public class CurrentStageEnemiesEditor : Editor
 
     public void OnSceneGUI()
     {
-        if (data.FoldedOut == -1 || selectedEnemy == null) return;
-        EventType e = Event.current.type;
+        SingleEnemyEditor enemyEditor = data.EnemyEditors[data.FoldedOut];
+        enemyEditor.DrawPath();
+        enemyEditors.GetArrayElementAtIndex(foldedOut.intValue).managedReferenceValue = enemyEditor;
 
-        Vector2 screenPosition = HandleUtility.WorldToGUIPoint(selectedEnemy.SpawnPosition);
-        Vector2 screenScale = data.EnemySprite.rect.size / HandleUtility.GetHandleSize(selectedEnemy.SpawnPosition) * data.EnemyScale;
-        Handles.BeginGUI();
-        GUI.DrawTexture(new Rect(
-            screenPosition - screenScale / 2, screenScale),
-            data.EnemySprite.texture);
-        Handles.EndGUI();
-
-        EditorGUI.BeginChangeCheck();
-        Vector2 newSpawnPosition = Handles.PositionHandle(selectedEnemy.SpawnPosition, Quaternion.identity);
-        if (EditorGUI.EndChangeCheck())
-        {
-            Undo.RecordObject(this, "Moved enemy");
-            selectedEnemy.SpawnPosition = newSpawnPosition;
-            wasTextureMoved = true;
-            //Repaint();
-        }
-
-        data.SelectedOption.DrawPath(selectedEnemy.Path, 0, e, false);
-        data.SelectedOption.DrawPath(data.TempPath, selectedPathIndex.intValue, e, true);
         Repaint();
     }
 }
