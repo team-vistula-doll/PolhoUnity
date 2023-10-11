@@ -13,6 +13,10 @@ public class SingleEnemyEditor
     SerializedObject serialData;
     SerializedProperty prefabID, selectedPathIndex, isInsert, pathTypeSelection, tempPath;
 
+    GameObject prefab;
+    Sprite sprite;
+    Vector2 scale;
+
     bool wasTextureMoved = false;
     bool isIncorrectPrefab = false;
 
@@ -36,15 +40,15 @@ public class SingleEnemyEditor
         //fireable = serialEnemy.FindPropertyRelative("Fireable");
         Debug.Log(id.intValue);
 
-        if (enemyPrefab.objectReferenceValue == null/* && foldedOut.intValue != index*/)
+        if (prefab == null/* && foldedOut.intValue != index*/)
         {
             //if (enemyPrefab != null) DestroyImmediate(enemyPrefab);
-            GameObject prefab = (GameObject)AssetDatabase.LoadAssetAtPath(
+            GameObject newPrefab = (GameObject)AssetDatabase.LoadAssetAtPath(
                 "Assets/Prefabs/Enemies/" + enemy.PrefabName + ".prefab", typeof(GameObject));
             //enemySpawnPosition.vector2Value = prefab.transform.position;
-            enemySprite.objectReferenceValue = prefab.GetComponent<SpriteRenderer>().sprite;
-            enemyScale.vector2Value = prefab.transform.localScale;
-            enemyPrefab.objectReferenceValue = prefab;
+            sprite = newPrefab.GetComponent<SpriteRenderer>().sprite;
+            scale = newPrefab.transform.localScale;
+            prefab = newPrefab;
         }
 
         if (prefabID.intValue != enemy.ID)
@@ -194,11 +198,11 @@ public class SingleEnemyEditor
         string objectPath = "Assets/Prefabs/Enemies/Enemy.prefab";
         EditorGUI.BeginChangeCheck();
         GameObject obj = (GameObject)EditorGUILayout.ObjectField(
-            "Prefab", (GameObject)enemyPrefab.objectReferenceValue, typeof(GameObject), false);
+            "Prefab", (GameObject)prefab, typeof(GameObject), false);
         if (EditorGUI.EndChangeCheck())
         {
             //Undo.RecordObject(this, "Change prefab");
-            enemyPrefab.objectReferenceValue = obj;
+            prefab = obj;
             objectPath = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(obj);
             isIncorrectPrefab = objectPath.IndexOf("Assets/Prefabs/Enemies/") != 0;
             if (!isIncorrectPrefab)
@@ -206,8 +210,8 @@ public class SingleEnemyEditor
                 prefabName.stringValue = objectPath.Substring(objectPath.LastIndexOf('/') + 1);
                 prefabName.stringValue = prefabName.stringValue.Substring(0, prefabName.stringValue.LastIndexOf('.'));
                 //spawnPosition.vector2Value = obj.transform.position;
-                enemyScale.vector2Value = obj.transform.localScale;
-                enemySprite.objectReferenceValue = obj.GetComponent<SpriteRenderer>().sprite;
+                scale = obj.transform.localScale;
+                sprite = obj.GetComponent<SpriteRenderer>().sprite;
             }
         }
         if (isIncorrectPrefab)
