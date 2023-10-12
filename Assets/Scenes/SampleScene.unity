@@ -1691,30 +1691,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4716b63354d2ad94f9196b3e7f0c89c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Enemies:
-  - rid: 186632302576795654
-  - rid: 186632302576795656
+  Enemies: []
   references:
     version: 2
-    RefIds:
-    - rid: 186632302576795654
-      type: {class: Enemy, ns: EnemyClass, asm: Game}
-      data:
-        ID: 0
-        PrefabName: Enemy
-        Name: Enemy
-        SpawnTime: 0
-        SpawnPosition: {x: 9.05, y: 0}
-        Path: []
-    - rid: 186632302576795656
-      type: {class: Enemy, ns: EnemyClass, asm: Game}
-      data:
-        ID: 1
-        PrefabName: Enemy
-        Name: Enemy
-        SpawnTime: 0
-        SpawnPosition: {x: -3.51, y: 0}
-        Path: []
+    RefIds: []
 --- !u!1 &1022631778
 GameObject:
   m_ObjectHideFlags: 0

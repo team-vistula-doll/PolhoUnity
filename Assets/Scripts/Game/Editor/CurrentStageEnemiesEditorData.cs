@@ -4,8 +4,6 @@ using WaypointPath;
 
 public class CurrentStageEnemiesEditorData : WaypointPathEditorData
 {
-    [SerializeReference]
-    public List<SingleEnemyEditor> EnemyEditors = new();
     //public GameObject EnemyPrefab;
     public List<bool> Foldouts = new();
     public int FoldedOut = -1;

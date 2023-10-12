@@ -1,12 +1,14 @@
 using EnemyClass;
+using System;
 using UnityEditor;
 using UnityEngine;
 using WaypointPath;
 
+[Serializable]
 public class SingleEnemyEditor
 {
-    Enemy enemy;
-    SerializedObject serialEnemy;
+    public Enemy enemy;
+    SerializedProperty serialEnemy;
     SerializedProperty id, prefabName, enemyName, spawnTime, spawnPosition, path/*, spawnRepeats, fireable*/;
 
     CurrentStageEnemiesEditorData data;
@@ -20,7 +22,13 @@ public class SingleEnemyEditor
     bool wasTextureMoved = false;
     bool isIncorrectPrefab = false;
 
-    public SingleEnemyEditor(Enemy enemy) => this.enemy = enemy;
+    public SingleEnemyEditor(Enemy enemy, SerializedProperty serialEnemy, CurrentStageEnemiesEditorData data)
+    {
+        this.enemy = enemy;
+        this.serialEnemy = serialEnemy;
+        this.data = data;
+        serialData = new SerializedObject(data);
+    }
     public void PrepareFoldout()
     {
         //Undo.RecordObject(this, "Open foldout");
@@ -29,16 +37,15 @@ public class SingleEnemyEditor
         //selectedEnemy = enemy;
         foreach (var option in CurrentStageEnemiesEditorData.Options) option.StartPosition = enemy.SpawnPosition;
 
-        //SerializedProperty serialEnemy = enemies.GetArrayElementAtIndex(index);
-        id = serialEnemy.FindProperty("ID");
-        prefabName = serialEnemy.FindProperty("PrefabName");
-        enemyName = serialEnemy.FindProperty("Name");
-        spawnTime = serialEnemy.FindProperty("SpawnTime");
-        spawnPosition = serialEnemy.FindProperty("SpawnPosition");
-        path = serialEnemy.FindProperty("Path");
+        id = serialEnemy.FindPropertyRelative("ID");
+        prefabName = serialEnemy.FindPropertyRelative("PrefabName");
+        enemyName = serialEnemy.FindPropertyRelative("Name");
+        spawnTime = serialEnemy.FindPropertyRelative("SpawnTime");
+        spawnPosition = serialEnemy.FindPropertyRelative("SpawnPosition");
+        path = serialEnemy.FindPropertyRelative("Path");
         //spawnRepeats = serialEnemy.FindPropertyRelative("SpawnRepeats");
         //fireable = serialEnemy.FindPropertyRelative("Fireable");
-        Debug.Log(id.intValue);
+        Debug.Log(enemy.ID);
 
         if (prefab == null/* && foldedOut.intValue != index*/)
         {
@@ -51,7 +58,7 @@ public class SingleEnemyEditor
             prefab = newPrefab;
         }
 
-        if (prefabID.intValue != enemy.ID)
+        if (data.PrefabID != enemy.ID)
         {
             PathEditor.StartDeleteIndex = PathEditor.EndDeleteIndex = selectedPathIndex.intValue = enemy.Path.Count - 2;
             if (selectedPathIndex.intValue < 0) PathEditor.StartDeleteIndex = PathEditor.EndDeleteIndex = selectedPathIndex.intValue = 0;
@@ -161,7 +168,7 @@ public class SingleEnemyEditor
         //}
         //GUILayout.EndHorizontal();
 
-        if (tempPath.arraySize > 1 && enemy.Path.Count == 0)
+        if (tempPath.arraySize > 1 && path.arraySize == 0)
         {
             data.PathTypeSelection = 0;
             serialData.Update();
@@ -175,7 +182,7 @@ public class SingleEnemyEditor
 
         if (wasTextureMoved)
         {
-            if (enemy.Path.Count > 0)
+            if (path.arraySize > 0)
             {
                 WaypointPathCreator p = (WaypointPathCreator)path.GetArrayElementAtIndex(0).managedReferenceValue;
                 p.StartPosition = spawnPosition.vector2Value;
@@ -258,9 +265,9 @@ public class SingleEnemyEditor
         return result;
     }
 
-    public bool DrawPath()
+    public Vector2? DrawPath()
     {
-        bool result = false;
+        Vector2? result = null;
 
         EventType e = Event.current.type;
         Vector2 screenPosition = HandleUtility.WorldToGUIPoint(enemy.SpawnPosition);
@@ -275,12 +282,12 @@ public class SingleEnemyEditor
         Vector2 newSpawnPosition = Handles.PositionHandle(enemy.SpawnPosition, Quaternion.identity);
         if (EditorGUI.EndChangeCheck())
         {
-            //Undo.RecordObject(this, "")
-            result = true;
+            //Undo.RecordObject(enemy, "")
+            result = newSpawnPosition;
         }
 
-        data.SelectedOption.DrawPath(enemy.Path, 0, e, false);
-        data.SelectedOption.DrawPath(data.TempPath, selectedPathIndex.intValue, e, true);
+        //data.SelectedOption.DrawPath(enemy.Path, 0, e, false);
+        //data.SelectedOption.DrawPath(data.TempPath, selectedPathIndex.intValue, e, true);
         return result;
     }
 }

@@ -17,9 +17,11 @@ public class CurrentStageEnemiesEditor : Editor
     CurrentStageEnemiesEditorData data;
     SerializedObject serialData;
     SerializedProperty prefabID, selectedPathIndex, isInsert, pathTypeSelection, tempPath;
-    SerializedProperty enemyEditors, foldouts, foldedOut, idIncrement;
+    SerializedProperty foldouts, foldedOut, idIncrement;
     const string assetPath = "Assets/Editor Assets/CurrentStageEnemiesEditorData.asset";
 
+    [SerializeReference]
+    List<SingleEnemyEditor> enemyEditors = new();
     //int selectedEnemyIndex = 0;
     [SerializeField]
     Enemy enemy, selectedEnemy = null;
@@ -57,7 +59,6 @@ public class CurrentStageEnemiesEditor : Editor
         pathTypeSelection = serialData.FindProperty("PathTypeSelection");
         tempPath = serialData.FindProperty("TempPath");
 
-        enemyEditors = serialData.FindProperty("EnemyEditors");
         foldouts = serialData.FindProperty("Foldouts");
         foldedOut = serialData.FindProperty("FoldedOut");
         idIncrement = serialData.FindProperty("IDIncrement");
@@ -69,17 +70,15 @@ public class CurrentStageEnemiesEditor : Editor
         if (data.FoldedOut != -1)
         {
             selectedEnemy = (Enemy)enemies.GetArrayElementAtIndex(data.FoldedOut).managedReferenceValue;
-            SingleEnemyEditor enemyEditor = (SingleEnemyEditor)enemyEditors.GetArrayElementAtIndex(data.FoldedOut).managedReferenceValue;
-            enemyEditor.PrepareFoldout();
-            enemyEditors.GetArrayElementAtIndex(data.FoldedOut).managedReferenceValue = enemyEditor;
+            enemyEditors[data.FoldedOut].PrepareFoldout();
         }
 
         if (stageEnemies.Enemies.Count > 0)
         {
-            foreach (var en in stageEnemies.Enemies)
+            for (int i = 0; i < stageEnemies.Enemies.Count; i++)
             {
-                enemyEditors.arraySize++;
-                enemyEditors.GetArrayElementAtIndex(enemyEditors.arraySize - 1).managedReferenceValue = new SingleEnemyEditor(en);
+                Enemy en = stageEnemies.Enemies[i];
+                enemyEditors.Add(new SingleEnemyEditor(en, enemies.GetArrayElementAtIndex(i), data));
             }
         }
 
@@ -132,17 +131,16 @@ public class CurrentStageEnemiesEditor : Editor
             { ID = idIncrement.intValue++ };
             if (stageEnemies.Enemies.Count > 0) newEnemy.SpawnTime = stageEnemies.Enemies[^1].SpawnTime;
 
-            Action<SerializedProperty, object> addEnemy = (c, o) =>
-            { 
-                c.arraySize++;
-                c.GetArrayElementAtIndex(c.arraySize - 1).managedReferenceValue = o;
-            };
-            addEnemy(enemies, newEnemy);
-            addEnemy(enemyEditors, new SingleEnemyEditor(newEnemy));
-            addEnemy(foldouts, false);
+            enemies.arraySize++;
+            enemies.GetArrayElementAtIndex(enemies.arraySize - 1).managedReferenceValue = newEnemy;
+            foldouts.arraySize++;
+            foldouts.GetArrayElementAtIndex(foldouts.arraySize - 1).boolValue = false;
+
+            Undo.RecordObject(this, "Add new enemy");
+            enemyEditors.Add(new SingleEnemyEditor(newEnemy, enemies.GetArrayElementAtIndex(enemies.arraySize - 1),  data));
         };
 
-        for (int i = 0; i < enemyEditors.arraySize; i++)
+        for (int i = 0; i < enemies.arraySize; i++)
         {
             enemy = (Enemy)enemies.GetArrayElementAtIndex(i).managedReferenceValue;
             string label = "(" + enemy.SpawnTime.ToString("0.00") + ") " + enemy.Name + ", ID " + enemy.ID;
@@ -165,9 +163,8 @@ public class CurrentStageEnemiesEditor : Editor
                 foldouts.GetArrayElementAtIndex(i).boolValue = true;
                 //selectedEnemy = enemy;
 
-                SingleEnemyEditor enemyEditor = (SingleEnemyEditor)enemyEditors.GetArrayElementAtIndex(i).managedReferenceValue;
-                enemyEditor.PrepareFoldout();
-                enemyEditors.GetArrayElementAtIndex(i).managedReferenceValue = enemyEditor;
+                Undo.RecordObject(this, "Open foldout");
+                enemyEditors[i].PrepareFoldout();
                 //tempPath.arraySize = data.TempPath.Count;
                 //for (int j = 0; j < tempPath.arraySize; j++)
                 //    tempPath.GetArrayElementAtIndex(j).managedReferenceValue = data.TempPath[j];
@@ -183,17 +180,18 @@ public class CurrentStageEnemiesEditor : Editor
                 bool isDelete = GUILayout.Button("Delete", style, GUILayout.MaxWidth(EditorStyles.label.CalcSize(new GUIContent("Delete")).x + 20));
                 if (isDelete)
                 {
-                    Action<SerializedProperty> deleteEnemy = c =>
+                    for (int j = i; j < enemies.arraySize - 1; j++)
                     {
-                        for (int j = i; j < c.arraySize - 1; j++)
-                        {
-                            c.GetArrayElementAtIndex(j).managedReferenceValue = c.GetArrayElementAtIndex(j + 1).managedReferenceValue;
-                        }
-                        c.arraySize--;
-                    };
-                    deleteEnemy(enemies);
-                    deleteEnemy(enemyEditors);
-                    deleteEnemy(foldouts);
+                        enemies.GetArrayElementAtIndex(j).managedReferenceValue = enemies.GetArrayElementAtIndex(j + 1).managedReferenceValue;
+                    }
+                    enemies.arraySize--;
+                    Undo.RecordObject(this, "Close foldout");
+                    enemyEditors.RemoveAt(i);
+                    for (int j = i; j < foldouts.arraySize - 1; j++)
+                    {
+                        foldouts.GetArrayElementAtIndex(j).boolValue = foldouts.GetArrayElementAtIndex(j + 1).boolValue;
+                    }
+                    foldouts.arraySize--;
                     foldedOut.intValue = -1;
                     break;
                 }
@@ -208,9 +206,18 @@ public class CurrentStageEnemiesEditor : Editor
 
     public void OnSceneGUI()
     {
-        SingleEnemyEditor enemyEditor = data.EnemyEditors[data.FoldedOut];
-        enemyEditor.DrawPath();
-        enemyEditors.GetArrayElementAtIndex(foldedOut.intValue).managedReferenceValue = enemyEditor;
+        if (data.FoldedOut < 0) return;
+        EventType e = Event.current.type;
+        SingleEnemyEditor enemyEditor = enemyEditors[data.FoldedOut];
+        Vector2? spawn = enemyEditor.DrawPath();
+        if (spawn != null)
+        {
+            Undo.RecordObject(this, "Move enemy");
+            enemyEditor.enemy.SpawnPosition = spawn.Value;
+        }
+
+        data.SelectedOption.DrawPath(enemy.Path, 0, e, false);
+        data.SelectedOption.DrawPath(data.TempPath, selectedPathIndex.intValue, e, true);
 
         Repaint();
     }
