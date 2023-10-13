@@ -1,7 +1,5 @@
 using EnemyClass;
-using System;
 using System.Collections.Generic;
-using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 using WaypointPath;
@@ -78,7 +76,7 @@ public class CurrentStageEnemiesEditor : Editor
             for (int i = 0; i < stageEnemies.Enemies.Count; i++)
             {
                 Enemy en = stageEnemies.Enemies[i];
-                enemyEditors.Add(new SingleEnemyEditor(en, enemies.GetArrayElementAtIndex(i), data));
+                enemyEditors.Add(new SingleEnemyEditor(en, enemies.GetArrayElementAtIndex(i), data, serialData));
             }
         }
 
@@ -86,7 +84,7 @@ public class CurrentStageEnemiesEditor : Editor
     }
     private void UndoRedo()
     {
-        Debug.Log(id.intValue);
+        //Debug.Log(id.intValue);
         if (data.FoldedOut == -1 || data.TempPath.Count == 0) return;
         if (data.SelectedOption.GetPathCreator() != data.TempPath[data.SelectedPathIndex])
         {
@@ -137,11 +135,12 @@ public class CurrentStageEnemiesEditor : Editor
             foldouts.GetArrayElementAtIndex(foldouts.arraySize - 1).boolValue = false;
 
             Undo.RecordObject(this, "Add new enemy");
-            enemyEditors.Add(new SingleEnemyEditor(newEnemy, enemies.GetArrayElementAtIndex(enemies.arraySize - 1),  data));
+            enemyEditors.Add(new SingleEnemyEditor(newEnemy, enemies.GetArrayElementAtIndex(enemies.arraySize - 1),  data, serialData));
         };
 
         for (int i = 0; i < enemies.arraySize; i++)
         {
+            var currentEnemyEditor = enemyEditors[i];
             enemy = (Enemy)enemies.GetArrayElementAtIndex(i).managedReferenceValue;
             string label = "(" + enemy.SpawnTime.ToString("0.00") + ") " + enemy.Name + ", ID " + enemy.ID;
             foldouts.GetArrayElementAtIndex(i).boolValue = EditorGUILayout.Foldout(foldouts.GetArrayElementAtIndex(i).boolValue, label);
@@ -162,9 +161,8 @@ public class CurrentStageEnemiesEditor : Editor
                 for (int j = 0; j < foldouts.arraySize; j++) foldouts.GetArrayElementAtIndex(j).boolValue = false;
                 foldouts.GetArrayElementAtIndex(i).boolValue = true;
                 //selectedEnemy = enemy;
-
                 Undo.RecordObject(this, "Open foldout");
-                enemyEditors[i].PrepareFoldout();
+                currentEnemyEditor.PrepareFoldout();
                 //tempPath.arraySize = data.TempPath.Count;
                 //for (int j = 0; j < tempPath.arraySize; j++)
                 //    tempPath.GetArrayElementAtIndex(j).managedReferenceValue = data.TempPath[j];
@@ -197,6 +195,8 @@ public class CurrentStageEnemiesEditor : Editor
                 }
             }
             GUILayout.EndHorizontal();
+
+            currentEnemyEditor.DrawFoldout();
         }
 
         serialData.ApplyModifiedProperties();

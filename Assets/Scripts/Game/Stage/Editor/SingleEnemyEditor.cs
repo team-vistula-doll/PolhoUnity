@@ -12,7 +12,7 @@ public class SingleEnemyEditor
     SerializedProperty id, prefabName, enemyName, spawnTime, spawnPosition, path/*, spawnRepeats, fireable*/;
 
     CurrentStageEnemiesEditorData data;
-    SerializedObject serialData;
+    public SerializedObject serialData;
     SerializedProperty prefabID, selectedPathIndex, isInsert, pathTypeSelection, tempPath;
 
     GameObject prefab;
@@ -22,13 +22,20 @@ public class SingleEnemyEditor
     bool wasTextureMoved = false;
     bool isIncorrectPrefab = false;
 
-    public SingleEnemyEditor(Enemy enemy, SerializedProperty serialEnemy, CurrentStageEnemiesEditorData data)
+    public SingleEnemyEditor(Enemy enemy, SerializedProperty serialEnemy, CurrentStageEnemiesEditorData data, SerializedObject serialData)
     {
         this.enemy = enemy;
         this.serialEnemy = serialEnemy;
         this.data = data;
-        serialData = new SerializedObject(data);
+
+        this.serialData = serialData;
+        prefabID = serialData.FindProperty("PrefabID");
+        selectedPathIndex = serialData.FindProperty("SelectedPathIndex");
+        isInsert = serialData.FindProperty("IsInsert");
+        pathTypeSelection = serialData.FindProperty("PathTypeSelection");
+        tempPath = serialData.FindProperty("TempPath");
     }
+
     public void PrepareFoldout()
     {
         //Undo.RecordObject(this, "Open foldout");
@@ -262,6 +269,7 @@ public class SingleEnemyEditor
                 (WaypointPathCreator)tempPath.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue);
             //EditorUtility.SetDirty(stageEnemies);
         }
+
         return result;
     }
 
