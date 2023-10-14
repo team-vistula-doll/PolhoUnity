@@ -34,6 +34,8 @@ public class SingleEnemyEditor
         isInsert = serialData.FindProperty("IsInsert");
         pathTypeSelection = serialData.FindProperty("PathTypeSelection");
         tempPath = serialData.FindProperty("TempPath");
+
+        PrepareFoldout();
     }
 
     public void PrepareFoldout()
@@ -291,11 +293,15 @@ public class SingleEnemyEditor
         if (EditorGUI.EndChangeCheck())
         {
             //Undo.RecordObject(enemy, "")
+            WaypointPathCreator creator = (WaypointPathCreator)tempPath.GetArrayElementAtIndex(0).managedReferenceValue;
+            creator.StartPosition = newSpawnPosition;
+            tempPath.GetArrayElementAtIndex(0).managedReferenceValue = creator;
+            PathEditor.ConnectPaths(tempPath, 0);
             result = newSpawnPosition;
         }
 
-        //data.SelectedOption.DrawPath(enemy.Path, 0, e, false);
-        //data.SelectedOption.DrawPath(data.TempPath, selectedPathIndex.intValue, e, true);
+        data.SelectedOption.DrawPath(enemy.Path, 0, e, false);
+        data.SelectedOption.DrawPath(data.TempPath, selectedPathIndex.intValue, e, true);
         return result;
     }
 }

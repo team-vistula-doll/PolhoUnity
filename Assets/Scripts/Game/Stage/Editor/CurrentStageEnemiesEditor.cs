@@ -20,29 +20,16 @@ public class CurrentStageEnemiesEditor : Editor
 
     [SerializeReference]
     List<SingleEnemyEditor> enemyEditors = new();
-    //int selectedEnemyIndex = 0;
     [SerializeField]
     Enemy enemy, selectedEnemy = null;
     [SerializeField]
     bool isIncorrectPrefab = false;
-    //[SerializeField]
-    //GameObject enemyPrefab;
-    //[SerializeField]
-    //Vector2 enemySpawnPosition;
-    //[SerializeField]
-    //Vector2 enemyScale;
-    //[SerializeField]
-    //Sprite enemySprite = null;
-    //List<bool> foldouts;
-    //int foldedOut = -1;
     bool wasTextureMoved = false;
-    //int idIncrement = 0;
 
     private void OnEnable()
     {
         if (stageEnemies == null) stageEnemies = target as CurrentStageEnemies;
         enemies = serializedObject.FindProperty("Enemies");
-        //foldouts = new();
 
         data = (CurrentStageEnemiesEditorData)AssetDatabase.LoadAssetAtPath(assetPath, typeof(CurrentStageEnemiesEditorData));
         if (data == null) data = (CurrentStageEnemiesEditorData)ScriptableObject.CreateInstance(typeof(CurrentStageEnemiesEditorData));
@@ -61,18 +48,18 @@ public class CurrentStageEnemiesEditor : Editor
         foldedOut = serialData.FindProperty("FoldedOut");
         idIncrement = serialData.FindProperty("IDIncrement");
 
-        if (data.FoldedOut < data.Foldouts.Count - 1)
+        if (data.FoldedOut > data.Foldouts.Count - 1)
             data.FoldedOut = -1;
 
-        //if (enemies.arraySize < data.FoldedOut)
         if (data.FoldedOut != -1)
         {
             selectedEnemy = (Enemy)enemies.GetArrayElementAtIndex(data.FoldedOut).managedReferenceValue;
-            enemyEditors[data.FoldedOut].PrepareFoldout();
+            //enemyEditors[data.FoldedOut].PrepareFoldout();
         }
 
         if (stageEnemies.Enemies.Count > 0)
         {
+            enemyEditors = new()
             for (int i = 0; i < stageEnemies.Enemies.Count; i++)
             {
                 Enemy en = stageEnemies.Enemies[i];
@@ -162,7 +149,7 @@ public class CurrentStageEnemiesEditor : Editor
                 foldouts.GetArrayElementAtIndex(i).boolValue = true;
                 //selectedEnemy = enemy;
                 Undo.RecordObject(this, "Open foldout");
-                currentEnemyEditor.PrepareFoldout();
+                //currentEnemyEditor.PrepareFoldout();
                 //tempPath.arraySize = data.TempPath.Count;
                 //for (int j = 0; j < tempPath.arraySize; j++)
                 //    tempPath.GetArrayElementAtIndex(j).managedReferenceValue = data.TempPath[j];
@@ -216,8 +203,8 @@ public class CurrentStageEnemiesEditor : Editor
             enemyEditor.enemy.SpawnPosition = spawn.Value;
         }
 
-        data.SelectedOption.DrawPath(enemy.Path, 0, e, false);
-        data.SelectedOption.DrawPath(data.TempPath, selectedPathIndex.intValue, e, true);
+        //data.SelectedOption.DrawPath(enemy.Path, 0, e, false);
+        //data.SelectedOption.DrawPath(data.TempPath, selectedPathIndex.intValue, e, true);
 
         Repaint();
     }
