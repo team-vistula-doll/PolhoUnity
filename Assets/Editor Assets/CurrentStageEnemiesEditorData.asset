@@ -14,12 +14,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PrefabID: 0
   SelectedPathIndex: 0
-  TempPath: []
+  TempPath:
+  - rid: 3409141735368687618
   IsInsert: 0
   PathTypeSelection: 0
-  Foldouts: 0000
-  FoldedOut: -1
+  Foldouts: 0001000000000000000000000000000000000000
+  FoldedOut: 1
   IDIncrement: 2
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 3409141735368687618
+      type: {class: WaypointPathExpression, ns: WaypointPath, asm: Game}
+      data:
+        StartPosition: {x: 3.293531, y: 0}
+        StepSize: 0.5
+        PathFormula: x
+        Length: 20
+        Angle: 0

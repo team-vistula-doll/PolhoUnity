@@ -35,15 +35,6 @@ public class SingleEnemyEditor
         pathTypeSelection = serialData.FindProperty("PathTypeSelection");
         tempPath = serialData.FindProperty("TempPath");
 
-        PrepareFoldout();
-    }
-
-    public void PrepareFoldout()
-    {
-        //Undo.RecordObject(this, "Open foldout");
-        //for (int j = 0; j < foldouts.arraySize; j++) foldouts.GetArrayElementAtIndex(j).boolValue = false;
-        //foldouts.GetArrayElementAtIndex(index).boolValue = true;
-        //selectedEnemy = enemy;
         foreach (var option in CurrentStageEnemiesEditorData.Options) option.StartPosition = enemy.SpawnPosition;
 
         id = serialEnemy.FindPropertyRelative("ID");
@@ -55,6 +46,10 @@ public class SingleEnemyEditor
         //spawnRepeats = serialEnemy.FindPropertyRelative("SpawnRepeats");
         //fireable = serialEnemy.FindPropertyRelative("Fireable");
         Debug.Log(enemy.ID);
+    }
+
+    public void PrepareFoldout()
+    {
 
         if (prefab == null/* && foldedOut.intValue != index*/)
         {
@@ -92,7 +87,10 @@ public class SingleEnemyEditor
             if (enemy.Path.Count == 0)
             {
                 tempPath.arraySize = 1;
-                tempPath.GetArrayElementAtIndex(tempPath.arraySize - 1).managedReferenceValue = new WaypointPathExpression();
+                tempPath.GetArrayElementAtIndex(tempPath.arraySize - 1).managedReferenceValue = new WaypointPathExpression()
+                {
+                    StartPosition = spawnPosition.vector2Value
+                };
             }
             //tempPath.managedReferenceValue = new List<WaypointPathCreator>() { new WaypointPathExpression() };
             else if (enemy.Path.Count != 0)
@@ -118,6 +116,8 @@ public class SingleEnemyEditor
         //data.TempPath[data.SelectedPathIndex]);
         data.SelectedOption.SetPathCreator(
             (WaypointPathCreator)tempPath.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue);
+
+        serialData.ApplyModifiedPropertiesWithoutUndo();
     }
 
     /// <summary>
@@ -239,19 +239,12 @@ public class SingleEnemyEditor
         if (EditorGUI.EndChangeCheck())
         {
             result = true;
-            //serializedObject.ApplyModifiedProperties();
-            //int currId = id.intValue;
-            //Enemy[] list = new Enemy[enemies.arraySize];
-            //for (int j = 0; j < enemies.arraySize; j++) list[j] = (Enemy)enemies.GetArrayElementAtIndex(j).managedReferenceValue;
-            ////list[i].SpawnTime = spawnTime.floatValue;
-            //Array.Sort(list);
-            //for (int j = 0; j < enemies.arraySize; j++) enemies.GetArrayElementAtIndex(j).managedReferenceValue = list[j];
-            //foldedOut.intValue = Array.FindIndex(list, x => x.ID == currId);
-            //foldouts.GetArrayElementAtIndex(foldedOut.intValue).boolValue = true;
-            //foldouts.GetArrayElementAtIndex(i).boolValue = false;
         }
         EditorGUILayout.PropertyField(enemyName);
+        EditorGUI.BeginChangeCheck();
         EditorGUILayout.PropertyField(spawnPosition);
+        if (EditorGUI.EndChangeCheck())
+            wasTextureMoved = true;
 
         data.SelectedOption.SelectPath(selectedPathIndex, pathTypeSelection, isInsert, tempPath, enemy.Path);
 
@@ -272,6 +265,7 @@ public class SingleEnemyEditor
             //EditorUtility.SetDirty(stageEnemies);
         }
 
+        serialData.ApplyModifiedPropertiesWithoutUndo();
         return result;
     }
 
@@ -293,10 +287,11 @@ public class SingleEnemyEditor
         if (EditorGUI.EndChangeCheck())
         {
             //Undo.RecordObject(enemy, "")
-            WaypointPathCreator creator = (WaypointPathCreator)tempPath.GetArrayElementAtIndex(0).managedReferenceValue;
-            creator.StartPosition = newSpawnPosition;
-            tempPath.GetArrayElementAtIndex(0).managedReferenceValue = creator;
-            PathEditor.ConnectPaths(tempPath, 0);
+            //WaypointPathCreator creator = (WaypointPathCreator)tempPath.GetArrayElementAtIndex(0).managedReferenceValue;
+            //creator.StartPosition = newSpawnPosition;
+            //tempPath.GetArrayElementAtIndex(0).managedReferenceValue = creator;
+            //PathEditor.ConnectPaths(tempPath, 0);
+            wasTextureMoved = true;
             result = newSpawnPosition;
         }
 

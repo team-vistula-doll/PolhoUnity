@@ -1,4 +1,5 @@
 using EnemyClass;
+using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -31,7 +32,7 @@ public class CurrentStageEnemiesEditor : Editor
         if (stageEnemies == null) stageEnemies = target as CurrentStageEnemies;
         enemies = serializedObject.FindProperty("Enemies");
 
-        data = (CurrentStageEnemiesEditorData)AssetDatabase.LoadAssetAtPath(assetPath, typeof(CurrentStageEnemiesEditorData));
+        if (data == null) data = (CurrentStageEnemiesEditorData)AssetDatabase.LoadAssetAtPath(assetPath, typeof(CurrentStageEnemiesEditorData));
         if (data == null) data = (CurrentStageEnemiesEditorData)ScriptableObject.CreateInstance(typeof(CurrentStageEnemiesEditorData));
         data.Init();
         serialData = new SerializedObject(data);
@@ -51,15 +52,10 @@ public class CurrentStageEnemiesEditor : Editor
         if (data.FoldedOut > data.Foldouts.Count - 1)
             data.FoldedOut = -1;
 
-        if (data.FoldedOut != -1)
-        {
-            selectedEnemy = (Enemy)enemies.GetArrayElementAtIndex(data.FoldedOut).managedReferenceValue;
-            //enemyEditors[data.FoldedOut].PrepareFoldout();
-        }
 
         if (stageEnemies.Enemies.Count > 0)
         {
-            enemyEditors = new()
+            enemyEditors = new();
             for (int i = 0; i < stageEnemies.Enemies.Count; i++)
             {
                 Enemy en = stageEnemies.Enemies[i];
@@ -67,17 +63,21 @@ public class CurrentStageEnemiesEditor : Editor
             }
         }
 
+        if (data.FoldedOut != -1)
+        {
+            selectedEnemy = (Enemy)enemies.GetArrayElementAtIndex(data.FoldedOut).managedReferenceValue;
+            enemyEditors[data.FoldedOut].PrepareFoldout();
+        }
+
         Undo.undoRedoPerformed -= UndoRedo; Undo.undoRedoPerformed += UndoRedo;
     }
     private void UndoRedo()
     {
-        //Debug.Log(id.intValue);
         if (data.FoldedOut == -1 || data.TempPath.Count == 0) return;
         if (data.SelectedOption.GetPathCreator() != data.TempPath[data.SelectedPathIndex])
         {
             data.PathTypeSelection = CurrentStageEnemiesEditorData.GetSelectedOption(data.TempPath[data.SelectedPathIndex]);
             data.SelectedOption.SetPathCreator(data.TempPath[data.SelectedPathIndex]);
-            //serialData.Update();
         }
         else data.SelectedOption.ApplyPathOptions();
 
@@ -136,8 +136,6 @@ public class CurrentStageEnemiesEditor : Editor
                 if (foldedOut.intValue == i)
                 {
                     Undo.RecordObject(this, "Close foldout");
-                    //enemySprite = null;
-                    //id = spawnPosition = path = spawnRepeats = fireable = null;
                     selectedEnemy = null;
                     foldedOut.intValue = -1;
                 }
@@ -147,12 +145,8 @@ public class CurrentStageEnemiesEditor : Editor
             {
                 for (int j = 0; j < foldouts.arraySize; j++) foldouts.GetArrayElementAtIndex(j).boolValue = false;
                 foldouts.GetArrayElementAtIndex(i).boolValue = true;
-                //selectedEnemy = enemy;
                 Undo.RecordObject(this, "Open foldout");
-                //currentEnemyEditor.PrepareFoldout();
-                //tempPath.arraySize = data.TempPath.Count;
-                //for (int j = 0; j < tempPath.arraySize; j++)
-                //    tempPath.GetArrayElementAtIndex(j).managedReferenceValue = data.TempPath[j];
+                currentEnemyEditor.PrepareFoldout();
 
                 foldedOut.intValue = i;
             }
@@ -183,7 +177,19 @@ public class CurrentStageEnemiesEditor : Editor
             }
             GUILayout.EndHorizontal();
 
-            currentEnemyEditor.DrawFoldout();
+            if (currentEnemyEditor.DrawFoldout())
+            {
+                serializedObject.ApplyModifiedPropertiesWithoutUndo();
+                int currId = currentEnemyEditor.enemy.ID;
+                Enemy[] list = new Enemy[enemies.arraySize];
+                for (int j = 0; j < enemies.arraySize; j++) list[j] = (Enemy)enemies.GetArrayElementAtIndex(j).managedReferenceValue;
+                //list[i].SpawnTime = spawnTime.floatValue;
+                Array.Sort(list);
+                for (int j = 0; j < enemies.arraySize; j++) enemies.GetArrayElementAtIndex(j).managedReferenceValue = list[j];
+                foldedOut.intValue = Array.FindIndex(list, x => x.ID == currId);
+                foldouts.GetArrayElementAtIndex(foldedOut.intValue).boolValue = true;
+                foldouts.GetArrayElementAtIndex(i).boolValue = false;
+            }
         }
 
         serialData.ApplyModifiedProperties();
@@ -202,9 +208,6 @@ public class CurrentStageEnemiesEditor : Editor
             Undo.RecordObject(this, "Move enemy");
             enemyEditor.enemy.SpawnPosition = spawn.Value;
         }
-
-        //data.SelectedOption.DrawPath(enemy.Path, 0, e, false);
-        //data.SelectedOption.DrawPath(data.TempPath, selectedPathIndex.intValue, e, true);
 
         Repaint();
     }
