@@ -7,11 +7,15 @@ using WaypointPath;
 [Serializable]
 public class SingleEnemyEditor
 {
+    [SerializeField]
     public Enemy enemy;
+    [SerializeReference]
     SerializedProperty serialEnemy;
     SerializedProperty id, prefabName, enemyName, spawnTime, spawnPosition, path/*, spawnRepeats, fireable*/;
 
+    [SerializeField]
     CurrentStageEnemiesEditorData data;
+    [SerializeReference]
     public SerializedObject serialData;
     SerializedProperty prefabID, selectedPathIndex, isInsert, pathTypeSelection, tempPath;
 
@@ -27,8 +31,13 @@ public class SingleEnemyEditor
         this.enemy = enemy;
         this.serialEnemy = serialEnemy;
         this.data = data;
-
         this.serialData = serialData;
+
+        InitEditor();
+    }
+
+    public void InitEditor()
+    {
         prefabID = serialData.FindProperty("PrefabID");
         selectedPathIndex = serialData.FindProperty("SelectedPathIndex");
         isInsert = serialData.FindProperty("IsInsert");
@@ -50,6 +59,7 @@ public class SingleEnemyEditor
 
     public void PrepareFoldout()
     {
+        InitEditor();
 
         if (prefab == null/* && foldedOut.intValue != index*/)
         {
@@ -62,29 +72,29 @@ public class SingleEnemyEditor
             prefab = newPrefab;
         }
 
-        if (data.PrefabID != enemy.ID)
+        if (prefabID.intValue != id.intValue)
         {
-            PathEditor.StartDeleteIndex = PathEditor.EndDeleteIndex = selectedPathIndex.intValue = enemy.Path.Count - 2;
+            PathEditor.StartDeleteIndex = PathEditor.EndDeleteIndex = selectedPathIndex.intValue = path.arraySize - 2;
             if (selectedPathIndex.intValue < 0) PathEditor.StartDeleteIndex = PathEditor.EndDeleteIndex = selectedPathIndex.intValue = 0;
             tempPath.arraySize = 0;
-            prefabID.intValue = enemy.ID;
+            prefabID.intValue = id.intValue;
         }
 
         if (tempPath.arraySize != 0)
         {
             int insert = isInsert.boolValue ? 2 : 1;
-            if (tempPath.arraySize > enemy.Path.Count + insert)
+            if (tempPath.arraySize > path.arraySize + insert)
             {
-                for (int i = enemy.Path.Count; i < tempPath.arraySize - insert; i++)
+                for (int i = path.arraySize; i < tempPath.arraySize - insert; i++)
                     tempPath.GetArrayElementAtIndex(i).managedReferenceValue = tempPath.GetArrayElementAtIndex(
-                        i + tempPath.arraySize - (enemy.Path.Count + insert)).managedReferenceValue;
+                        i + tempPath.arraySize - (path.arraySize + insert)).managedReferenceValue;
                 tempPath.arraySize -= insert;
                 //data.TempPath.RemoveRange(selectedEnemy.Path.Count, data.TempPath.Count - (selectedEnemy.Path.Count + insert));
             }
         }
         else
         {
-            if (enemy.Path.Count == 0)
+            if (path.arraySize == 0)
             {
                 tempPath.arraySize = 1;
                 tempPath.GetArrayElementAtIndex(tempPath.arraySize - 1).managedReferenceValue = new WaypointPathExpression()
@@ -93,18 +103,18 @@ public class SingleEnemyEditor
                 };
             }
             //tempPath.managedReferenceValue = new List<WaypointPathCreator>() { new WaypointPathExpression() };
-            else if (enemy.Path.Count != 0)
+            else if (path.arraySize != 0)
             {
                 int tempPathOldSize = tempPath.arraySize;
-                tempPath.arraySize += enemy.Path.Count;
-                for (int i = 0; i < enemy.Path.Count; i++)
+                tempPath.arraySize += path.arraySize;
+                for (int i = 0; i < path.arraySize; i++)
                 {
                     WaypointPathCreator creator = enemy.Path[i];
                     tempPath.GetArrayElementAtIndex(tempPathOldSize + i).managedReferenceValue = creator.GetNewAdjoinedPath(0);
                     //foreach (var creator in selectedEnemy.Path)
                     //    data.TempPath.Add(creator.GetNewAdjoinedPath(0));
                 }
-                WaypointPathCreator c = enemy.Path[enemy.Path.Count - 1];
+                WaypointPathCreator c = enemy.Path[path.arraySize - 1];
                 tempPath.arraySize++;
                 tempPath.GetArrayElementAtIndex(tempPath.arraySize - 1).managedReferenceValue = c.GetNewAdjoinedPath(1);
                 //data.TempPath.Add(selectedEnemy.Path[^1].GetNewAdjoinedPath(1));

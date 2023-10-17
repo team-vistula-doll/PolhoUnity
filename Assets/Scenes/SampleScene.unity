@@ -1692,24 +1692,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Enemies:
-  - rid: 3409141733665275984
-  - rid: 3409141733665275982
+  - rid: 3409141758788370460
   references:
     version: 2
     RefIds:
-    - rid: 3409141733665275982
+    - rid: 3409141758788370460
       type: {class: Enemy, ns: EnemyClass, asm: Game}
       data:
         ID: 0
-        PrefabName: Enemy
-        Name: Enemy
-        SpawnTime: 1.61
-        SpawnPosition: {x: 3.293531, y: 0}
-        Path: []
-    - rid: 3409141733665275984
-      type: {class: Enemy, ns: EnemyClass, asm: Game}
-      data:
-        ID: 1
         PrefabName: Enemy
         Name: Enemy
         SpawnTime: 0

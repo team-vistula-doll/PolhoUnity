@@ -52,7 +52,6 @@ public class CurrentStageEnemiesEditor : Editor
         if (data.FoldedOut > data.Foldouts.Count - 1)
             data.FoldedOut = -1;
 
-
         if (stageEnemies.Enemies.Count > 0)
         {
             enemyEditors = new();
@@ -74,6 +73,8 @@ public class CurrentStageEnemiesEditor : Editor
     private void UndoRedo()
     {
         if (data.FoldedOut == -1 || data.TempPath.Count == 0) return;
+        if (data.Foldouts.Count == 0) data.FoldedOut = -1;
+        
         if (data.SelectedOption.GetPathCreator() != data.TempPath[data.SelectedPathIndex])
         {
             data.PathTypeSelection = CurrentStageEnemiesEditorData.GetSelectedOption(data.TempPath[data.SelectedPathIndex]);
