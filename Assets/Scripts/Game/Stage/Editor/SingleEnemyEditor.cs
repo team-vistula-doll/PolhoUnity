@@ -19,8 +19,11 @@ public class SingleEnemyEditor
     public SerializedObject serialData;
     SerializedProperty prefabID, selectedPathIndex, isInsert, pathTypeSelection, tempPath;
 
+    [SerializeField]
     GameObject prefab;
+    [SerializeField]
     Sprite sprite;
+    [SerializeField]
     Vector2 scale;
 
     bool wasTextureMoved = false;
@@ -28,16 +31,16 @@ public class SingleEnemyEditor
 
     public SingleEnemyEditor(Enemy enemy, SerializedProperty serialEnemy, CurrentStageEnemiesEditorData data, SerializedObject serialData)
     {
+        InitEditor(enemy, serialEnemy, data, serialData);
+    }
+
+    public void InitEditor(Enemy enemy, SerializedProperty serialEnemy, CurrentStageEnemiesEditorData data, SerializedObject serialData)
+    {
         this.enemy = enemy;
         this.serialEnemy = serialEnemy;
         this.data = data;
         this.serialData = serialData;
 
-        InitEditor();
-    }
-
-    public void InitEditor()
-    {
         prefabID = serialData.FindProperty("PrefabID");
         selectedPathIndex = serialData.FindProperty("SelectedPathIndex");
         isInsert = serialData.FindProperty("IsInsert");
@@ -59,8 +62,6 @@ public class SingleEnemyEditor
 
     public void PrepareFoldout()
     {
-        InitEditor();
-
         if (prefab == null/* && foldedOut.intValue != index*/)
         {
             //if (enemyPrefab != null) DestroyImmediate(enemyPrefab);

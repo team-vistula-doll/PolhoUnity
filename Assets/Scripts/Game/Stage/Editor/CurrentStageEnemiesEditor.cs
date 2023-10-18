@@ -73,7 +73,12 @@ public class CurrentStageEnemiesEditor : Editor
     private void UndoRedo()
     {
         if (data.FoldedOut == -1 || data.TempPath.Count == 0) return;
+
+        serialData.UpdateIfRequiredOrScript();
+        serializedObject.UpdateIfRequiredOrScript();
         if (data.Foldouts.Count == 0) data.FoldedOut = -1;
+        if (data.FoldedOut != -1)
+            enemyEditors[data.FoldedOut].InitEditor(selectedEnemy, enemies.GetArrayElementAtIndex(data.FoldedOut), data, serialData);
         
         if (data.SelectedOption.GetPathCreator() != data.TempPath[data.SelectedPathIndex])
         {
@@ -147,6 +152,7 @@ public class CurrentStageEnemiesEditor : Editor
                 for (int j = 0; j < foldouts.arraySize; j++) foldouts.GetArrayElementAtIndex(j).boolValue = false;
                 foldouts.GetArrayElementAtIndex(i).boolValue = true;
                 Undo.RecordObject(this, "Open foldout");
+                currentEnemyEditor.InitEditor(selectedEnemy, enemies.GetArrayElementAtIndex(i), data, serialData);
                 currentEnemyEditor.PrepareFoldout();
 
                 foldedOut.intValue = i;
