@@ -128,16 +128,16 @@ public class SingleEnemyEditor
         data.SelectedOption.SetPathCreator(
             (WaypointPathCreator)tempPath.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue);
 
-        serialData.ApplyModifiedPropertiesWithoutUndo();
+        //serialData.ApplyModifiedPropertiesWithoutUndo();
     }
 
     /// <summary>
     /// 
     /// </summary>
     /// <returns>If the spawn time was changed</returns>
-    public bool DrawFoldout()
+    public float DrawFoldout()
     {
-        bool result = false;
+        float result = -1;
         //enemy = (Enemy)enemies.GetArrayElementAtIndex(i).managedReferenceValue;
         //string label = "(" + enemy.SpawnTime.ToString("0.00") + ") " + enemy.Name + ", ID " + enemy.ID;
         //foldouts.GetArrayElementAtIndex(i).boolValue = EditorGUILayout.Foldout(foldouts.GetArrayElementAtIndex(i).boolValue, label);
@@ -249,7 +249,7 @@ public class SingleEnemyEditor
         if (spawnTime.floatValue < 0) spawnTime.floatValue = 0;
         if (EditorGUI.EndChangeCheck())
         {
-            result = true;
+            result = spawnTime.floatValue;
         }
         EditorGUILayout.PropertyField(enemyName);
         EditorGUI.BeginChangeCheck();
@@ -276,7 +276,7 @@ public class SingleEnemyEditor
             //EditorUtility.SetDirty(stageEnemies);
         }
 
-        serialData.ApplyModifiedPropertiesWithoutUndo();
+        //serialData.ApplyModifiedPropertiesWithoutUndo();
         return result;
     }
 
@@ -285,8 +285,8 @@ public class SingleEnemyEditor
         Vector2? result = null;
 
         EventType e = Event.current.type;
-        Vector2 screenPosition = HandleUtility.WorldToGUIPoint(enemy.SpawnPosition);
-        Vector2 screenScale = sprite.rect.size / HandleUtility.GetHandleSize(enemy.SpawnPosition) * scale;
+        Vector2 screenPosition = HandleUtility.WorldToGUIPoint(spawnPosition.vector2Value);
+        Vector2 screenScale = sprite.rect.size / HandleUtility.GetHandleSize(spawnPosition.vector2Value) * scale;
         Handles.BeginGUI();
         GUI.DrawTexture(new Rect(
             screenPosition - screenScale / 2, screenScale),
@@ -294,7 +294,7 @@ public class SingleEnemyEditor
         Handles.EndGUI();
 
         EditorGUI.BeginChangeCheck();
-        Vector2 newSpawnPosition = Handles.PositionHandle(enemy.SpawnPosition, Quaternion.identity);
+        Vector2 newSpawnPosition = Handles.PositionHandle(spawnPosition.vector2Value, Quaternion.identity);
         if (EditorGUI.EndChangeCheck())
         {
             //Undo.RecordObject(enemy, "")

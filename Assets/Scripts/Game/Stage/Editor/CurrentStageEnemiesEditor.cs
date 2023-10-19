@@ -141,9 +141,9 @@ public class CurrentStageEnemiesEditor : Editor
             {
                 if (foldedOut.intValue == i)
                 {
+                    foldedOut.intValue = -1;
                     Undo.RecordObject(this, "Close foldout");
                     selectedEnemy = null;
-                    foldedOut.intValue = -1;
                 }
                 continue;
             }
@@ -151,11 +151,11 @@ public class CurrentStageEnemiesEditor : Editor
             {
                 for (int j = 0; j < foldouts.arraySize; j++) foldouts.GetArrayElementAtIndex(j).boolValue = false;
                 foldouts.GetArrayElementAtIndex(i).boolValue = true;
+                foldedOut.intValue = i;
                 Undo.RecordObject(this, "Open foldout");
                 currentEnemyEditor.InitEditor(selectedEnemy, enemies.GetArrayElementAtIndex(i), data, serialData);
                 currentEnemyEditor.PrepareFoldout();
 
-                foldedOut.intValue = i;
             }
 
             GUILayout.BeginHorizontal();
@@ -171,26 +171,26 @@ public class CurrentStageEnemiesEditor : Editor
                         enemies.GetArrayElementAtIndex(j).managedReferenceValue = enemies.GetArrayElementAtIndex(j + 1).managedReferenceValue;
                     }
                     enemies.arraySize--;
-                    Undo.RecordObject(this, "Close foldout");
-                    enemyEditors.RemoveAt(i);
                     for (int j = i; j < foldouts.arraySize - 1; j++)
                     {
                         foldouts.GetArrayElementAtIndex(j).boolValue = foldouts.GetArrayElementAtIndex(j + 1).boolValue;
                     }
                     foldouts.arraySize--;
                     foldedOut.intValue = -1;
+                    Undo.RecordObject(this, "Close foldout");
+                    enemyEditors.RemoveAt(i);
                     break;
                 }
             }
             GUILayout.EndHorizontal();
-
-            if (currentEnemyEditor.DrawFoldout())
+            float newSpawnTime = currentEnemyEditor.DrawFoldout();
+            if (newSpawnTime >= 0f)
             {
-                serializedObject.ApplyModifiedPropertiesWithoutUndo();
+                //serializedObject.ApplyModifiedPropertiesWithoutUndo();
                 int currId = currentEnemyEditor.enemy.ID;
                 Enemy[] list = new Enemy[enemies.arraySize];
                 for (int j = 0; j < enemies.arraySize; j++) list[j] = (Enemy)enemies.GetArrayElementAtIndex(j).managedReferenceValue;
-                //list[i].SpawnTime = spawnTime.floatValue;
+                list[i].SpawnTime = newSpawnTime;
                 Array.Sort(list);
                 for (int j = 0; j < enemies.arraySize; j++) enemies.GetArrayElementAtIndex(j).managedReferenceValue = list[j];
                 foldedOut.intValue = Array.FindIndex(list, x => x.ID == currId);
