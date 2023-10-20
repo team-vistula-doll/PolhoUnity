@@ -10,11 +10,11 @@ public class SingleEnemyEditor
     [SerializeField]
     public Enemy enemy;
     [SerializeReference]
-    SerializedProperty serialEnemy;
+    public SerializedProperty serialEnemy;
     SerializedProperty id, prefabName, enemyName, spawnTime, spawnPosition, path/*, spawnRepeats, fireable*/;
 
     [SerializeField]
-    CurrentStageEnemiesEditorData data;
+    public CurrentStageEnemiesEditorData data;
     [SerializeReference]
     public SerializedObject serialData;
     SerializedProperty prefabID, selectedPathIndex, isInsert, pathTypeSelection, tempPath;
@@ -58,10 +58,7 @@ public class SingleEnemyEditor
         //spawnRepeats = serialEnemy.FindPropertyRelative("SpawnRepeats");
         //fireable = serialEnemy.FindPropertyRelative("Fireable");
         Debug.Log(enemy.ID);
-    }
 
-    public void PrepareFoldout()
-    {
         if (prefab == null/* && foldedOut.intValue != index*/)
         {
             //if (enemyPrefab != null) DestroyImmediate(enemyPrefab);
@@ -80,7 +77,10 @@ public class SingleEnemyEditor
             tempPath.arraySize = 0;
             prefabID.intValue = id.intValue;
         }
+    }
 
+    public void PrepareFoldout()
+    {
         if (tempPath.arraySize != 0)
         {
             int insert = isInsert.boolValue ? 2 : 1;

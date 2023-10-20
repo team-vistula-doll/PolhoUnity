@@ -188,14 +188,15 @@ public class CurrentStageEnemiesEditor : Editor
             {
                 //serializedObject.ApplyModifiedPropertiesWithoutUndo();
                 int currId = currentEnemyEditor.enemy.ID;
-                Enemy[] list = new Enemy[enemies.arraySize];
-                for (int j = 0; j < enemies.arraySize; j++) list[j] = (Enemy)enemies.GetArrayElementAtIndex(j).managedReferenceValue;
-                list[i].SpawnTime = newSpawnTime;
-                Array.Sort(list);
-                for (int j = 0; j < enemies.arraySize; j++) enemies.GetArrayElementAtIndex(j).managedReferenceValue = list[j];
-                foldedOut.intValue = Array.FindIndex(list, x => x.ID == currId);
-                foldouts.GetArrayElementAtIndex(foldedOut.intValue).boolValue = true;
+                SerializedProperty[] list = new SerializedProperty[enemies.arraySize];
+                for (int j = 0; j < enemies.arraySize; j++) list[j] = enemies.GetArrayElementAtIndex(j);
+                list[i].FindPropertyRelative("SpawnTime").floatValue = newSpawnTime;
+                //list[i].FindPropertyRelative("SpawnPosition").vector2Value = Vector2.one;
+                //Array.Sort(list);
+                for (int j = 0; j < enemies.arraySize; j++) enemies.GetArrayElementAtIndex(j).managedReferenceValue = list[j].managedReferenceValue;
+                foldedOut.intValue = Array.FindIndex(list, x => x.FindPropertyRelative("ID").intValue == currId);
                 foldouts.GetArrayElementAtIndex(i).boolValue = false;
+                foldouts.GetArrayElementAtIndex(foldedOut.intValue).boolValue = true;
             }
         }
 
