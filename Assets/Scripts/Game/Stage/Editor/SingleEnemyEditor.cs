@@ -57,7 +57,6 @@ public class SingleEnemyEditor
         path = serialEnemy.FindPropertyRelative("Path");
         //spawnRepeats = serialEnemy.FindPropertyRelative("SpawnRepeats");
         //fireable = serialEnemy.FindPropertyRelative("Fireable");
-        Debug.Log(enemy.ID);
 
         if (prefab == null/* && foldedOut.intValue != index*/)
         {

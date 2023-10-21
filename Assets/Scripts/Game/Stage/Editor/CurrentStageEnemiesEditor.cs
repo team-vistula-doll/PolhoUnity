@@ -187,16 +187,25 @@ public class CurrentStageEnemiesEditor : Editor
             if (newSpawnTime >= 0f)
             {
                 //serializedObject.ApplyModifiedPropertiesWithoutUndo();
-                int currId = currentEnemyEditor.enemy.ID;
                 SerializedProperty[] list = new SerializedProperty[enemies.arraySize];
                 for (int j = 0; j < enemies.arraySize; j++) list[j] = enemies.GetArrayElementAtIndex(j);
+                int currId = list[i].FindPropertyRelative("ID").intValue;
                 list[i].FindPropertyRelative("SpawnTime").floatValue = newSpawnTime;
-                //list[i].FindPropertyRelative("SpawnPosition").vector2Value = Vector2.one;
-                //Array.Sort(list);
-                for (int j = 0; j < enemies.arraySize; j++) enemies.GetArrayElementAtIndex(j).managedReferenceValue = list[j].managedReferenceValue;
+
+                float[] timeList = new float[list.Length];
+                for (int j = 0; j < list.Length; j++) timeList[j] = list[j].FindPropertyRelative("SpawnTime").floatValue;
+                Array.Sort(timeList, list);
                 foldedOut.intValue = Array.FindIndex(list, x => x.FindPropertyRelative("ID").intValue == currId);
                 foldouts.GetArrayElementAtIndex(i).boolValue = false;
                 foldouts.GetArrayElementAtIndex(foldedOut.intValue).boolValue = true;
+
+                //for (int j = 0; j < enemies.arraySize; j++) enemies.GetArrayElementAtIndex(j).managedReferenceValue = list[j].managedReferenceValue;
+                //SerializedProperty iterator = enemies.Copy();
+                //while (iterator.Next(true))
+                //{
+                //    enemies.FindPropertyRelative(iterator.name)
+                //}
+                Debug.Log(currId + " " + list[foldedOut.intValue].FindPropertyRelative("ID").intValue);
             }
         }
 
