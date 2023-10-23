@@ -6,7 +6,7 @@ using WaypointPath;
 public class WaypointPathDataEditor : Editor
 {
     WaypointPathEditorData data;
-    const string assetPath = "Assets/Editor Assets/WaypointPathEditorData.asset";
+    const string assetPath = "Assets/Editor Default Resources/WaypointPathEditorData.asset";
 
     SerializedObject serialData;
     SerializedProperty selectedPathIndex, isInsert, pathTypeSelection, tempPath;
@@ -16,7 +16,7 @@ public class WaypointPathDataEditor : Editor
     private void OnEnable()
     {
         if (pathData == null) pathData = target as WaypointPathData;
-        data = (WaypointPathEditorData)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathEditorData));
+        data = (WaypointPathEditorData)EditorGUIUtility.Load(assetPath);
         if (data == null) data = (WaypointPathEditorData)ScriptableObject.CreateInstance(typeof(WaypointPathEditorData));
         data.Init();
 

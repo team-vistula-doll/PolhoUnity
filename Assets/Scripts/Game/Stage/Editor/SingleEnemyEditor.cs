@@ -61,8 +61,8 @@ public class SingleEnemyEditor
         if (prefab == null/* && foldedOut.intValue != index*/)
         {
             //if (enemyPrefab != null) DestroyImmediate(enemyPrefab);
-            GameObject newPrefab = (GameObject)AssetDatabase.LoadAssetAtPath(
-                "Assets/Prefabs/Enemies/" + enemy.PrefabName + ".prefab", typeof(GameObject));
+            GameObject newPrefab = (GameObject)EditorGUIUtility.Load(
+                "Assets/Prefabs/Enemies/" + enemy.PrefabName + ".prefab");
             //enemySpawnPosition.vector2Value = prefab.transform.position;
             sprite = newPrefab.GetComponent<SpriteRenderer>().sprite;
             scale = newPrefab.transform.localScale;

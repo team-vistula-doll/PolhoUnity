@@ -17,7 +17,7 @@ public class CurrentStageEnemiesEditor : Editor
     SerializedObject serialData;
     SerializedProperty prefabID, selectedPathIndex, isInsert, pathTypeSelection, tempPath;
     SerializedProperty foldouts, foldedOut, idIncrement;
-    const string assetPath = "Assets/Editor Assets/CurrentStageEnemiesEditorData.asset";
+    const string assetPath = "Assets/Editor Default Resources/CurrentStageEnemiesEditorData.asset";
 
     [SerializeReference]
     List<SingleEnemyEditor> enemyEditors = new();
@@ -32,7 +32,7 @@ public class CurrentStageEnemiesEditor : Editor
         if (stageEnemies == null) stageEnemies = target as CurrentStageEnemies;
         enemies = serializedObject.FindProperty("Enemies");
 
-        if (data == null) data = (CurrentStageEnemiesEditorData)AssetDatabase.LoadAssetAtPath(assetPath, typeof(CurrentStageEnemiesEditorData));
+        if (data == null) data = (CurrentStageEnemiesEditorData)EditorGUIUtility.Load(assetPath);
         if (data == null) data = (CurrentStageEnemiesEditorData)ScriptableObject.CreateInstance(typeof(CurrentStageEnemiesEditorData));
         data.Init();
         serialData = new SerializedObject(data);
