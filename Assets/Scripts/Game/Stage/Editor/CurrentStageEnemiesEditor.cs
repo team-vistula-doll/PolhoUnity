@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using WaypointPath;
+using static SerializedObjectUtility.SerializedObjectUtility;
 
 [CustomEditor(typeof(CurrentStageEnemies))]
 [CanEditMultipleObjects]
@@ -183,29 +184,28 @@ public class CurrentStageEnemiesEditor : Editor
                 }
             }
             GUILayout.EndHorizontal();
+
             float newSpawnTime = currentEnemyEditor.DrawFoldout();
             if (newSpawnTime >= 0f)
             {
-                //serializedObject.ApplyModifiedPropertiesWithoutUndo();
-                SerializedProperty[] list = new SerializedProperty[enemies.arraySize];
-                for (int j = 0; j < enemies.arraySize; j++) list[j] = enemies.GetArrayElementAtIndex(j);
-                int currId = list[i].FindPropertyRelative("ID").intValue;
-                list[i].FindPropertyRelative("SpawnTime").floatValue = newSpawnTime;
+                int currId = enemies.GetArrayElementAtIndex(i).FindPropertyRelative("ID").intValue;
+                enemies.GetArrayElementAtIndex(i).FindPropertyRelative("SpawnTime").floatValue = newSpawnTime;
 
-                float[] timeList = new float[list.Length];
-                for (int j = 0; j < list.Length; j++) timeList[j] = list[j].FindPropertyRelative("SpawnTime").floatValue;
-                Array.Sort(timeList, list);
-                foldedOut.intValue = Array.FindIndex(list, x => x.FindPropertyRelative("ID").intValue == currId);
+                SortSerializedPropertyArray(enemies, 0, enemies.arraySize - 1);
+                for (int j = 0; j < enemies.arraySize; j++)
+                {
+                    int newId = enemies.GetArrayElementAtIndex(j).FindPropertyRelative("ID").intValue;
+                    if (newId == currId)
+                    {
+                        foldedOut.intValue = j;
+                        break;
+                    }
+                }
+                //foldedOut.intValue = Array.FindIndex(enemies, x => x.FindPropertyRelative("ID").intValue == currId);
                 foldouts.GetArrayElementAtIndex(i).boolValue = false;
                 foldouts.GetArrayElementAtIndex(foldedOut.intValue).boolValue = true;
 
-                //for (int j = 0; j < enemies.arraySize; j++) enemies.GetArrayElementAtIndex(j).managedReferenceValue = list[j].managedReferenceValue;
-                //SerializedProperty iterator = enemies.Copy();
-                //while (iterator.Next(true))
-                //{
-                //    enemies.FindPropertyRelative(iterator.name)
-                //}
-                Debug.Log(currId + " " + list[foldedOut.intValue].FindPropertyRelative("ID").intValue);
+                Debug.Log(currId + " " + enemies.GetArrayElementAtIndex(foldedOut.intValue).FindPropertyRelative("ID").intValue);
             }
         }
 
