@@ -13,9 +13,8 @@ namespace WaypointPath
 
     public class WaypointPathEditorData : ScriptableObject
     {
-        const string expressionAssetPath = "Assets/Editor Default Resources/ExpressionEditor.asset";
-        const string bezierAssetPath = "Assets/Editor Default Resources" +
-            "/BezierEditor.asset";
+        const string expressionAssetPath = "Assets/Editor Assets/ExpressionEditor.asset";
+        const string bezierAssetPath = "Assets/Editor Assets/BezierEditor.asset";
         public int PrefabID = 0;
         public static List<PathEditor> Options { get; private set; } = new() { null, null };
         public PathEditor SelectedOption { get => Options[(int)PathTypeSelection]; }
@@ -29,10 +28,10 @@ namespace WaypointPath
 
         public void Init()
         {
-            Options[0] = (ExpressionEditor)EditorGUIUtility.Load(expressionAssetPath);
+            Options[0] = (ExpressionEditor)AssetDatabase.LoadAssetAtPath(expressionAssetPath, typeof(ExpressionEditor));
             if (Options[0] == null) Options[0] = (ExpressionEditor)ScriptableObject.CreateInstance(typeof(ExpressionEditor));
 
-            Options[1] = (BezierEditor)EditorGUIUtility.Load(bezierAssetPath);
+            Options[1] = (BezierEditor)AssetDatabase.LoadAssetAtPath(bezierAssetPath, typeof(BezierEditor));
             if (Options[1] == null) Options[1] = (BezierEditor)ScriptableObject.CreateInstance(typeof(BezierEditor));
         }
 
