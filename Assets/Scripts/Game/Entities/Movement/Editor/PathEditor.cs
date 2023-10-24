@@ -28,8 +28,6 @@ namespace WaypointPath
                 path.Add((WaypointPathCreator)pathData.GetArrayElementAtIndex(i).managedReferenceValue);
             ConnectPaths(path, startIndex);
             pathData.arraySize = path.Count;
-            for (int i = 0; i < path.Count; i++)
-                pathData.GetArrayElementAtIndex(i).managedReferenceValue = path[i];
         }
 
         public static void ConnectPaths(List<WaypointPathCreator> path, int startIndex)

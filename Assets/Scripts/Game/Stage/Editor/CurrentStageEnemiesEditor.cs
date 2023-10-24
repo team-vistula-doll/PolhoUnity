@@ -189,11 +189,14 @@ public class CurrentStageEnemiesEditor : Editor
             if (newSpawnTime >= 0f)
             {
                 int currId = enemies.GetArrayElementAtIndex(i).FindPropertyRelative("ID").intValue;
-                Enemy newEnemy = (Enemy)enemies.GetArrayElementAtIndex(i).managedReferenceValue;
-                newEnemy.SpawnTime = enemies.GetArrayElementAtIndex(i).FindPropertyRelative("SpawnTime").floatValue
-                    = newSpawnTime;
+                enemies.GetArrayElementAtIndex(i).FindPropertyRelative("SpawnTime").floatValue = newSpawnTime;
 
-                SortSerializedPropertyArray(enemies, 0, enemies.arraySize - 1);
+                IComparable[] keys = new IComparable[enemies.arraySize];
+                for (int j = 0; j < enemies.arraySize; j++)
+                    keys[j] = enemies.GetArrayElementAtIndex(j).FindPropertyRelative("SpawnTime").floatValue;
+
+                SortSerializedPropertyArray(enemies, keys, 0, enemies.arraySize - 1);
+
                 for (int j = 0; j < enemies.arraySize; j++)
                 {
                     Debug.Log("Element " + j + " spawnTime = " +
