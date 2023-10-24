@@ -244,11 +244,11 @@ public class SingleEnemyEditor
             EditorGUILayout.HelpBox("The provided object isn't in the enemies folder!", MessageType.Warning);
 
         EditorGUI.BeginChangeCheck();
-        spawnTime.floatValue = EditorGUILayout.DelayedFloatField("Spawn time", spawnTime.floatValue);
+        float newSpawnTime = EditorGUILayout.DelayedFloatField("Spawn time", spawnTime.floatValue);
         if (spawnTime.floatValue < 0) spawnTime.floatValue = 0;
         if (EditorGUI.EndChangeCheck())
         {
-            result = spawnTime.floatValue;
+            result = newSpawnTime;
         }
         EditorGUILayout.PropertyField(enemyName);
         EditorGUI.BeginChangeCheck();

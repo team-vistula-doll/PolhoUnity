@@ -15,7 +15,7 @@ MonoBehaviour:
   PrefabID: 0
   SelectedPathIndex: 0
   TempPath:
-  - rid: 3409141894382616609
+  - rid: 186632757396897919
   IsInsert: 0
   PathTypeSelection: 0
   Foldouts: 0100
@@ -24,7 +24,7 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 3409141894382616609
+    - rid: 186632757396897919
       type: {class: WaypointPathExpression, ns: WaypointPath, asm: Game}
       data:
         StartPosition: {x: 0, y: 0}

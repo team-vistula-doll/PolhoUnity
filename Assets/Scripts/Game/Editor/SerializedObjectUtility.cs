@@ -17,10 +17,12 @@ namespace SerializedObjectUtility
                     i++;
 
                     arr.MoveArrayElement(i, j);
+                    arr.MoveArrayElement(j + 1, i + 1);
                 }
             }
 
-            arr.MoveArrayElement(i + 1, high);
+            arr.MoveArrayElement(high, i + 1);
+            arr.MoveArrayElement(i + 2, high + 1);
 
             return i + 1;
         }

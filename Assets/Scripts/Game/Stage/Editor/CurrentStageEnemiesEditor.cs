@@ -189,11 +189,15 @@ public class CurrentStageEnemiesEditor : Editor
             if (newSpawnTime >= 0f)
             {
                 int currId = enemies.GetArrayElementAtIndex(i).FindPropertyRelative("ID").intValue;
-                enemies.GetArrayElementAtIndex(i).FindPropertyRelative("SpawnTime").floatValue = newSpawnTime;
+                Enemy newEnemy = (Enemy)enemies.GetArrayElementAtIndex(i).managedReferenceValue;
+                newEnemy.SpawnTime = enemies.GetArrayElementAtIndex(i).FindPropertyRelative("SpawnTime").floatValue
+                    = newSpawnTime;
 
                 SortSerializedPropertyArray(enemies, 0, enemies.arraySize - 1);
                 for (int j = 0; j < enemies.arraySize; j++)
                 {
+                    Debug.Log("Element " + j + " spawnTime = " +
+                        enemies.GetArrayElementAtIndex(j).FindPropertyRelative("SpawnTime").floatValue);
                     int newId = enemies.GetArrayElementAtIndex(j).FindPropertyRelative("ID").intValue;
                     if (newId == currId)
                     {
@@ -201,11 +205,13 @@ public class CurrentStageEnemiesEditor : Editor
                         break;
                     }
                 }
+                Debug.Log(enemies.GetArrayElementAtIndex(foldedOut.intValue)
+                    .FindPropertyRelative("SpawnTime").floatValue);
                 //foldedOut.intValue = Array.FindIndex(enemies, x => x.FindPropertyRelative("ID").intValue == currId);
                 foldouts.GetArrayElementAtIndex(i).boolValue = false;
                 foldouts.GetArrayElementAtIndex(foldedOut.intValue).boolValue = true;
 
-                Debug.Log(currId + " " + enemies.GetArrayElementAtIndex(foldedOut.intValue).FindPropertyRelative("ID").intValue);
+                //Debug.Log(currId + " " + enemies.GetArrayElementAtIndex(foldedOut.intValue).FindPropertyRelative("ID").intValue);
             }
         }
 
