@@ -17,9 +17,9 @@ MonoBehaviour:
   TempPath: []
   IsInsert: 0
   PathTypeSelection: 0
-  Foldouts: 
-  FoldedOut: -1
-  IDIncrement: 0
+  Foldouts: 0001
+  FoldedOut: 1
+  IDIncrement: 2
   references:
     version: 2
     RefIds: []

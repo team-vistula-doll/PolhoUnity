@@ -14,7 +14,7 @@ public class SingleEnemyEditor
     SerializedProperty id, prefabName, enemyName, spawnTime, spawnPosition, path/*, spawnRepeats, fireable*/;
 
     [SerializeField]
-    public CurrentStageEnemiesEditorData data;
+    public WaypointPathEditorData data;
     [SerializeReference]
     public SerializedObject serialData;
     SerializedProperty prefabID, selectedPathIndex, isInsert, pathTypeSelection, tempPath;
@@ -29,17 +29,17 @@ public class SingleEnemyEditor
     bool wasTextureMoved = false;
     bool isIncorrectPrefab = false;
 
-    public SingleEnemyEditor(Enemy enemy, SerializedProperty serialEnemy, CurrentStageEnemiesEditorData data, SerializedObject serialData)
+    public SingleEnemyEditor(Enemy enemy, SerializedProperty serialEnemy, WaypointPathEditorData data)
     {
-        InitEditor(enemy, serialEnemy, data, serialData);
+        InitEditor(enemy, serialEnemy, data);
     }
 
-    public void InitEditor(Enemy enemy, SerializedProperty serialEnemy, CurrentStageEnemiesEditorData data, SerializedObject serialData)
+    public void InitEditor(Enemy enemy, SerializedProperty serialEnemy, WaypointPathEditorData data)
     {
         this.enemy = enemy;
         this.serialEnemy = serialEnemy;
         this.data = data;
-        this.serialData = serialData;
+        serialData = new SerializedObject(data);
 
         prefabID = serialData.FindProperty("PrefabID");
         selectedPathIndex = serialData.FindProperty("SelectedPathIndex");

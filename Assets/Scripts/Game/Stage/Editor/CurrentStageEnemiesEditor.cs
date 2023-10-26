@@ -16,8 +16,10 @@ public class CurrentStageEnemiesEditor : Editor
 
     CurrentStageEnemiesEditorData data;
     SerializedObject serialData;
-    SerializedProperty prefabID, selectedPathIndex, isInsert, pathTypeSelection, tempPath;
     SerializedProperty foldouts, foldedOut, idIncrement;
+
+    [SerializeReference]
+    List<WaypointPathEditorData> enemyDatas = new();
     const string assetPath = "Assets/Editor Assets/CurrentStageEnemiesEditorData.asset";
 
     [SerializeReference]
@@ -35,16 +37,16 @@ public class CurrentStageEnemiesEditor : Editor
 
         if (data == null) data = (CurrentStageEnemiesEditorData)AssetDatabase.LoadAssetAtPath(assetPath, typeof(CurrentStageEnemiesEditorData));
         if (data == null) data = (CurrentStageEnemiesEditorData)ScriptableObject.CreateInstance(typeof(CurrentStageEnemiesEditorData));
+        else if (enemyDatas == null || enemyDatas.Count == 0)
+        {
+            WaypointPathEditorData[] loadedAssetArray = Array.ConvertAll(AssetDatabase.LoadAllAssetsAtPath(assetPath), item => (WaypointPathEditorData)item);
+            enemyDatas.AddRange(loadedAssetArray[1..]);
+        }
+
         data.Init();
         serialData = new SerializedObject(data);
         for (int i = 0; i < enemies.arraySize; i++) data.Foldouts.Add(false);
         if (stageEnemies.Enemies.Count > 0) data.IDIncrement = stageEnemies.Enemies[^1].ID + 1;
-
-        prefabID = serialData.FindProperty("PrefabID");
-        selectedPathIndex = serialData.FindProperty("SelectedPathIndex");
-        isInsert = serialData.FindProperty("IsInsert");
-        pathTypeSelection = serialData.FindProperty("PathTypeSelection");
-        tempPath = serialData.FindProperty("TempPath");
 
         foldouts = serialData.FindProperty("Foldouts");
         foldedOut = serialData.FindProperty("FoldedOut");
@@ -59,7 +61,14 @@ public class CurrentStageEnemiesEditor : Editor
             for (int i = 0; i < stageEnemies.Enemies.Count; i++)
             {
                 Enemy en = stageEnemies.Enemies[i];
-                enemyEditors.Add(new SingleEnemyEditor(en, enemies.GetArrayElementAtIndex(i), data, serialData));
+                WaypointPathEditorData enemyData;
+                if (enemyDatas == null || enemyDatas.Count < i)
+                {
+                    enemyData = (WaypointPathEditorData)ScriptableObject.CreateInstance(typeof(WaypointPathEditorData));
+                    enemyDatas.Add(enemyData);
+                }
+                else enemyData = enemyDatas[i];
+                enemyEditors.Add(new SingleEnemyEditor(en, enemies.GetArrayElementAtIndex(i), enemyData));
             }
         }
 
@@ -79,7 +88,16 @@ public class CurrentStageEnemiesEditor : Editor
         serializedObject.UpdateIfRequiredOrScript();
         if (data.Foldouts.Count == 0) data.FoldedOut = -1;
         if (data.FoldedOut != -1)
-            enemyEditors[data.FoldedOut].InitEditor(selectedEnemy, enemies.GetArrayElementAtIndex(data.FoldedOut), data, serialData);
+        {
+            WaypointPathEditorData enemyData;
+            if (enemyDatas == null || enemyDatas.Count < data.FoldedOut)
+            {
+                enemyData = (WaypointPathEditorData)ScriptableObject.CreateInstance(typeof(WaypointPathEditorData));
+                enemyDatas.Add(enemyData);
+            }
+            else enemyData = enemyDatas[data.FoldedOut];
+            enemyEditors[data.FoldedOut].InitEditor(selectedEnemy, enemies.GetArrayElementAtIndex(data.FoldedOut), enemyData);
+        }
         
         if (data.SelectedOption.GetPathCreator() != data.TempPath[data.SelectedPathIndex])
         {
@@ -97,7 +115,11 @@ public class CurrentStageEnemiesEditor : Editor
 
     private void OnDisable()
     {
-        if (!AssetDatabase.Contains(data)) AssetDatabase.CreateAsset(data, assetPath);
+        if (!AssetDatabase.Contains(data))
+        {
+            AssetDatabase.CreateAsset(data, assetPath);
+            foreach (var ed in enemyDatas) AssetDatabase.AddObjectToAsset(ed, assetPath);
+        }
         AssetDatabase.SaveAssets();
         Undo.undoRedoPerformed -= UndoRedo;
     }
@@ -129,7 +151,9 @@ public class CurrentStageEnemiesEditor : Editor
             foldouts.GetArrayElementAtIndex(foldouts.arraySize - 1).boolValue = false;
 
             Undo.RecordObject(this, "Add new enemy");
-            enemyEditors.Add(new SingleEnemyEditor(newEnemy, enemies.GetArrayElementAtIndex(enemies.arraySize - 1),  data, serialData));
+            enemyDatas.Add((WaypointPathEditorData)ScriptableObject.CreateInstance(typeof(WaypointPathEditorData)));
+            enemyEditors.Add(new SingleEnemyEditor(newEnemy, enemies.GetArrayElementAtIndex(enemies.arraySize - 1),
+                enemyDatas[foldouts.arraySize - 1]));
         };
 
         for (int i = 0; i < enemies.arraySize; i++)
@@ -154,7 +178,7 @@ public class CurrentStageEnemiesEditor : Editor
                 foldouts.GetArrayElementAtIndex(i).boolValue = true;
                 foldedOut.intValue = i;
                 Undo.RecordObject(this, "Open foldout");
-                currentEnemyEditor.InitEditor(selectedEnemy, enemies.GetArrayElementAtIndex(i), data, serialData);
+                currentEnemyEditor.InitEditor(selectedEnemy, enemies.GetArrayElementAtIndex(i), enemyDatas[i]);
                 currentEnemyEditor.PrepareFoldout();
 
             }
