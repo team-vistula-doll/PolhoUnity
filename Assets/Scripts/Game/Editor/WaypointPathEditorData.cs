@@ -26,7 +26,7 @@ namespace WaypointPath
         public bool IsInsert = false;
         public PathType PathTypeSelection = 0;
 
-        public void Init()
+        public static void Init()
         {
             Options[0] = (ExpressionEditor)AssetDatabase.LoadAssetAtPath(expressionAssetPath, typeof(ExpressionEditor));
             if (Options[0] == null) Options[0] = (ExpressionEditor)ScriptableObject.CreateInstance(typeof(ExpressionEditor));

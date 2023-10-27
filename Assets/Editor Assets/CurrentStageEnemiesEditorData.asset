@@ -1,5 +1,25 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-3206259014729110272
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d751a49c23cbf74a8a6fa0f897a07fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PrefabID: 0
+  SelectedPathIndex: 0
+  TempPath: []
+  IsInsert: 0
+  PathTypeSelection: 0
+  references:
+    version: 2
+    RefIds: []
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12,14 +32,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66801b3d444b94141b136e405f454614, type: 3}
   m_Name: CurrentStageEnemiesEditorData
   m_EditorClassIdentifier: 
+  Foldouts: 0100
+  FoldedOut: 0
+  IDIncrement: 2
+--- !u!114 &1871810571353813911
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d751a49c23cbf74a8a6fa0f897a07fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   PrefabID: 0
   SelectedPathIndex: 0
   TempPath: []
   IsInsert: 0
   PathTypeSelection: 0
-  Foldouts: 0001
-  FoldedOut: 1
-  IDIncrement: 2
   references:
     version: 2
     RefIds: []

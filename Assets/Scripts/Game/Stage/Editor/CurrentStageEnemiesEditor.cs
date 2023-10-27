@@ -1,6 +1,7 @@
 using EnemyClass;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using WaypointPath;
@@ -12,7 +13,7 @@ public class CurrentStageEnemiesEditor : Editor
 {
     CurrentStageEnemies stageEnemies;
     SerializedProperty enemies;
-    SerializedProperty id, prefabName, enemyName, spawnTime, spawnPosition, path/*, spawnRepeats, fireable*/;
+    //SerializedProperty id, prefabName, enemyName, spawnTime, spawnPosition, path/*, spawnRepeats, fireable*/;
 
     CurrentStageEnemiesEditorData data;
     SerializedObject serialData;
@@ -40,10 +41,10 @@ public class CurrentStageEnemiesEditor : Editor
         else if (enemyDatas == null || enemyDatas.Count == 0)
         {
             WaypointPathEditorData[] loadedAssetArray = Array.ConvertAll(AssetDatabase.LoadAllAssetsAtPath(assetPath), item => (WaypointPathEditorData)item);
-            enemyDatas.AddRange(loadedAssetArray[1..]);
+            enemyDatas.AddRange(Array.ConvertAll(AssetDatabase.LoadAllAssetsAtPath(assetPath), item => (WaypointPathEditorData)item));
         }
 
-        data.Init();
+        //data.Init();
         serialData = new SerializedObject(data);
         for (int i = 0; i < enemies.arraySize; i++) data.Foldouts.Add(false);
         if (stageEnemies.Enemies.Count > 0) data.IDIncrement = stageEnemies.Enemies[^1].ID + 1;
@@ -55,6 +56,7 @@ public class CurrentStageEnemiesEditor : Editor
         if (data.FoldedOut > data.Foldouts.Count - 1)
             data.FoldedOut = -1;
 
+        WaypointPathEditorData.Init();
         if (stageEnemies.Enemies.Count > 0)
         {
             enemyEditors = new();
@@ -82,8 +84,9 @@ public class CurrentStageEnemiesEditor : Editor
     }
     private void UndoRedo()
     {
-        if (data.FoldedOut == -1 || data.TempPath.Count == 0) return;
+        if (data.FoldedOut == -1 || enemyDatas[data.FoldedOut].TempPath.Count == 0) return;
 
+        WaypointPathEditorData currentEnemyData = enemyDatas[data.FoldedOut];
         serialData.UpdateIfRequiredOrScript();
         serializedObject.UpdateIfRequiredOrScript();
         if (data.Foldouts.Count == 0) data.FoldedOut = -1;
@@ -99,17 +102,17 @@ public class CurrentStageEnemiesEditor : Editor
             enemyEditors[data.FoldedOut].InitEditor(selectedEnemy, enemies.GetArrayElementAtIndex(data.FoldedOut), enemyData);
         }
         
-        if (data.SelectedOption.GetPathCreator() != data.TempPath[data.SelectedPathIndex])
+        if (currentEnemyData.SelectedOption.GetPathCreator() != currentEnemyData.TempPath[currentEnemyData.SelectedPathIndex])
         {
-            data.PathTypeSelection = CurrentStageEnemiesEditorData.GetSelectedOption(data.TempPath[data.SelectedPathIndex]);
-            data.SelectedOption.SetPathCreator(data.TempPath[data.SelectedPathIndex]);
+            currentEnemyData.PathTypeSelection = WaypointPathEditorData.GetSelectedOption(currentEnemyData.TempPath[currentEnemyData.SelectedPathIndex]);
+            currentEnemyData.SelectedOption.SetPathCreator(currentEnemyData.TempPath[currentEnemyData.SelectedPathIndex]);
         }
-        else data.SelectedOption.ApplyPathOptions();
+        else currentEnemyData.SelectedOption.ApplyPathOptions();
 
-        if (data.TempPath.Count > 0)
+        if (currentEnemyData.TempPath.Count > 0)
         {
-            data.TempPath[0].StartPosition = selectedEnemy.SpawnPosition;
-            PathEditor.ConnectPaths(data.TempPath, 0);
+            currentEnemyData.TempPath[0].StartPosition = selectedEnemy.SpawnPosition;
+            PathEditor.ConnectPaths(currentEnemyData.TempPath, 0);
         }
     }
 
@@ -204,6 +207,7 @@ public class CurrentStageEnemiesEditor : Editor
                     foldedOut.intValue = -1;
                     Undo.RecordObject(this, "Close foldout");
                     enemyEditors.RemoveAt(i);
+                    enemyDatas.RemoveAt(i);
                     break;
                 }
             }

@@ -1,8 +1,8 @@
+#if UNITY_EDITOR
 using System.Collections.Generic;
 using UnityEngine;
-using WaypointPath;
 
-public class CurrentStageEnemiesEditorData : WaypointPathEditorData
+public class CurrentStageEnemiesEditorData : ScriptableObject
 {
     //public GameObject EnemyPrefab;
     public List<bool> Foldouts = new();
@@ -12,3 +12,4 @@ public class CurrentStageEnemiesEditorData : WaypointPathEditorData
     //public Sprite EnemySprite;
     public int IDIncrement = 0;
 }
+#endif //UNITY_EDITOR

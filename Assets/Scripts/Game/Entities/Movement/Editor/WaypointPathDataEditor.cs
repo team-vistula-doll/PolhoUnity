@@ -18,7 +18,7 @@ public class WaypointPathDataEditor : Editor
         if (pathData == null) pathData = target as WaypointPathData;
         data = (WaypointPathEditorData)AssetDatabase.LoadAssetAtPath(assetPath, typeof(WaypointPathEditorData));
         if (data == null) data = (WaypointPathEditorData)ScriptableObject.CreateInstance(typeof(WaypointPathEditorData));
-        data.Init();
+        WaypointPathEditorData.Init();
 
         int newId = pathData.GetInstanceID();
         if (data.PrefabID != newId)

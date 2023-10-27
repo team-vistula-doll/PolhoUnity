@@ -39,7 +39,7 @@ public class SingleEnemyEditor
         this.enemy = enemy;
         this.serialEnemy = serialEnemy;
         this.data = data;
-        serialData = new SerializedObject(data);
+        serialData = new SerializedObject(this.data);
 
         prefabID = serialData.FindProperty("PrefabID");
         selectedPathIndex = serialData.FindProperty("SelectedPathIndex");
@@ -47,7 +47,8 @@ public class SingleEnemyEditor
         pathTypeSelection = serialData.FindProperty("PathTypeSelection");
         tempPath = serialData.FindProperty("TempPath");
 
-        foreach (var option in CurrentStageEnemiesEditorData.Options) option.StartPosition = enemy.SpawnPosition;
+        foreach (var option in WaypointPathEditorData.Options)
+            option.StartPosition = enemy.SpawnPosition;
 
         id = serialEnemy.FindPropertyRelative("ID");
         prefabName = serialEnemy.FindPropertyRelative("PrefabName");
@@ -121,7 +122,7 @@ public class SingleEnemyEditor
             }
         }
 
-        pathTypeSelection.intValue = (int)CurrentStageEnemiesEditorData.GetSelectedOption(
+        pathTypeSelection.intValue = (int)WaypointPathEditorData.GetSelectedOption(
             (WaypointPathCreator)tempPath.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue);
         //data.TempPath[data.SelectedPathIndex]);
         data.SelectedOption.SetPathCreator(
@@ -192,7 +193,7 @@ public class SingleEnemyEditor
             data.PathTypeSelection = 0;
             serialData.Update();
             tempPath.ClearArray();
-            CurrentStageEnemiesEditorData.Options[1].SetPathCreator(new WaypointPathBezier());
+            WaypointPathEditorData.Options[1].SetPathCreator(new WaypointPathBezier());
             tempPath.arraySize++;
             WaypointPathCreator newExpression = new WaypointPathExpression();
             tempPath.GetArrayElementAtIndex(0).managedReferenceValue = newExpression;
@@ -266,9 +267,9 @@ public class SingleEnemyEditor
 
         if (data.SelectedOption.SetPath(path, isInsert, selectedPathIndex, tempPath))
         {
-            pathTypeSelection.intValue = (int)CurrentStageEnemiesEditorData.GetSelectedOption(
+            pathTypeSelection.intValue = (int)WaypointPathEditorData.GetSelectedOption(
                     (WaypointPathCreator)tempPath.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue);
-            CurrentStageEnemiesEditorData.Options[pathTypeSelection.intValue].SetPathCreator(
+            WaypointPathEditorData.Options[pathTypeSelection.intValue].SetPathCreator(
                 (WaypointPathCreator)tempPath.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue);
             //EditorUtility.SetDirty(stageEnemies);
         }
