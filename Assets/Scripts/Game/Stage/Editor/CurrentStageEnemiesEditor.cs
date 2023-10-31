@@ -40,8 +40,11 @@ public class CurrentStageEnemiesEditor : Editor
         if (data == null) data = (CurrentStageEnemiesEditorData)ScriptableObject.CreateInstance(typeof(CurrentStageEnemiesEditorData));
         else if (enemyDatas == null || enemyDatas.Count == 0)
         {
-            WaypointPathEditorData[] loadedAssetArray = Array.ConvertAll(AssetDatabase.LoadAllAssetsAtPath(assetPath), item => (WaypointPathEditorData)item);
-            enemyDatas.AddRange(Array.ConvertAll(AssetDatabase.LoadAllAssetsAtPath(assetPath), item => (WaypointPathEditorData)item));
+            var loadedAssetsArray = AssetDatabase.LoadAllAssetsAtPath(assetPath);
+            object[] loadedObjectsArray =
+                Array.FindAll(loadedAssetsArray, item => item.GetType() == typeof(WaypointPathEditorData));
+            WaypointPathEditorData[] loadedEnemyDatas = Array.ConvertAll(loadedObjectsArray, item => (WaypointPathEditorData)item);
+            enemyDatas.AddRange((IEnumerable<WaypointPathEditorData>)loadedEnemyDatas);
         }
 
         //data.Init();
