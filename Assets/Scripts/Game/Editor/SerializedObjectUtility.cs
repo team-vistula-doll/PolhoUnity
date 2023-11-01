@@ -1,5 +1,6 @@
 using System;
 using UnityEditor;
+using UnityEngine;
 
 namespace SerializedObjectUtility
 {
@@ -16,14 +17,14 @@ namespace SerializedObjectUtility
                 {
                     i++;
                     (keys[i], keys[j]) = (keys[j], keys[i]);
-                    arr.MoveArrayElement(i, j);
-                    arr.MoveArrayElement(j + 1, i + 1);
+                    arr.MoveArrayElement(j, i);
+                    arr.MoveArrayElement(i + 1, j);
                 }
             }
 
             (keys[high], keys[i + 1]) = (keys[i + 1], keys[high]);
             arr.MoveArrayElement(high, i + 1);
-            arr.MoveArrayElement(i + 2, high + 1);
+            arr.MoveArrayElement(i + 2, high);
 
             return i + 1;
         }

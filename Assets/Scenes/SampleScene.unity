@@ -1691,10 +1691,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4716b63354d2ad94f9196b3e7f0c89c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Enemies: []
+  Enemies:
+  - rid: 2877829887327993906
+  - rid: 2877829887327993898
+  - rid: 2877829887327993902
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 2877829887327993898
+      type: {class: Enemy, ns: EnemyClass, asm: Game}
+      data:
+        ID: 0
+        PrefabName: Enemy
+        Name: Enemy
+        SpawnTime: 1.8
+        SpawnPosition: {x: 0, y: 0}
+        Path: []
+    - rid: 2877829887327993902
+      type: {class: Enemy, ns: EnemyClass, asm: Game}
+      data:
+        ID: 1
+        PrefabName: Enemy
+        Name: Enemy
+        SpawnTime: 4.06
+        SpawnPosition: {x: 0, y: 0}
+        Path: []
+    - rid: 2877829887327993906
+      type: {class: Enemy, ns: EnemyClass, asm: Game}
+      data:
+        ID: 2
+        PrefabName: Enemy
+        Name: Enemy
+        SpawnTime: 0
+        SpawnPosition: {x: 0, y: 0}
+        Path: []
 --- !u!1 &1022631778
 GameObject:
   m_ObjectHideFlags: 0
