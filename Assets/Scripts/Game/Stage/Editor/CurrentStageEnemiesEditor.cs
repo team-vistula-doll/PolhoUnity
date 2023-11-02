@@ -174,7 +174,7 @@ public class CurrentStageEnemiesEditor : Editor
                 {
                     foldedOut.intValue = -1;
                     Undo.RecordObject(this, "Close foldout");
-                    selectedEnemy = null;
+                    //selectedEnemy = null;
                 }
                 continue;
             }

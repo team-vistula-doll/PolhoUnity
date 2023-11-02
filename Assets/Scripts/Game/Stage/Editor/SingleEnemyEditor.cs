@@ -81,6 +81,7 @@ public class SingleEnemyEditor
 
     public void PrepareFoldout()
     {
+        serialData.Update();
         if (tempPath.arraySize != 0)
         {
             int insert = isInsert.boolValue ? 2 : 1;
@@ -128,7 +129,7 @@ public class SingleEnemyEditor
         data.SelectedOption.SetPathCreator(
             (WaypointPathCreator)tempPath.GetArrayElementAtIndex(selectedPathIndex.intValue).managedReferenceValue);
 
-        //serialData.ApplyModifiedPropertiesWithoutUndo();
+        serialData.ApplyModifiedPropertiesWithoutUndo();
     }
 
     /// <summary>
@@ -137,61 +138,12 @@ public class SingleEnemyEditor
     /// <returns>If the spawn time was changed</returns>
     public float DrawFoldout()
     {
+        serialData.Update();
         float result = -1;
-        //enemy = (Enemy)enemies.GetArrayElementAtIndex(i).managedReferenceValue;
-        //string label = "(" + enemy.SpawnTime.ToString("0.00") + ") " + enemy.Name + ", ID " + enemy.ID;
-        //foldouts.GetArrayElementAtIndex(i).boolValue = EditorGUILayout.Foldout(foldouts.GetArrayElementAtIndex(i).boolValue, label);
-        //if (!foldouts.GetArrayElementAtIndex(i).boolValue)
-        //{
-        //    if (foldedOut.intValue == i)
-        //    {
-        //        Undo.RecordObject(this, "Close foldout");
-        //        enemySprite = null;
-        //        //id = spawnPosition = path = spawnRepeats = fireable = null;
-        //        enemy = null;
-        //        foldedOut.intValue = -1;
-        //    }
-        //    continue;
-        //}
-        //else if (foldedOut.intValue != i)
-        //{
-        //    PrepareFoldout(i);
-        //    //tempPath.arraySize = data.TempPath.Count;
-        //    //for (int j = 0; j < tempPath.arraySize; j++)
-        //    //    tempPath.GetArrayElementAtIndex(j).managedReferenceValue = data.TempPath[j];
-
-        //    foldedOut.intValue = i;
-        //}
-
-        //GUILayout.BeginHorizontal();
-        //{
-        //    var style = new GUIStyle(GUI.skin.button);
-        //    style.normal.textColor = new Color(0.863f, 0.078f, 0.235f);
-        //    GUILayout.FlexibleSpace();
-        //    bool isDelete = GUILayout.Button("Delete", style, GUILayout.MaxWidth(EditorStyles.label.CalcSize(new GUIContent("Delete")).x + 20));
-        //    if (isDelete)
-        //    {
-        //        for (int j = i; j < enemies.arraySize - 1; j++)
-        //        {
-        //            enemies.GetArrayElementAtIndex(j).managedReferenceValue = enemies.GetArrayElementAtIndex(j + 1).managedReferenceValue;
-        //        }
-        //        enemies.arraySize--;
-
-        //        for (int j = i; j < foldouts.arraySize - 1; j++)
-        //        {
-        //            foldouts.GetArrayElementAtIndex(j).boolValue = foldouts.GetArrayElementAtIndex(j + 1).boolValue;
-        //        }
-        //        foldouts.arraySize--;
-        //        foldedOut.intValue = -1;
-        //        break;
-        //    }
-        //}
-        //GUILayout.EndHorizontal();
-
+        
         if (tempPath.arraySize > 1 && path.arraySize == 0)
         {
             data.PathTypeSelection = 0;
-            serialData.Update();
             tempPath.ClearArray();
             WaypointPathEditorData.Options[1].SetPathCreator(new WaypointPathBezier());
             tempPath.arraySize++;
@@ -274,7 +226,7 @@ public class SingleEnemyEditor
             //EditorUtility.SetDirty(stageEnemies);
         }
 
-        //serialData.ApplyModifiedPropertiesWithoutUndo();
+        serialData.ApplyModifiedProperties();
         return result;
     }
 
