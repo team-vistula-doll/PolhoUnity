@@ -216,6 +216,7 @@ public class CurrentStageEnemiesEditor : Editor
             }
             GUILayout.EndHorizontal();
 
+            currentEnemyEditor.Enemy = selectedEnemy = (Enemy)enemies.GetArrayElementAtIndex(foldedOut.intValue).managedReferenceValue;
             float newSpawnTime = currentEnemyEditor.DrawFoldout();
             if (newSpawnTime >= 0f)
             {
@@ -263,7 +264,7 @@ public class CurrentStageEnemiesEditor : Editor
         if (spawn != null)
         {
             Undo.RecordObject(this, "Move enemy");
-            enemyEditor.enemy.SpawnPosition = spawn.Value;
+            enemyEditor.Enemy.SpawnPosition = spawn.Value;
         }
 
         Repaint();
