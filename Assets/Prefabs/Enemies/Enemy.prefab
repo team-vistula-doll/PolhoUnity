@@ -249,27 +249,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Path:
-  - rid: 3803625656537055335
-  - rid: 3803625656537055337
+  - rid: 7768707446602727660
   references:
     version: 2
     RefIds:
-    - rid: 3803625656537055335
-      type: {class: WaypointPathExpression, ns: WaypointPath, asm: Game}
+    - rid: 7768707446602727660
+      type: {class: WaypointPathBezier, ns: WaypointPath, asm: Game}
       data:
         StartPosition: {x: 0, y: 0}
         StepSize: 0.5
-        PathFormula: x
-        Length: 1.99
-        Angle: -17.2
-    - rid: 3803625656537055337
-      type: {class: WaypointPathExpression, ns: WaypointPath, asm: Game}
-      data:
-        StartPosition: {x: 2.4894629, y: 1.3125448}
-        StepSize: 0.5
-        PathFormula: x
-        Length: 1.99
-        Angle: -42.5
+        EndPosition: {x: 3.310432, y: 2.9679742}
+        EndControl: {x: 9.398582, y: 0.07610226}
+        StartControl: {x: 0, y: 0}
 --- !u!1 &2092912531923440514
 GameObject:
   m_ObjectHideFlags: 0

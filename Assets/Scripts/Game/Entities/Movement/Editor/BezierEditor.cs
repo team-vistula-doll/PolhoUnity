@@ -17,7 +17,10 @@ namespace WaypointPath
         bool isEndControlEnabled = false;
         //bool isStartControlEnabled = false;
 
+        [SerializeReference]
         bool isLocal = true;
+        [SerializeReference]
+        Vector2 localStart = Vector2.zero;
 
         protected override void OnEnable()
         {
@@ -28,6 +31,18 @@ namespace WaypointPath
             endPosition = pathBezier.EndPosition;
             startControl = pathBezier.StartControl;
             endControl = pathBezier.EndControl;
+
+            Undo.undoRedoPerformed += UndoRedo;
+        }
+
+        void UndoRedo()
+        {
+            if (isLocal)
+            {
+                pathBezier.EndPosition -= localStart;
+                pathBezier.StartControl -= localStart;
+                pathBezier.EndControl -= localStart;
+            }
         }
 
         //private void OnDisable()
@@ -89,7 +104,6 @@ namespace WaypointPath
                 startControl = startCon;
                 ApplyPathOptions();
             }
-
 
             return changed;
         }
