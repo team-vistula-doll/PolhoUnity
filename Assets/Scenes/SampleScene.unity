@@ -1608,7 +1608,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e420316fd3864c42aed3918c4a93cca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StageToRun: {fileID: 11400000, guid: 545673ed9afd8bf4383938587d9e54a6, type: 2}
+  StageToRun: {fileID: 11400000, guid: 00335b75e6faabb4581631286de65d53, type: 2}
 --- !u!114 &966855638
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1692,18 +1692,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Enemies:
+<<<<<<< Updated upstream
   - rid: 7768707446602727448
   - rid: 7768707446602727452
   references:
     version: 2
     RefIds:
     - rid: 7768707446602727448
+=======
+  - rid: 2130791398732726279
+  references:
+    version: 2
+    RefIds:
+    - rid: 2130791398732726279
+>>>>>>> Stashed changes
       type: {class: Enemy, ns: EnemyClass, asm: Game}
       data:
         ID: 0
         PrefabName: Enemy
-        Name: Enemy
+        Name: enemy1
         SpawnTime: 0
+<<<<<<< Updated upstream
         SpawnPosition: {x: 0, y: 0}
         Path:
         - rid: 7768707446602727463
@@ -1715,6 +1724,9 @@ MonoBehaviour:
         Name: Enemy
         SpawnTime: 0
         SpawnPosition: {x: 0, y: 0}
+=======
+        SpawnPosition: {x: -8, y: 0}
+>>>>>>> Stashed changes
         Path: []
     - rid: 7768707446602727463
       type: {class: WaypointPathBezier, ns: WaypointPath, asm: Game}

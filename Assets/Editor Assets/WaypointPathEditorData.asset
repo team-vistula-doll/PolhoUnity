@@ -12,16 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d751a49c23cbf74a8a6fa0f897a07fa, type: 3}
   m_Name: WaypointPathEditorData
   m_EditorClassIdentifier: 
+<<<<<<< Updated upstream
   PrefabID: 22974
   SelectedPathIndex: 1
   TempPath:
   - rid: 7768707446602727659
   - rid: 7768707446602727662
+=======
+  PrefabID: -2484
+  SelectedPathIndex: 0
+  TempPath:
+  - rid: 2130791488620331008
+>>>>>>> Stashed changes
   IsInsert: 0
   PathTypeSelection: 0
   references:
     version: 2
     RefIds:
+<<<<<<< Updated upstream
     - rid: 7768707446602727659
       type: {class: WaypointPathBezier, ns: WaypointPath, asm: Game}
       data:
@@ -34,6 +42,12 @@ MonoBehaviour:
       type: {class: WaypointPathExpression, ns: WaypointPath, asm: Game}
       data:
         StartPosition: {x: 3.310432, y: 2.9679742}
+=======
+    - rid: 2130791488620331008
+      type: {class: WaypointPathExpression, ns: WaypointPath, asm: Game}
+      data:
+        StartPosition: {x: 0, y: 0}
+>>>>>>> Stashed changes
         StepSize: 0.5
         PathFormula: x
         Length: 20

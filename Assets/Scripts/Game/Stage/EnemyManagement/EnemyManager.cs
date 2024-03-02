@@ -2,22 +2,27 @@ using DanmakU;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using EnemyClass;
 using WaypointPath;
 
 [RequireComponent(typeof(EnemyBank))]
 public class EnemyManager : MonoBehaviour
 {
+    public List<Enemy> Enemies { get; private set; }
+
     private Dictionary<int, GameObject> _enemyObjects;
-    private List<EnemyClass.Enemy> _enemies;
     private int _enemyObjectIDs = 0;
     private int _enemyStructIDs = 0;
     private EnemyBank _enemyBank;
     
-    void Start()
+    void Awake()
     {
         _enemyObjects = new Dictionary<int, GameObject>();
-        _enemies = new List<EnemyClass.Enemy>();
+        //_enemies = new List<Enemy>();
         _enemyBank = GetComponent<EnemyBank>();
+
+        Enemies = GetComponent<CurrentStageEnemies>().Enemies;
+        Debug.Log(Enemies);
     }
 
     //public Dictionary<int, Enemy> AddEnemiesFromFile(string filename)
@@ -30,11 +35,11 @@ public class EnemyManager : MonoBehaviour
     /// </summary>
     /// <param name="spawnRepeats">optional</param>
     /// <returns>Enemy struct ID</returns>
-    public int CreateNewEnemy (EnemyClass.Enemy enemy)
+    public int CreateNewEnemy (Enemy enemy)
     {
         enemy.ID = ++_enemyStructIDs;
         enemy.Path[0].StartPosition = enemy.SpawnPosition;
-        _enemies.Add(enemy);
+        Enemies.Add(enemy);
         return _enemyStructIDs;
     }
 
@@ -49,9 +54,9 @@ public class EnemyManager : MonoBehaviour
         id--;
         if(insertAt <= -1)
         {
-            _enemies[id].Path.AddRange(waypoints);
+            Enemies[id].Path.AddRange(waypoints);
         }
-        else _enemies[id].Path.InsertRange(insertAt, waypoints);
+        else Enemies[id].Path.InsertRange(insertAt, waypoints);
     }
 
     /// <summary>
@@ -61,11 +66,11 @@ public class EnemyManager : MonoBehaviour
     /// <returns>Spawned enemy object ID</returns>
     public int SpawnNewEnemy(int id)
     {
-        id--;
-        GameObject enemyObject = Instantiate(_enemyBank.EnemyEntries[_enemies[id].Name], _enemies[id].SpawnPosition, Quaternion.identity, transform);
-        if (_enemies[id].Fireable != null)
-            enemyObject.GetComponentInChildren<EnemyDanmakuEmitter>().Fireable = _enemies[id].Fireable;
-        enemyObject.GetComponent<WaypointPathData>().Path = _enemies[id].Path.ToList();
+        //id--;
+        GameObject enemyObject = Instantiate(_enemyBank.EnemyEntries[Enemies[id].Name], Enemies[id].SpawnPosition, Quaternion.identity, transform);
+        if (Enemies[id].Fireable != null)
+            enemyObject.GetComponentInChildren<EnemyDanmakuEmitter>().Fireable = Enemies[id].Fireable;
+        enemyObject.GetComponent<WaypointPathData>().Path = Enemies[id].Path.ToList();
 
         _enemyObjects.Add(++_enemyObjectIDs, enemyObject);
         return _enemyObjectIDs;
