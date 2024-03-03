@@ -252,6 +252,8 @@ public class CurrentStageEnemiesEditor : Editor
 
         serialData.ApplyModifiedProperties();
         serializedObject.ApplyModifiedProperties();
+
+        base.OnInspectorGUI();
         SceneView.RepaintAll();
     }
 
