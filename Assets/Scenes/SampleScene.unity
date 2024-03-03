@@ -1692,41 +1692,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Enemies:
-<<<<<<< Updated upstream
-  - rid: 7768707446602727448
-  - rid: 7768707446602727452
-  references:
-    version: 2
-    RefIds:
-    - rid: 7768707446602727448
-=======
   - rid: 2130791398732726279
   references:
     version: 2
     RefIds:
     - rid: 2130791398732726279
->>>>>>> Stashed changes
       type: {class: Enemy, ns: EnemyClass, asm: Game}
       data:
         ID: 0
         PrefabName: Enemy
         Name: enemy1
         SpawnTime: 0
-<<<<<<< Updated upstream
-        SpawnPosition: {x: 0, y: 0}
-        Path:
-        - rid: 7768707446602727463
-    - rid: 7768707446602727452
-      type: {class: Enemy, ns: EnemyClass, asm: Game}
-      data:
-        ID: 1
-        PrefabName: Enemy
-        Name: Enemy
-        SpawnTime: 0
-        SpawnPosition: {x: 0, y: 0}
-=======
         SpawnPosition: {x: -8, y: 0}
->>>>>>> Stashed changes
         Path: []
     - rid: 7768707446602727463
       type: {class: WaypointPathBezier, ns: WaypointPath, asm: Game}
