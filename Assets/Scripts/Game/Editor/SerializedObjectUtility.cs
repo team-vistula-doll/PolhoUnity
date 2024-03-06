@@ -32,12 +32,13 @@ namespace SerializedObjectUtility
         /// <summary>
         /// Sorts a serialized array/list by a key array
         /// </summary>
-        /// <param name="keys">The keys array by which <paramref name="arr"/> will be sorted</param>
         /// <param name="arr">The serialized array with elements not inheriting ScriptableObjects</param>
+        /// <param name="keys">The keys array by which <paramref name="arr"/> will be sorted</param>
         /// <param name="start">Start index</param>
         /// <param name="end">End index</param>
         public static void SortSerializedPropertyArray(SerializedProperty arr, IComparable[] keys, int start, int end)
         {
+            if (start == end) return;
             int[] stack = new int[end - start + 1];
             int top = -1;
             stack[++top] = start;
