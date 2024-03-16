@@ -17,14 +17,20 @@ namespace SerializedObjectUtility
                 {
                     i++;
                     (keys[i], keys[j]) = (keys[j], keys[i]);
-                    arr.MoveArrayElement(j, i);
-                    arr.MoveArrayElement(i + 1, j);
+                    if (i != j)
+                    {
+                        arr.MoveArrayElement(j, i);
+                        arr.MoveArrayElement(i + 1, j);
+                    }
                 }
             }
 
             (keys[high], keys[i + 1]) = (keys[i + 1], keys[high]);
-            arr.MoveArrayElement(high, i + 1);
-            arr.MoveArrayElement(i + 2, high);
+            if (high != i + 1)
+            {
+                arr.MoveArrayElement(high, i + 1);
+                arr.MoveArrayElement(i + 2, high);
+            }
 
             return i + 1;
         }
