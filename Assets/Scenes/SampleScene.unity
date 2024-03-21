@@ -1692,28 +1692,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Enemies:
-  - rid: 2130791398732726279
+  - rid: 6769570325340356644
+  - rid: 6769570325340356648
   references:
     version: 2
     RefIds:
-    - rid: 2130791398732726279
+    - rid: 6769570325340356644
       type: {class: Enemy, ns: EnemyClass, asm: Game}
       data:
         ID: 0
         PrefabName: Enemy
-        Name: enemy1
+        Name: Enemy
         SpawnTime: 0
-        SpawnPosition: {x: -8, y: 0}
-        Path:
-        - rid: 8218407498213752843
-    - rid: 8218407498213752843
-      type: {class: WaypointPathExpression, ns: WaypointPath, asm: Game}
+        SpawnPosition: {x: 0, y: 0}
+        Path: []
+    - rid: 6769570325340356648
+      type: {class: Enemy, ns: EnemyClass, asm: Game}
       data:
-        StartPosition: {x: -8, y: 0}
-        StepSize: 0.5
-        PathFormula: x
-        Length: 20
-        Angle: -45
+        ID: 1
+        PrefabName: Enemy
+        Name: Enemy
+        SpawnTime: 1.36
+        SpawnPosition: {x: 0, y: 0}
+        Path: []
 --- !u!1 &1022631778
 GameObject:
   m_ObjectHideFlags: 0
