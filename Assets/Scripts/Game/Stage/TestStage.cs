@@ -26,7 +26,7 @@ public class TestStage : Stage
 
         int enemy1a = args.EnemyManager.CreateNewEnemy(new Enemy
         {
-            Name = "enemy1",
+            Name = "AppleCat",
             SpawnTime = -1,
             SpawnPosition = enemy1aPath.StartPosition,
             Path = new() { enemy1aPath },
@@ -34,7 +34,7 @@ public class TestStage : Stage
         });
         int enemy1b = args.EnemyManager.CreateNewEnemy(new Enemy
         {
-            Name = "enemy1",
+            Name = "AppleCat",
             SpawnTime = -1,
             SpawnPosition = enemy1bPath.StartPosition,
             Path = new() { enemy1bPath },
@@ -42,7 +42,7 @@ public class TestStage : Stage
         });
         int enemy1c = args.EnemyManager.CreateNewEnemy(new Enemy
         {
-            Name = "enemy1",
+            Name = "AppleCat",
             SpawnTime = -1,
             SpawnPosition = enemy1cPath.StartPosition,
             Path = new() { enemy1cPath },
@@ -50,7 +50,7 @@ public class TestStage : Stage
         });
         int enemy1d = args.EnemyManager.CreateNewEnemy(new Enemy
         {
-            Name = "enemy1",
+            Name = "AppleCat",
             SpawnTime = -1,
             SpawnPosition = enemy1dPath.StartPosition,
             Path = new() { enemy1dPath },

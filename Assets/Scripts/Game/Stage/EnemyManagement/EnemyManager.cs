@@ -37,7 +37,7 @@ public class EnemyManager : MonoBehaviour
     /// <returns>Enemy struct ID</returns>
     public int CreateNewEnemy (Enemy enemy)
     {
-        enemy.ID = ++_enemyStructIDs;
+        enemy.ID = _enemyStructIDs++;
         enemy.Path[0].StartPosition = enemy.SpawnPosition;
         Enemies.Add(enemy);
         return _enemyStructIDs;
@@ -66,13 +66,13 @@ public class EnemyManager : MonoBehaviour
     /// <returns>Spawned enemy object ID</returns>
     public int SpawnNewEnemy(int id)
     {
-        //id--;
+        id--;
         GameObject enemyObject = Instantiate(_enemyBank.EnemyEntries[Enemies[id].Name], Enemies[id].SpawnPosition, Quaternion.identity, transform);
         if (Enemies[id].Fireable != null)
             enemyObject.GetComponentInChildren<EnemyDanmakuEmitter>().Fireable = Enemies[id].Fireable;
         enemyObject.GetComponent<WaypointPathData>().Path = Enemies[id].Path.ToList();
 
-        _enemyObjects.Add(++_enemyObjectIDs, enemyObject);
+        _enemyObjects.Add(_enemyObjectIDs++, enemyObject);
         return _enemyObjectIDs;
     }
 

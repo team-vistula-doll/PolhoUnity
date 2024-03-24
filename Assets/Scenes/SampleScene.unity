@@ -1608,7 +1608,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e420316fd3864c42aed3918c4a93cca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StageToRun: {fileID: 11400000, guid: 00335b75e6faabb4581631286de65d53, type: 2}
+  StageToRun: {fileID: 11400000, guid: 545673ed9afd8bf4383938587d9e54a6, type: 2}
 --- !u!114 &966855638
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1693,20 +1693,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4716b63354d2ad94f9196b3e7f0c89c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Enemies:
-  - rid: 8218407975585579039
+  Enemies: []
   references:
     version: 2
-    RefIds:
-    - rid: 8218407975585579039
-      type: {class: Enemy, ns: EnemyClass, asm: Game}
-      data:
-        ID: 0
-        PrefabName: Enemy
-        Name: AppleCat
-        SpawnTime: 0
-        SpawnPosition: {x: -8, y: 0}
-        Path: []
+    RefIds: []
 --- !u!1 &1022631778
 GameObject:
   m_ObjectHideFlags: 0
