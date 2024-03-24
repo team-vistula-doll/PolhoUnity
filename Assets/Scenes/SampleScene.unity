@@ -1630,6 +1630,8 @@ MonoBehaviour:
     Prefab: {fileID: 317357075254503586, guid: f5eeef1cccc085a418f6e0738626b30e, type: 3}
   - Name: boss
     Prefab: {fileID: 545863818296485109, guid: d11ff07a24b1ffe4d976d56e8c4ae331, type: 3}
+  - Name: AppleCat
+    Prefab: {fileID: 2092912531510788433, guid: e6ad58a28ac57f6499129cc73b230f72, type: 3}
 --- !u!114 &966855639
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1692,28 +1694,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Enemies:
-  - rid: 6769570325340356644
-  - rid: 6769570325340356648
+  - rid: 8218407975585579039
   references:
     version: 2
     RefIds:
-    - rid: 6769570325340356644
+    - rid: 8218407975585579039
       type: {class: Enemy, ns: EnemyClass, asm: Game}
       data:
         ID: 0
         PrefabName: Enemy
-        Name: Enemy
+        Name: AppleCat
         SpawnTime: 0
-        SpawnPosition: {x: 0, y: 0}
-        Path: []
-    - rid: 6769570325340356648
-      type: {class: Enemy, ns: EnemyClass, asm: Game}
-      data:
-        ID: 1
-        PrefabName: Enemy
-        Name: Enemy
-        SpawnTime: 1.36
-        SpawnPosition: {x: 0, y: 0}
+        SpawnPosition: {x: -8, y: 0}
         Path: []
 --- !u!1 &1022631778
 GameObject:
