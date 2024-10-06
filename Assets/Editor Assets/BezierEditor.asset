@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: BezierEditor
   m_EditorClassIdentifier: 
   stepSize: 0.5
-  StartPosition: {x: -8, y: 0}
-  endPosition: {x: 0, y: 0}
+  StartPosition: {x: 0, y: 0}
+  endPosition: {x: 3.310432, y: 2.9679742}
   startControl: {x: 0, y: 0}
-  endControl: {x: 0, y: 0}
+  endControl: {x: 9.398582, y: 0.07610226}
   isLocal: 1
   localStart: {x: 0, y: 0}

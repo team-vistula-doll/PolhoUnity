@@ -38,7 +38,7 @@ public class EnemyManager : MonoBehaviour
     public int CreateNewEnemy (Enemy enemy)
     {
         enemy.ID = ++_enemyStructIDs;
-        enemy.Path[0].StartPosition = enemy.SpawnPosition;
+        enemy.Path[0].StartPoint.Position = enemy.SpawnPosition;
         Enemies.Add(enemy);
         return _enemyStructIDs;
     }

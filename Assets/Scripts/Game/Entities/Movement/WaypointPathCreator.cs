@@ -9,7 +9,7 @@ namespace WaypointPath
     //Given starting position and an implemented path creator,
     //will generate List of waypoints
     {
-        public Vector2 StartPosition = Vector2.zero;
+        public Waypoint StartPoint = new(Vector2.zero, 0, 0);
         [Range(0.2f, 50f)]
         public float StepSize = 0.5f;
 

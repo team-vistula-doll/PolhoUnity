@@ -114,7 +114,7 @@ public class CurrentStageEnemiesEditor : Editor
 
         if (currentEnemyData.TempPath.Count > 0)
         {
-            currentEnemyData.TempPath[0].StartPosition = selectedEnemy.SpawnPosition;
+            currentEnemyData.TempPath[0].StartPoint.Position = selectedEnemy.SpawnPosition;
             PathEditor.ConnectPaths(currentEnemyData.TempPath, 0);
         }
     }

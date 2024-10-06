@@ -16,9 +16,9 @@ namespace WaypointPath
         public float Angle = 0; //in degrees
 
         public WaypointPathExpression() { }
-        public WaypointPathExpression(Vector2 startPosition, string pathFormula, float length, float angle)
+        public WaypointPathExpression(Waypoint startPoint, string pathFormula, float length, float angle)
         {
-            StartPosition = startPosition;
+            StartPoint = startPoint;
             PathFormula = pathFormula;
             Length = length;
             Angle = angle;
@@ -26,21 +26,23 @@ namespace WaypointPath
 
         public override WaypointPathCreator GetModifiedPathCopy(Vector2 vector, Func<Vector2, Vector2, Vector2> mod)
         {
-            Vector2 startPosition = mod(StartPosition, vector);
-            WaypointPathExpression value = new(startPosition, PathFormula, Length, Angle);
+            Vector2 startPosition = mod(StartPoint.Position, vector);
+            Waypoint startPoint = new(startPosition, StartPoint.Speed, StartPoint.Acceleration);
+            WaypointPathExpression value = new(startPoint, PathFormula, Length, Angle);
             return value;
         }
 
         public override WaypointPathCreator GetNewAdjoinedPath(float percent)
         {
             Vector2 start = (Vector2)GetPointVector(percent * Length, Angle);
-            WaypointPathExpression value = new(start, PathFormula, Length, Angle);
+            Waypoint startPoint = new(start, StartPoint.Speed, StartPoint.Acceleration);
+            WaypointPathExpression value = new(startPoint, PathFormula, Length, Angle);
             return value;
         }
 
         public override void ModifyPath(Vector2 vector, Func<Vector2, Vector2, Vector2> mod)
         {
-            StartPosition = mod(StartPosition, vector);
+            StartPoint.Position = mod(StartPoint.Position, vector);
         }
 
         static ExpressionParser parser = new();
@@ -64,7 +66,7 @@ namespace WaypointPath
                                             p.x * Mathf.Sin(angle) + p.y * Mathf.Cos(angle));
             //Rotate point using rotation matrix
 
-            return p + StartPosition; //Translate point to originate from the startPos
+            return p + StartPoint.Position; //Translate point to originate from the startPos
         }
 
         public Vector2? GetPointVector(float x, float? angle = null)

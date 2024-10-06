@@ -6,7 +6,7 @@ namespace WaypointPath
     public class ExpressionEditor : PathEditor
     {
         [SerializeField]
-        WaypointPathExpression pathExpression = new(Vector2.zero, "x", 20, 0);
+        WaypointPathExpression pathExpression = new(new(Vector2.zero, 0, 0), "x", 20, 0);
         [SerializeField, Delayed]
         string pathFormula;
         [SerializeField, Min(0f)]

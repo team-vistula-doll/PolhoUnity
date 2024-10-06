@@ -7,7 +7,7 @@ namespace WaypointPath
     public class BezierEditor : PathEditor
     {
         [SerializeField]
-        WaypointPathBezier pathBezier = new(Vector2.zero, Vector2.zero, Vector2.zero, Vector2.zero);
+        WaypointPathBezier pathBezier = new(new(Vector2.zero, 0, 0), Vector2.zero, Vector2.zero, Vector2.zero);
         //SerializedObject serialPath;
         [SerializeField]
         Vector2 endPosition, startControl, endControl;
@@ -27,7 +27,7 @@ namespace WaypointPath
             base.OnEnable();
 
             stepSize = pathBezier.StepSize;
-            StartPosition = pathBezier.StartPosition;
+            StartPosition = pathBezier.StartPoint.Position;
             endPosition = pathBezier.EndPosition;
             startControl = pathBezier.StartControl;
             endControl = pathBezier.EndControl;
@@ -168,7 +168,7 @@ namespace WaypointPath
             //{
                 size = HandleUtility.GetHandleSize(startControl) * 0.15f;
                 Handles.color = Color.cyan;
-                startControlHandle = Handles.FreeMoveHandle(startControl, Quaternion.identity, size, snap, Handles.SphereHandleCap);
+                startControlHandle = Handles.FreeMoveHandle(startControl, size, snap, Handles.SphereHandleCap);
             //}
             //else startControlHandle = Vector2.zero;
 
@@ -176,13 +176,13 @@ namespace WaypointPath
             {
                 size = HandleUtility.GetHandleSize(endControl) * 0.15f;
                 Handles.color = Color.cyan;
-                endControlHandle = Handles.FreeMoveHandle(endControl, Quaternion.identity, size, snap, Handles.SphereHandleCap);
+                endControlHandle = Handles.FreeMoveHandle(endControl, size, snap, Handles.SphereHandleCap);
             }
             else endControlHandle = Vector2.zero;
 
             size = HandleUtility.GetHandleSize(endPosition) * 0.2f;
             Handles.color = Color.yellow;
-            Vector2 endPositionHandle = Handles.FreeMoveHandle(endPosition, Quaternion.identity, size, snap, Handles.SphereHandleCap);
+            Vector2 endPositionHandle = Handles.FreeMoveHandle(endPosition, size, snap, Handles.SphereHandleCap);
 
             Handles.color = new Color(1, 0, 0, 0.5f); //red
             if (startControlHandle - StartPosition != Vector2.zero)

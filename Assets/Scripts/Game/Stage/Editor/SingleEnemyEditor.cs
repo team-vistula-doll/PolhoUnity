@@ -101,7 +101,7 @@ public class SingleEnemyEditor
                 tempPath.arraySize = 1;
                 tempPath.GetArrayElementAtIndex(tempPath.arraySize - 1).managedReferenceValue = new WaypointPathExpression()
                 {
-                    StartPosition = spawnPosition.vector2Value
+                    StartPoint = new(spawnPosition.vector2Value, 0, 0)
                 };
             }
             //tempPath.managedReferenceValue = new List<WaypointPathCreator>() { new WaypointPathExpression() };
@@ -157,13 +157,13 @@ public class SingleEnemyEditor
             if (path.arraySize > 0)
             {
                 WaypointPathCreator p = (WaypointPathCreator)path.GetArrayElementAtIndex(0).managedReferenceValue;
-                p.StartPosition = spawnPosition.vector2Value;
+                p.StartPoint.Position = spawnPosition.vector2Value;
                 PathEditor.ConnectPaths(path, 0);
             }
             if (tempPath.arraySize > 0)
             {
                 WaypointPathCreator p = (WaypointPathCreator)tempPath.GetArrayElementAtIndex(0).managedReferenceValue;
-                p.StartPosition = spawnPosition.vector2Value;
+                p.StartPoint.Position = spawnPosition.vector2Value;
                 PathEditor.ConnectPaths(tempPath, 0);
             }
             Data.SelectedOption.SetPathCreator(

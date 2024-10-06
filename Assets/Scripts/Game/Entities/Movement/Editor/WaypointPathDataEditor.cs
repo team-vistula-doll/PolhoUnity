@@ -106,13 +106,13 @@ public class WaypointPathDataEditor : Editor
             if (path.arraySize > 0)
             {
                 WaypointPathCreator p = (WaypointPathCreator)path.GetArrayElementAtIndex(0).managedReferenceValue;
-                p.StartPosition = pathData.transform.position;
+                p.StartPoint.Position = pathData.transform.position;
                 PathEditor.ConnectPaths(path, 0);
             }
             if (tempPath.arraySize > 0)
             {
                 WaypointPathCreator p = (WaypointPathCreator)tempPath.GetArrayElementAtIndex(0).managedReferenceValue;
-                p.StartPosition = pathData.transform.position;
+                p.StartPoint.Position = pathData.transform.position;
                 PathEditor.ConnectPaths(tempPath, 0);
             }
             data.SelectedOption.SetPathCreator(

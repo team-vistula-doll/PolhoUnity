@@ -18,7 +18,7 @@ namespace WaypointPath
         public virtual void SetPathCreator(WaypointPathCreator pathCreator)
         {
             stepSize = pathCreator.StepSize;
-            StartPosition = pathCreator.StartPosition;
+            StartPosition = pathCreator.StartPoint.Position;
         }
 
         public static void ConnectPaths(SerializedProperty pathData, int startIndex)
@@ -46,7 +46,7 @@ namespace WaypointPath
             {
                 Vector2? vector2 = path[startIndex - 1].GetVectorAt(1);
                 if (vector2 == null) return;
-                vector2 -= path[startIndex].StartPosition;
+                vector2 -= path[startIndex].StartPoint.Position;
                 path[startIndex].ModifyPath((Vector2)vector2, (x, y) => x + y);
             }
         }
@@ -222,7 +222,7 @@ namespace WaypointPath
 
         public virtual void ApplyPathOptions()
         {
-            GetPathCreator().StartPosition = StartPosition;
+            GetPathCreator().StartPoint.Position = StartPosition;
             GetPathCreator().StepSize = stepSize;
         }
 
