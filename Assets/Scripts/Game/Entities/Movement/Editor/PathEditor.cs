@@ -329,10 +329,10 @@ namespace WaypointPath
             for (; startIndex < path.Count; startIndex++)
             {
                 WaypointPathCreator x = path[startIndex];
-                List<Vector2> vector2s = x.GeneratePath();
-                foreach (Vector2 point in vector2s)
+                List<Waypoint> vector2s = x.GeneratePath();
+                foreach (Waypoint point in vector2s)
                 {
-                    Handles.SphereHandleCap(0, point, Quaternion.identity, isTemp ? 0.1f : 0.08f, EventType.Repaint);
+                    Handles.SphereHandleCap(0, point.Position, Quaternion.identity, isTemp ? 0.1f : 0.08f, EventType.Repaint);
                 }
                 if (isTemp) Handles.color = Color.red;
             }

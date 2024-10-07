@@ -10,9 +10,9 @@ public class WaypointWalker : MonoBehaviour
     public event EventHandler<int> WaypointEvent;
 
     private WaypointPathData _pathData;
-    private List<Vector2> _vector2Path;
+    private List<Waypoint> _vector2Path;
     private IMoveable _moveableEntity;
-    private Vector2 _nextWaypoint;
+    private Waypoint _nextWaypoint = new(new(), null, null);
     private int _currentWaypointIndex;
     private int _currentPathIndex;
 
@@ -35,12 +35,6 @@ public class WaypointWalker : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Validates and sets the path from a function
-    /// </summary>
-    /// <param name="isAdd">If true the path is added to the existing path, if false the path replaces the existing path</param>
-    /// <param name="isTemp">If true sets the temp path, if false sets the real path</param>
-
     void FixedUpdate()
     {
         move?.Invoke();
@@ -48,14 +42,14 @@ public class WaypointWalker : MonoBehaviour
 
     private void Move()
     {
-        if (_moveableEntity != null && _moveableEntity.Rigidbody2D != null)
+        if (_moveableEntity != null)
         {
             if (_isMoving)
-                _moveableEntity.Move(GetCurrentAxis());
+                _moveableEntity.Move(GetCurrentWaypoint());
 
             else
             {
-                _moveableEntity.Move(new Vector2(0, 0));
+                //_moveableEntity.Move(_moveableEntity.transform.position);
                 move -= Move;
             }
         }
@@ -78,9 +72,9 @@ public class WaypointWalker : MonoBehaviour
     /// </summary>
     private void ChangeNextWaypoint()
     {
-        if (Vector2.Distance(transform.position, _nextWaypoint) < 0.1f && _currentWaypointIndex < _vector2Path.Count - 1)
+        if (Vector2.Distance(transform.position, _nextWaypoint.Position) < 0.1f && _currentWaypointIndex < _vector2Path.Count - 1)
         {
-            while (_vector2Path.Count > _currentWaypointIndex && Vector2.Distance(_nextWaypoint, _vector2Path[_currentWaypointIndex]) < 0.01f)
+            while (_vector2Path.Count > _currentWaypointIndex && Vector2.Distance(_nextWaypoint.Position, _vector2Path[_currentWaypointIndex].Position) < 0.01f)
                 _vector2Path.RemoveAt(_currentWaypointIndex);
             _nextWaypoint = _vector2Path[_currentWaypointIndex];
             WaypointEvent?.Invoke(this, _currentWaypointIndex);
@@ -95,13 +89,10 @@ public class WaypointWalker : MonoBehaviour
         }
     }
 
-    public Vector2 GetCurrentAxis()
+    public Waypoint GetCurrentWaypoint()
     {
         ChangeNextWaypoint();
 
-        Vector2 axis = _nextWaypoint - new Vector2(_moveableEntity.Rigidbody2D.position.x,
-            _moveableEntity.Rigidbody2D.position.y);
-
-        return axis.normalized;
+        return _nextWaypoint;
     }
 }

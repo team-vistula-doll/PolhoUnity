@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using WaypointPath;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(AudioSource))]
 public class Player : MonoBehaviour, IMoveable
@@ -61,12 +62,13 @@ public class Player : MonoBehaviour, IMoveable
         }
     }
 
-    public void Move(Vector2 input)
+    public void Move(Waypoint waypoint)
     {
-        if(input.magnitude > 1)
-            input = input.normalized;
-        
-        Rigidbody2D.velocity = new Vector2(input.x, input.y) * Speed;
+        if(waypoint.Position.magnitude > 1)
+            waypoint.Position = waypoint.Position.normalized;
+        if (waypoint.Acceleration.HasValue) Speed += waypoint.Acceleration.Value;
+
+        Rigidbody2D.velocity = new Vector2(waypoint.Position.x, waypoint.Position.y) * Speed * Time.deltaTime;
     }
 
     public IEnumerator OnHit()

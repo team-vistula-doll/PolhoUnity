@@ -27,13 +27,13 @@ public class PlayerInputController : MonoBehaviour
     public void Move(InputAction.CallbackContext context)
     {
         MoveVal = context.ReadValue<Vector2>();
-        _player.Move(new Vector2(MoveVal.x * FocusMultiplier, MoveVal.y * FocusMultiplier));
+        _player.Move(new(new Vector2(MoveVal.x * FocusMultiplier, MoveVal.y * FocusMultiplier), null, null));
     }
 
     public void Focus(InputAction.CallbackContext context)
     {
         FocusMultiplier = context.canceled ? 1f : 0.5f;
-        _player.Move(new Vector2(MoveVal.x * FocusMultiplier, MoveVal.y * FocusMultiplier));
+        _player.Move(new(new Vector2(MoveVal.x * FocusMultiplier, MoveVal.y * FocusMultiplier), null, null));
     }
 
     public void Shoot(InputAction.CallbackContext context)

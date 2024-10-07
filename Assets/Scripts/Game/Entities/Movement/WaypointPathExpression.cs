@@ -81,7 +81,7 @@ namespace WaypointPath
 
         public override Vector2? GetVectorAt(float percent) => GetPointVector(percent * Length);
 
-        public override List<Vector2> GeneratePath()
+        public override List<Waypoint> GeneratePath()
         {
             if (StepSize < 0.2f) StepSize = 0.2f; //Prevent too many waypoints and Unity freezing
             Expression exp;
@@ -92,18 +92,18 @@ namespace WaypointPath
                 exp = parser.EvaluateExpression(PathFormula);
             } catch (ParseException) { return new(); }
 
-            List<Vector2> waypoints = new();
+            List<Waypoint> waypoints = new();
 
             for (int i = 1; i * StepSize <= Length; i++)
             {
                 Vector2 point = GetPointVector(exp, i * StepSize, Angle);
-                waypoints.Add(point);
+                waypoints.Add(new(point, null, null));
             }
 
             Vector2 end = GetPointVector(exp, Length, Angle);
-            if (waypoints.Count != 0 && Vector2.Distance(waypoints.Last(), end) <= 0.1f)
+            if (waypoints.Count != 0 && Vector2.Distance(waypoints.Last().Position, end) <= 0.1f)
                 waypoints.RemoveAt(waypoints.Count - 1);
-            waypoints.Add(end);
+            waypoints.Add(new(end, null, null));
 
             return waypoints;
         }

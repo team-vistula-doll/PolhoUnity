@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2092912531510788438}
   - component: {fileID: 2092912531510788439}
-  - component: {fileID: 2092912531510788437}
   - component: {fileID: 2092912531510788436}
   - component: {fileID: 2092912531510788426}
   - component: {fileID: 6367404635937336396}
@@ -29,6 +28,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2092912531510788433}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 1}
@@ -36,7 +36,6 @@ Transform:
   m_Children:
   - {fileID: 5984705698576210585}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &2092912531510788439
 SpriteRenderer:
@@ -90,27 +89,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!50 &2092912531510788437
-Rigidbody2D:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2092912531510788433}
-  m_BodyType: 1
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_Interpolate: 1
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
 --- !u!114 &2092912531510788436
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -123,7 +101,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e919f5137ba861648a60c67599516454, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Speed: 150
+  Speed: 2
   HealthPoints: 1
   ScoreValue: 10
   HitSound: {fileID: 8300000, guid: 27401145953c3bc4090829848910d781, type: 3}
@@ -256,8 +234,8 @@ MonoBehaviour:
     - rid: 7768707446602727660
       type: {class: WaypointPathBezier, ns: WaypointPath, asm: Game}
       data:
-        StartPosition: {x: 0, y: 0}
         StepSize: 0.5
+        KeyWaypoints: []
         EndPosition: {x: 3.310432, y: 2.9679742}
         EndControl: {x: 9.398582, y: 0.07610226}
         StartControl: {x: 0, y: 0}
@@ -286,13 +264,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2092912531923440514}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5984705698576210585}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}
 --- !u!114 &1256739408825577477
 MonoBehaviour:
@@ -356,6 +334,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5107029451421767632}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -363,7 +342,6 @@ Transform:
   m_Children:
   - {fileID: 2092912531923440512}
   m_Father: {fileID: 2092912531510788438}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &2534873172384411883
 BoxCollider2D:
@@ -375,6 +353,25 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0

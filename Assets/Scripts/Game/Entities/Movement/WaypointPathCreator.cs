@@ -12,6 +12,7 @@ namespace WaypointPath
         public Waypoint StartPoint = new(Vector2.zero, 0, 0);
         [Range(0.2f, 50f)]
         public float StepSize = 0.5f;
+        public List<(float percent, float speed, float acceleration)> KeyWaypoints = new();
 
         /// <summary>
         /// Copies and modifies the path; for simple operations that change all points
@@ -44,6 +45,6 @@ namespace WaypointPath
             return new Vector2(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad)) * length;
         }
 
-        public abstract List<Vector2> GeneratePath();
+        public abstract List<Waypoint> GeneratePath();
     }
 }

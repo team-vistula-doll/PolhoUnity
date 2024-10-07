@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
+using WaypointPath;
 
-[RequireComponent(typeof(Rigidbody2D), typeof(AudioSource))]
+[RequireComponent(typeof(AudioSource))]
 public class SimpleEnemy : MonoBehaviour, IEntity
 {
     public float Speed;
@@ -9,25 +10,19 @@ public class SimpleEnemy : MonoBehaviour, IEntity
     public AudioClip HitSound;
     public AudioClip DeathSound;
 
-    public Rigidbody2D Rigidbody2D { get; set; }
-
     private Player player;
     private AudioSource audioSource;
-
-    public void Move(Vector2 input)
-    {
-
-        if (input.magnitude > 1)
-            input = input.normalized;
-
-        Rigidbody2D.velocity = Speed * Time.deltaTime * input;
-    }
     
     private void Start()
     {
         player = GameObject.FindWithTag("Player").GetComponent<Player>();
-        Rigidbody2D = GetComponent<Rigidbody2D>();
         audioSource = GetComponent<AudioSource>();
+    }
+
+    public void Move(Waypoint waypoint)
+    {
+        if (waypoint.Acceleration.HasValue) Speed += waypoint.Acceleration.Value;
+        transform.position = Vector2.MoveTowards(transform.position, waypoint.Position, Speed * Time.deltaTime);
     }
 
     public void OnHit()

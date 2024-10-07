@@ -1,9 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using WaypointPath;
 
 public interface IMoveable
 {
-    Rigidbody2D Rigidbody2D{ get; set; }
-    void Move(Vector2 input);
+    Transform transform { get; }
+    void Move(Waypoint input);
 }
