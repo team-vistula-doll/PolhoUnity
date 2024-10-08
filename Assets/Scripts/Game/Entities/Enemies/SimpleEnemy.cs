@@ -21,6 +21,7 @@ public class SimpleEnemy : MonoBehaviour, IEntity
 
     public void Move(Waypoint waypoint)
     {
+        if (waypoint.Speed.HasValue) Speed = waypoint.Speed.Value;
         if (waypoint.Acceleration.HasValue) Speed += waypoint.Acceleration.Value;
         transform.position = Vector2.MoveTowards(transform.position, waypoint.Position, Speed * Time.deltaTime);
     }

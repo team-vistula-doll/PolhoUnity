@@ -1,9 +1,8 @@
 ﻿using System.Collections;
 using UnityEngine;
-using WaypointPath;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(AudioSource))]
-public class Player : MonoBehaviour, IMoveable
+public class Player : MonoBehaviour
 {
     public float Speed;
     public AudioClip HitSound;
@@ -62,13 +61,12 @@ public class Player : MonoBehaviour, IMoveable
         }
     }
 
-    public void Move(Waypoint waypoint)
+    public void Move(Vector2 input)
     {
-        if(waypoint.Position.magnitude > 1)
-            waypoint.Position = waypoint.Position.normalized;
-        if (waypoint.Acceleration.HasValue) Speed += waypoint.Acceleration.Value;
+        if (input.magnitude > 1)
+            input = input.normalized;
 
-        Rigidbody2D.velocity = new Vector2(waypoint.Position.x, waypoint.Position.y) * Speed * Time.deltaTime;
+        Rigidbody2D.velocity = Speed * Time.deltaTime * input;
     }
 
     public IEnumerator OnHit()

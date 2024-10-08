@@ -11,7 +11,7 @@ public class WaypointWalker : MonoBehaviour
 
     private WaypointPathData _pathData;
     private List<Waypoint> _vector2Path;
-    private IMoveable _moveableEntity;
+    private IPathable _moveableEntity;
     private Waypoint _nextWaypoint = new(new(), null, null);
     private int _currentWaypointIndex;
     private int _currentPathIndex;
@@ -22,7 +22,7 @@ public class WaypointWalker : MonoBehaviour
 
     void Start()
     {
-        _moveableEntity = GetComponent<IMoveable>();
+        _moveableEntity = GetComponent<IPathable>();
         _pathData = GetComponent<WaypointPathData>();
         //transform.position = pathData.Path[0];
         _currentPathIndex = 0;

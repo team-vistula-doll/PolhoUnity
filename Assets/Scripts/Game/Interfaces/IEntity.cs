@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
-public interface IEntity : IMoveable
+public interface IEntity : IPathable
 {
     void OnHit();
     void OnDeath();

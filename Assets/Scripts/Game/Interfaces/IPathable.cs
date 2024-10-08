@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using WaypointPath;
 
-public interface IMoveable
+public interface IPathable
 {
     Transform transform { get; }
     void Move(Waypoint input);

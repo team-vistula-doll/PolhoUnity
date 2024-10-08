@@ -13,13 +13,13 @@ public class PlayerInputController : MonoBehaviour
     public PlayerInput input;
     public Animator animator;
         
-    private IMoveable _player;
+    private Player _player;
     private PlayerDanmakuEmitter _playerEmitter;
 
     // Start is called before the first frame update
     void Start()
     {
-        _player = GetComponent<IMoveable>();
+        _player = GetComponent<Player>();
         _playerEmitter = GetComponentInChildren<PlayerDanmakuEmitter>();
         EnableMap("Pause Menu");
     }
@@ -27,13 +27,13 @@ public class PlayerInputController : MonoBehaviour
     public void Move(InputAction.CallbackContext context)
     {
         MoveVal = context.ReadValue<Vector2>();
-        _player.Move(new(new Vector2(MoveVal.x * FocusMultiplier, MoveVal.y * FocusMultiplier), null, null));
+        _player.Move(new Vector2(MoveVal.x * FocusMultiplier, MoveVal.y * FocusMultiplier));
     }
 
     public void Focus(InputAction.CallbackContext context)
     {
         FocusMultiplier = context.canceled ? 1f : 0.5f;
-        _player.Move(new(new Vector2(MoveVal.x * FocusMultiplier, MoveVal.y * FocusMultiplier), null, null));
+        _player.Move(new Vector2(MoveVal.x * FocusMultiplier, MoveVal.y * FocusMultiplier));
     }
 
     public void Shoot(InputAction.CallbackContext context)
