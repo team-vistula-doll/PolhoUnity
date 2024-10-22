@@ -216,7 +216,7 @@ namespace WaypointPath
 
         public virtual bool PathOptions()
         {
-            stepSize = EditorGUILayout.Slider("Step Size", stepSize, 0.2f, 50);
+            stepSize = EditorGUILayout.Slider("Step Size", stepSize, 0.5f, 50);
             return true;
         }
 

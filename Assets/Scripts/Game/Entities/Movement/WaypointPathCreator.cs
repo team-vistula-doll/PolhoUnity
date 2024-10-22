@@ -10,7 +10,7 @@ namespace WaypointPath
     //will generate List of waypoints
     {
         public Waypoint StartPoint = new(Vector2.zero, 0, 0);
-        [Range(0.2f, 50f)]
+        [Range(0.5f, 50f)]
         public float StepSize = 0.5f;
         public List<(float percent, float speed, float acceleration)> KeyWaypoints = new();
 

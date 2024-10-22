@@ -66,12 +66,12 @@ namespace WaypointPath
 
         public override List<Waypoint> GeneratePath()
         {
-            float step = StepSize * 10;
             if (EndPosition == Vector2.zero)
                 return new List<Waypoint>() { new(Vector2.zero, null, null) };
 
             //if (StepSize < 0.2f) StepSize = 0.2f; //Prevent too many waypoints and Unity freezing
 
+            float step = StepSize;
             List<Waypoint> waypoints = new();
             if (EndControl - StartPoint.Position == Vector2.zero)
             {

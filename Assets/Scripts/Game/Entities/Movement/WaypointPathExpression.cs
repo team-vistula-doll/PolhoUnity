@@ -83,7 +83,7 @@ namespace WaypointPath
 
         public override List<Waypoint> GeneratePath()
         {
-            if (StepSize < 0.2f) StepSize = 0.2f; //Prevent too many waypoints and Unity freezing
+            //if (StepSize < 0.2f) StepSize = 0.2f; //Prevent too many waypoints and Unity freezing
             Expression exp;
 
             //Create expression parser and evaluate expression

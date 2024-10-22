@@ -13,27 +13,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PrefabID: 0
-  SelectedPathIndex: 1
+  SelectedPathIndex: 0
   TempPath:
-  - rid: 2130791398732726283
+  - rid: 3870263554463498250
   - rid: 8218407498213752844
   IsInsert: 0
-  PathTypeSelection: 0
+  PathTypeSelection: 1
   references:
     version: 2
     RefIds:
-    - rid: 2130791398732726283
-      type: {class: WaypointPathExpression, ns: WaypointPath, asm: Game}
+    - rid: 3870263554463498250
+      type: {class: WaypointPathBezier, ns: WaypointPath, asm: Game}
       data:
-        StartPosition: {x: -8, y: 0}
-        StepSize: 0.5
-        PathFormula: x
-        Length: 20
-        Angle: -45
+        StepSize: 1.9
+        EndPosition: {x: -20.5, y: 6}
+        EndControl: {x: -23.4, y: 8}
+        StartControl: {x: -24, y: 6}
     - rid: 8218407498213752844
       type: {class: WaypointPathExpression, ns: WaypointPath, asm: Game}
       data:
-        StartPosition: {x: 20.284271, y: 0}
         StepSize: 0.5
         PathFormula: x
         Length: 20
@@ -50,6 +48,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66801b3d444b94141b136e405f454614, type: 3}
   m_Name: CurrentStageEnemiesEditorData
   m_EditorClassIdentifier: 
-  Foldouts: 0100
+  Foldouts: 01000000000000000000
   FoldedOut: 0
   IDIncrement: 1
