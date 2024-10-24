@@ -66,7 +66,7 @@ public class Player : MonoBehaviour
         if (input.magnitude > 1)
             input = input.normalized;
 
-        Rigidbody2D.velocity = Speed * Time.deltaTime * input;
+        Rigidbody2D.linearVelocity = Speed * Time.deltaTime * input;
     }
 
     public IEnumerator OnHit()
