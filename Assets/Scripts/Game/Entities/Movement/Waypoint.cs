@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace WaypointPath
@@ -18,6 +19,18 @@ namespace WaypointPath
 
     public static class WaypointMovement
     {
+        /// <summary>
+        /// Calculates the distance across a list of waypoints
+        /// </summary>
+        public static float CalculateDistance(List<Vector2> waypoints)
+        {
+            float distance = 0;
+            for (int i = 0; i < waypoints.Count - 1; i++)
+            {
+                distance += Vector2.Distance(waypoints[i], waypoints[i + 1]);
+            }
+            return distance;
+        }
         /// <summary>
         /// Call every frame to calculate the acceleration needed to achieve an end speed
         /// <para/> Formula: <c>a = (V0^2 - V1^2) / (2 * d - V0 * deltatime)</c>
