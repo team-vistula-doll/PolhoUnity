@@ -12,7 +12,7 @@ namespace WaypointPath
         public Waypoint StartPoint = new(Vector2.zero, 0, 0);
         [Range(0.5f, 50f)]
         public float StepSize = 0.5f;
-        public List<(float percent, float speed, float acceleration)> KeyWaypoints = new();
+        public SortedList<float, Waypoint> KeyWaypoints = new();
 
         /// <summary>
         /// Copies and modifies the path; for simple operations that change all points
@@ -33,6 +33,8 @@ namespace WaypointPath
         public abstract WaypointPathCreator GetNewAdjoinedPath(float percent);
 
         public abstract Vector2? GetVectorAt(float percent);
+
+        //public abstract void AddWaypointAt(float percent, float? speed = null, float? acceleration = null) //TODO: Declare
 
         /// <summary>
         /// Creates a Vector2 from its length and angle

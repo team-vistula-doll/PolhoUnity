@@ -24,12 +24,11 @@ public class WaypointWalker : MonoBehaviour
     {
         _moveableEntity = GetComponent<IPathable>();
         _pathData = GetComponent<WaypointPathData>();
-        //transform.position = pathData.Path[0];
-        _currentPathIndex = 0;
         if (_pathData.Path.Count > 0)
         {
             _vector2Path = _pathData.Path[_currentPathIndex++].GeneratePath();
-            _nextWaypoint = _vector2Path[0];
+            if (_vector2Path.Count > 0 ) 
+                _nextWaypoint = _vector2Path[0];
             move += Move;
             _isMoving = true;
         }
@@ -74,8 +73,9 @@ public class WaypointWalker : MonoBehaviour
     {
         if (Vector2.Distance(transform.position, _nextWaypoint.Position) < 0.1f && _currentWaypointIndex < _vector2Path.Count - 1)
         {
-            while (_vector2Path.Count > _currentWaypointIndex && Vector2.Distance(_nextWaypoint.Position, _vector2Path[_currentWaypointIndex].Position) < 0.01f)
+            while (_vector2Path.Count > _currentWaypointIndex + 1 && Vector2.Distance(_nextWaypoint.Position, _vector2Path[_currentWaypointIndex].Position) < 0.01f)
                 _vector2Path.RemoveAt(_currentWaypointIndex);
+            if (_vector2Path.Count == 0) return;
             _nextWaypoint = _vector2Path[_currentWaypointIndex];
             WaypointEvent?.Invoke(this, _currentWaypointIndex);
             _currentWaypointIndex++;

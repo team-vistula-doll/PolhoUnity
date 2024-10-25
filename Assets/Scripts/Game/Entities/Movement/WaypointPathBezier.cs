@@ -1,6 +1,7 @@
 using Bezier;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace WaypointPath
@@ -64,6 +65,11 @@ namespace WaypointPath
             return BezierCurve.CubicCurve(StartPoint.Position, StartControl, EndControl, EndPosition, percent);
         }
 
+        public void AddWaypointAt(float percent, float? speed = null, float? acceleration = null)
+        {
+            KeyWaypoints[percent] = new(GetVectorAt(percent).Value, speed, acceleration);
+        }
+
         public override List<Waypoint> GeneratePath()
         {
             if (EndPosition == Vector2.zero)
@@ -71,30 +77,49 @@ namespace WaypointPath
 
             //if (StepSize < 0.2f) StepSize = 0.2f; //Prevent too many waypoints and Unity freezing
 
-            float step = StepSize;
+            var enumerator = KeyWaypoints.GetEnumerator();
             List<Waypoint> waypoints = new();
-            if (EndControl - StartPoint.Position == Vector2.zero)
+            if (Vector2.Distance(EndControl, StartPoint.Position) < 0.0005)
             {
-                waypoints.Add(new(EndPosition, null, null));
-            }
-            else if (StartControl - StartPoint.Position == Vector2.zero)
-            {
-                for (int t = 1; t * step <= 100; t++)
+                while (enumerator.MoveNext())
                 {
-                    waypoints.Add(new(BezierCurve.QuadraticCurve(StartPoint.Position, EndControl,
-                        EndPosition, t * step / 100), null, null));
+                    waypoints.Add(enumerator.Current.Value);
                 }
+                if (Math.Abs(KeyWaypoints.LastOrDefault().Key - 1) > 0.005)
+                    waypoints.Add(new(EndPosition, null, null));
             }
             else
             {
-                for (int t = 1; t * step <= 100; t++)
+                bool keyWaypointExists = enumerator.MoveNext();
+                bool keyWaypointIsClose = false;
+                for (float t = 0.01f; t * StepSize <= 1; t += 0.01f)
                 {
-                    waypoints.Add(new(BezierCurve.CubicCurve(StartPoint.Position, StartControl,
-                        EndControl, EndPosition, t * step / 100), null, null));
+                    if (keyWaypointExists)
+                    {
+                        do
+                        {
+                            if (enumerator.Current.Key <= t)
+                            {
+                                waypoints.Add(enumerator.Current.Value);
+                                if (Math.Abs(enumerator.Current.Key - t) > 0.005) keyWaypointIsClose = true;
+                            }
+                            else break;
+                            keyWaypointExists = enumerator.MoveNext();
+                        } while (keyWaypointExists);
+                    }
+                    if (!keyWaypointIsClose) 
+                    {
+                        if (Vector2.Distance(StartControl, StartPoint.Position) < 0.0005)
+                            waypoints.Add(new(BezierCurve.QuadraticCurve(StartPoint.Position, EndControl,
+                                EndPosition, t * StepSize), null, null));
+                        else
+                            waypoints.Add(new(BezierCurve.CubicCurve(StartPoint.Position, StartControl,
+                                EndControl, EndPosition, t * StepSize), null, null));
+                    }
+                    keyWaypointIsClose = false;
                 }
             }
 
-            foreach (var point in KeyWaypoints) waypoints.Add(new(GetVectorAt(point.percent).Value, point.speed, point.acceleration));
             return waypoints;
         }
     }
