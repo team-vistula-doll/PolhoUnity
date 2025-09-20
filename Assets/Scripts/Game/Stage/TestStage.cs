@@ -18,7 +18,7 @@ public class TestStage : Stage
 
         //Spawn positions for the first enemies
 
-        WaypointPathBezier enemy1aPath = new(new(new(-6, 5), 0, 0), new(7, -2), new(-6, -1), new(2, -3));
+        WaypointPathBezier enemy1aPath = new(new(new(-6, 5), 1, 0), new(7, -2), new(-6, -1), new(2, -3));
 
         var enemy1bPath = enemy1aPath.GetModifiedPathCopy(new(0.5f, 0.5f), (x, y) => x - y);
         var enemy1cPath = enemy1aPath.GetModifiedPathCopy(new(-1f, 1f), (x, y) => x * y);
@@ -29,7 +29,7 @@ public class TestStage : Stage
             Name = "enemy1",
             SpawnTime = -1,
             SpawnPosition = enemy1aPath.StartPoint.Position,
-            Path = new() { enemy1aPath },
+            Paths = new() { enemy1aPath },
             Fireable = new Arc(3, 90, 0)
         });
         int enemy1b = args.EnemyManager.CreateNewEnemy(new Enemy
@@ -37,7 +37,7 @@ public class TestStage : Stage
             Name = "enemy1",
             SpawnTime = -1,
             SpawnPosition = enemy1bPath.StartPoint.Position,
-            Path = new() { enemy1bPath },
+            Paths = new() { enemy1bPath },
             Fireable = new Arc(3, 90, 0)
         });
         int enemy1c = args.EnemyManager.CreateNewEnemy(new Enemy
@@ -45,7 +45,7 @@ public class TestStage : Stage
             Name = "enemy1",
             SpawnTime = -1,
             SpawnPosition = enemy1cPath.StartPoint.Position,
-            Path = new() { enemy1cPath },
+            Paths = new() { enemy1cPath },
             Fireable = new Arc(3, 90, 0)
         });
         int enemy1d = args.EnemyManager.CreateNewEnemy(new Enemy
@@ -53,7 +53,7 @@ public class TestStage : Stage
             Name = "enemy1",
             SpawnTime = -1,
             SpawnPosition = enemy1dPath.StartPoint.Position,
-            Path = new() { enemy1dPath },
+            Paths = new() { enemy1dPath },
             Fireable = new Arc(3, 3, 45)
         });
 
@@ -83,7 +83,7 @@ public class TestStage : Stage
                 Name = "enemy2",
                 SpawnTime = -1,
                 SpawnPosition = enemy2aPath.StartPoint.Position,
-                Path = new() { enemy2aPath }
+                Paths = new() { enemy2aPath }
             });
             WaypointPathExpression enemy2bPath = new(new(new Vector2(6, i),0, 0), "-x", 20, 225);
             enemy2b = args.EnemyManager.CreateNewEnemy(new Enemy
@@ -91,7 +91,7 @@ public class TestStage : Stage
                 Name = "enemy2",
                 SpawnTime = -1,
                 SpawnPosition = enemy2bPath.StartPoint.Position,
-                Path = new() { enemy2bPath }
+                Paths = new() { enemy2bPath }
             });
 
             _enemyIDs.Add(args.EnemyManager.SpawnNewEnemy(enemy2a));
@@ -110,7 +110,7 @@ public class TestStage : Stage
                 Name = "enemy3",
                 SpawnTime = -1,
                 SpawnPosition = enemy3aPath.StartPoint.Position,
-                Path = new() { enemy3aPath }
+                Paths = new() { enemy3aPath }
             });
 
             _enemyIDs.Add(args.EnemyManager.SpawnNewEnemy(enemy3a));
@@ -122,7 +122,7 @@ public class TestStage : Stage
             Name = "enemy3",
             SpawnTime = -1,
             SpawnPosition = enemy3bPath.StartPoint.Position,
-            Path = new() { enemy3bPath }
+            Paths = new() { enemy3bPath }
         });
 
         _enemyIDs.Add(args.EnemyManager.SpawnNewEnemy(enemy3b));
@@ -134,7 +134,7 @@ public class TestStage : Stage
             Name = "boss",
             SpawnTime = -1,
             SpawnPosition = bossPath.StartPoint.Position,
-            Path = new() { bossPath }
+            Paths = new() { bossPath }
         });
 
         _enemyIDs.Add(args.EnemyManager.SpawnNewEnemy(boss));

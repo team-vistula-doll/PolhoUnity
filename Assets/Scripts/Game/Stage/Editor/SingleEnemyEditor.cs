@@ -111,12 +111,12 @@ public class SingleEnemyEditor
                 tempPath.arraySize += path.arraySize;
                 for (int i = 0; i < path.arraySize; i++)
                 {
-                    WaypointPathCreator creator = Enemy.Path[i];
+                    WaypointPathCreator creator = Enemy.Paths[i];
                     tempPath.GetArrayElementAtIndex(tempPathOldSize + i).managedReferenceValue = creator.GetNewAdjoinedPath(0);
                     //foreach (var creator in selectedEnemy.Path)
                     //    data.TempPath.Add(creator.GetNewAdjoinedPath(0));
                 }
-                WaypointPathCreator c = Enemy.Path[path.arraySize - 1];
+                WaypointPathCreator c = Enemy.Paths[path.arraySize - 1];
                 tempPath.arraySize++;
                 tempPath.GetArrayElementAtIndex(tempPath.arraySize - 1).managedReferenceValue = c.GetNewAdjoinedPath(1);
                 //data.TempPath.Add(selectedEnemy.Path[^1].GetNewAdjoinedPath(1));
@@ -207,7 +207,7 @@ public class SingleEnemyEditor
         if (EditorGUI.EndChangeCheck())
             wasTextureMoved = true;
 
-        Data.SelectedOption.SelectPath(selectedPathIndex, pathTypeSelection, isInsert, tempPath, Enemy.Path);
+        Data.SelectedOption.SelectPath(selectedPathIndex, pathTypeSelection, isInsert, tempPath, Enemy.Paths);
 
         selectedPathIndex.intValue -= Data.SelectedOption.DeletePath(path, tempPath);
         if (selectedPathIndex.intValue < 0) selectedPathIndex.intValue = 0;
@@ -257,7 +257,7 @@ public class SingleEnemyEditor
             result = newSpawnPosition;
         }
 
-        Data.SelectedOption.DrawPath(Enemy.Path, 0, e, false);
+        Data.SelectedOption.DrawPath(Enemy.Paths, 0, e, false);
         Data.SelectedOption.DrawPath(Data.TempPath, selectedPathIndex.intValue, e, true);
         return result;
     }
